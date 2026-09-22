@@ -1,0 +1,362 @@
+/* ===== Tambah Soal Layout ===== */
+.tambah-soal-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.tambah-soal-main {
+  flex: 1;
+  margin-left: 240px;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left var(--transition-base);
+}
+
+.tambah-soal-layout.sidebar-collapsed .tambah-soal-main {
+  margin-left: 72px;
+}
+
+/* ===== Content Area ===== */
+.tambah-soal-content {
+  padding: 24px;
+  flex: 1;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Header & Breadcrumb */
+.ts-header-wrapper {
+  margin-bottom: 24px;
+}
+
+.ts-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--color-gray-500);
+  margin-bottom: 12px;
+}
+
+.ts-breadcrumb svg {
+  width: 14px;
+  height: 14px;
+}
+
+.ts-breadcrumb-link {
+  color: var(--color-gray-500);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.ts-breadcrumb-link:hover {
+  color: var(--color-primary-600);
+}
+
+.ts-breadcrumb-active {
+  color: var(--color-primary-600);
+  font-weight: 500;
+}
+
+.ts-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ts-title-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ts-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--color-gray-900);
+  letter-spacing: -0.5px;
+}
+
+.ts-title-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-batal-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: white;
+  border: 1px solid var(--color-gray-200);
+  color: var(--color-gray-700);
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-batal-header:hover {
+  background: var(--color-gray-50);
+}
+
+/* Main Form Card */
+.ts-card {
+  background: white;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+  border: 1px solid var(--color-gray-200);
+  padding: 32px;
+  margin-bottom: 100px; /* Space for footer */
+}
+
+.ts-card-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.ts-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  background: #1d4ed8;
+  color: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ts-card-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  margin-bottom: 4px;
+}
+
+.ts-card-header p {
+  font-size: 13px;
+  color: var(--color-gray-500);
+}
+
+.ts-form-row {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.ts-form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+}
+
+.ts-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-gray-900);
+  margin-bottom: 10px;
+}
+
+.ts-label span {
+  color: #dc2626;
+}
+
+.ts-label-hint {
+  font-weight: 400;
+  color: var(--color-gray-500);
+  font-size: 12px;
+}
+
+.ts-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  color: var(--color-gray-900);
+  transition: all 0.2s;
+}
+
+.ts-input:focus {
+  outline: none;
+  border-color: #1E40AF;
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+  background: white;
+}
+
+select.ts-input {
+  appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%2364748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>');
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+}
+
+select.ts-input.success {
+  background-color: #dcfce7;
+  border-color: #86efac;
+  color: #166534;
+  font-weight: 600;
+}
+
+textarea.ts-input {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.ts-type-toggle {
+  display: flex;
+  gap: 16px;
+}
+
+.ts-type-radio {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: #f8fafc;
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  flex: 1;
+  transition: all 0.2s;
+}
+
+.ts-type-radio.active {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.ts-type-radio input {
+  margin: 0;
+  accent-color: #1d4ed8;
+  width: 16px;
+  height: 16px;
+}
+
+.ts-type-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-gray-700);
+}
+
+.ts-type-radio.active .ts-type-text {
+  color: #1d4ed8;
+}
+
+/* Options Grid */
+.ts-options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.ts-option-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ts-option-label {
+  width: 40px;
+  height: 40px;
+  background: #f1f5f9;
+  color: #475569;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Fixed Footer Bar */
+.ts-footer-bar {
+  position: fixed;
+  bottom: 0;
+  left: 240px;
+  right: 0;
+  background: white;
+  border-top: 1px solid var(--color-gray-200);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  z-index: 40;
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+  transition: left var(--transition-base);
+  gap: 16px;
+}
+
+.tambah-soal-layout.sidebar-collapsed .ts-footer-bar {
+  left: 72px;
+}
+
+.btn-batal-footer {
+  padding: 12px 24px;
+  background: white;
+  border: 1px solid var(--color-gray-200);
+  color: var(--color-gray-700);
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-batal-footer:hover {
+  background: var(--color-gray-50);
+}
+
+.btn-simpan-soal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: #1d4ed8;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-simpan-soal:hover {
+  background: #1e40af;
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tambah-soal-main {
+    margin-left: 0;
+  }
+  .ts-footer-bar {
+    left: 0;
+  }
+  .tambah-soal-layout.sidebar-collapsed .ts-footer-bar {
+    left: 0;
+  }
+  .ts-form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  .ts-options-grid {
+    grid-template-columns: 1fr;
+  }
+}

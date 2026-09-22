@@ -83,10 +83,10 @@ function ModulPage() {
               <h1 className="modul-title">Kelola Modul</h1>
             </div>
             
-            <button className="btn-tambah-modul">
+            <Link to="/tambah-modul" className="btn-tambah-modul" style={{ textDecoration: 'none' }}>
               <Plus />
               Tambah Modul
-            </button>
+            </Link>
           </div>
 
           {/* Stat Cards */}
