@@ -1,0 +1,471 @@
+/* ===== Data Siswa Layout ===== */
+.data-siswa-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f1f5f9;
+}
+
+.data-siswa-main {
+  flex: 1;
+  margin-left: 240px;
+  display: flex;
+  flex-direction: column;
+  transition: margin-left var(--transition-base);
+}
+
+.data-siswa-layout.sidebar-collapsed .data-siswa-main {
+  margin-left: 72px;
+}
+
+/* ===== Content Area ===== */
+.data-siswa-content {
+  padding: 24px;
+  flex: 1;
+}
+
+/* Breadcrumb & Header */
+.page-header {
+  margin-bottom: 24px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--color-gray-500);
+  margin-bottom: 12px;
+}
+
+.breadcrumb svg {
+  width: 14px;
+  height: 14px;
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.breadcrumb-link {
+  color: var(--color-gray-500);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.breadcrumb-link:hover {
+  color: var(--color-primary-600);
+}
+
+.breadcrumb-active {
+  color: var(--color-primary-600);
+  font-weight: 500;
+}
+
+.page-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  padding: 16px 20px;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--color-gray-100);
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--color-gray-900);
+  letter-spacing: -0.5px;
+}
+
+.badge-count {
+  background: #e0e7ff;
+  color: #3730a3;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ===== Stat Cards (Small) ===== */
+.ds-stat-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.ds-stat-card {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--color-gray-100);
+}
+
+.ds-stat-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ds-stat-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.ds-stat-icon.blue { background: #e0e7ff; color: #4338ca; }
+.ds-stat-icon.green { background: #dcfce7; color: #15803d; }
+.ds-stat-icon.gray { background: #e2e8f0; color: #475569; }
+.ds-stat-icon.red { background: #fee2e2; color: #b91c1c; }
+
+.ds-stat-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.ds-stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.ds-stat-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.ds-stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-gray-900);
+  line-height: 1;
+}
+
+.ds-stat-change {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.ds-stat-change.positive { color: #16a34a; }
+.ds-stat-change.neutral { color: var(--color-gray-400); font-weight: 500; }
+.ds-stat-change.negative { color: #dc2626; }
+
+/* ===== Data Container ===== */
+.data-container {
+  background: white;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--color-gray-100);
+  overflow: hidden;
+}
+
+/* Filters */
+.data-filters {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.search-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+}
+
+.search-box svg {
+  width: 16px;
+  height: 16px;
+  color: var(--color-gray-400);
+}
+
+.search-box input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  color: var(--color-gray-700);
+  outline: none;
+}
+
+.filter-select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  color: var(--color-gray-600);
+  min-width: 140px;
+  cursor: pointer;
+}
+
+.filter-select svg {
+  width: 14px;
+  height: 14px;
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: var(--color-gray-50);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  color: var(--color-gray-600);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.refresh-btn:hover {
+  background: var(--color-gray-100);
+}
+
+/* Table */
+.ds-table-wrapper {
+  overflow-x: auto;
+}
+
+.ds-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ds-table th {
+  background: #f8fafc;
+  padding: 12px 20px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.ds-table td {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--color-gray-50);
+  vertical-align: middle;
+}
+
+.ds-table tr:hover td {
+  background: var(--color-gray-50);
+}
+
+/* Table Cell specific */
+.cell-no {
+  font-size: 13px;
+  color: var(--color-gray-500);
+}
+
+.cell-siswa {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.siswa-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.siswa-avatar.blue { background: #e0e7ff; color: #4338ca; }
+.siswa-avatar.green { background: #dcfce7; color: #15803d; }
+.siswa-avatar.red { background: #fee2e2; color: #b91c1c; }
+.siswa-avatar.gray { background: #f1f5f9; color: #475569; }
+
+.siswa-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.siswa-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-gray-900);
+}
+
+.siswa-nisn {
+  font-size: 11px;
+  color: var(--color-gray-400);
+  margin-top: 2px;
+}
+
+.cell-sekolah {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-gray-700);
+}
+
+.cell-jurusan {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #e0e7ff;
+  color: #4338ca;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.cell-kelas {
+  font-size: 13px;
+  color: var(--color-gray-600);
+}
+
+.cell-nilai {
+  font-size: 14px;
+  font-weight: 700;
+}
+.cell-nilai.high { color: #15803d; }
+.cell-nilai.medium { color: #4338ca; }
+.cell-nilai.low { color: #dc2626; }
+
+/* Status Dot Badge */
+.status-dot-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.status-dot-badge.selesai {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+.status-dot-badge.selesai::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: #16a34a;
+  border-radius: 50%;
+}
+
+.status-dot-badge.proses {
+  background: #f8fafc;
+  color: #475569;
+}
+.status-dot-badge.proses::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: #64748b;
+  border-radius: 50%;
+}
+
+.status-dot-badge.tidak-selesai {
+  background: #fef2f2;
+  color: #dc2626;
+}
+.status-dot-badge.tidak-selesai::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: #dc2626;
+  border-radius: 50%;
+}
+
+/* Action icons */
+.ds-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ds-action-btn {
+  color: var(--color-gray-400);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.ds-action-btn:hover {
+  color: var(--color-gray-700);
+  background: var(--color-gray-100);
+}
+
+.ds-action-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Table Footer */
+.ds-table-footer {
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ds-table-info {
+  font-size: 13px;
+  color: var(--color-gray-500);
+}
+
+.ds-pagination {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .ds-stat-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .data-siswa-main {
+    margin-left: 0;
+  }
+  .data-filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .search-box {
+    width: 100%;
+  }
+  .filter-select {
+    width: 100%;
+  }
+}
