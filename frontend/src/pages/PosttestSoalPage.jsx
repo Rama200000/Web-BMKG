@@ -65,12 +65,23 @@ function PosttestSoalPage() {
 
   const formatTime = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
   const isWarning = timeLeft < 3 * 60;
+
+  const hitungSkor = (jawabanMap) => {
+    let benar = 0;
+    soalPosttest.forEach((soal, i) => {
+      if (jawabanMap[i] === soal.kunci) benar++;
+    });
+    return Math.round((benar / soalPosttest.length) * 100);
+  };
+
   const handleSelect = (idx) => setJawaban({ ...jawaban, [currentQ]: idx });
 
   const handleNext = () => {
     if (currentQ < soalPosttest.length - 1) {
       setCurrentQ(p => p + 1);
     } else {
+      const skor = hitungSkor(jawaban);
+      localStorage.setItem('skorPosttest', skor.toString());
       navigate('/siswa/hasil-posttest');
     }
   };

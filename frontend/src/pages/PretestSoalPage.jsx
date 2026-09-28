@@ -61,12 +61,20 @@ function PretestSoalPage() {
   const formatTime = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
   const isWarning = timeLeft < 3 * 60;
 
-  const handleSelect = (idx) => setJawaban({ ...jawaban, [currentQ]: idx });
+  const hitungSkor = (jawabanMap) => {
+    let benar = 0;
+    soalPretest.forEach((soal, i) => {
+      if (jawabanMap[i] === soal.kunci) benar++;
+    });
+    return Math.round((benar / soalPretest.length) * 100);
+  };
 
   const handleNext = () => {
     if (currentQ < soalPretest.length - 1) {
       setCurrentQ(p => p + 1);
     } else {
+      const skor = hitungSkor(jawaban);
+      localStorage.setItem('skorPretest', skor.toString());
       navigate('/siswa/hasil-pretest');
     }
   };

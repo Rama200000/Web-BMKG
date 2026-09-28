@@ -8,6 +8,7 @@ function SiswaHasilPosttestPage() {
   const [selesai, setSelesai] = useState(false);
   const [currentTime, setCurrentTime] = useState('');
   const [topScores, setTopScores] = useState([]);
+  const [skorSaya, setSkorSaya] = useState(0);
 
   useEffect(() => {
     const updateTime = () => {
@@ -16,13 +17,15 @@ function SiswaHasilPosttestPage() {
     };
     updateTime();
     const t = setInterval(updateTime, 1000);
+    const skor = parseInt(localStorage.getItem('skorPosttest') || '0');
+    setSkorSaya(skor);
     return () => clearInterval(t);
   }, []);
 
   useEffect(() => {
     // Ambil 5 nilai posttest tertinggi dari semua record
     const records = JSON.parse(localStorage.getItem('studentRecords') || '[]');
-    const myScore = 90;
+    const myScore = parseInt(localStorage.getItem('skorPosttest') || '0');
     const allScores = [
       ...records
         .filter(r => r.nilaiPosttest != null)
@@ -36,7 +39,7 @@ function SiswaHasilPosttestPage() {
   const handleFinish = () => {
     const currentStudent = JSON.parse(localStorage.getItem('currentStudent') || '{}');
     if (currentStudent && currentStudent.nama) {
-      currentStudent.nilaiPosttest = 90;
+      currentStudent.nilaiPosttest = skorSaya;
       currentStudent.status = 'Selesai';
       const allStudents = JSON.parse(localStorage.getItem('studentRecords') || '[]');
       allStudents.push(currentStudent);
@@ -68,7 +71,7 @@ function SiswaHasilPosttestPage() {
             </p>
             <div style={{ marginTop: 40, padding: '16px 24px', background: '#f0fdf4', borderRadius: 16, border: '1px solid #d1fae5', width: '100%' }}>
               <div style={{ fontSize: 12, color: '#15803d', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.5 }}>Sesi Berakhir</div>
-              <div style={{ fontSize: 28, fontWeight: 900, color: '#059669', marginTop: 4 }}>Skor Post-test: 90</div>
+              <div style={{ fontSize: 28, fontWeight: 900, color: '#059669', marginTop: 4 }}>Skor Post-test: {skorSaya}</div>
             </div>
           </div>
           <div className="home-indicator"><div className="indicator-line"></div></div>
@@ -117,7 +120,7 @@ function SiswaHasilPosttestPage() {
                 <ClipboardCheck size={22} color="white" />
               </div>
               <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>Skor Post-test</div>
-              <div style={{ fontSize: 54, fontWeight: 900, color: 'white', lineHeight: 1, letterSpacing: -2 }}>90</div>
+              <div style={{ fontSize: 54, fontWeight: 900, color: 'white', lineHeight: 1, letterSpacing: -2 }}>{skorSaya}</div>
               <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>Nilai Kamu</div>
             </div>
 
