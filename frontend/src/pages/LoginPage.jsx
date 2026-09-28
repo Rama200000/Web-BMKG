@@ -36,15 +36,30 @@ function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    // Dummy login: langsung sukses jika field tidak kosong
     setTimeout(() => {
       if (formData.nip && formData.password) {
-        navigate('/dashboard');
+        const email = formData.nip.toLowerCase();
+        let role = 'admin';
+        
+        if (email.includes('super')) {
+          role = 'super_admin';
+        } else if (email.includes('siswa') || email.includes('murid')) {
+          role = 'siswa';
+        }
+
+        localStorage.setItem('userRole', role);
+        localStorage.setItem('userEmail', email);
+
+        if (role === 'siswa') {
+          navigate('/siswa/dashboard');
+        } else {
+          navigate('/dashboard');
+        }
       } else {
         alert('Harap isi Email dan Password terlebih dahulu.');
         setIsLoading(false);
       }
-    }, 800); // Simulasi loading sedikit
+    }, 800);
   };
 
   return (

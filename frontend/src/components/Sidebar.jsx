@@ -6,12 +6,15 @@ import {
   FileQuestion,
   ClipboardCheck,
   Settings,
-  LogOut
+  LogOut,
+  Shield,
+  GraduationCap,
+  History
 } from 'lucide-react';
 import bmkgLogo from '../assets/bmkg-logo.png';
 import './Sidebar.css';
 
-const menuItems = [
+const adminMenus = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/data-siswa', label: 'Data Siswa', icon: Users },
   { path: '/modul', label: 'Modul', icon: BookOpen },
@@ -20,11 +23,28 @@ const menuItems = [
   { path: '/pengaturan', label: 'Pengaturan', icon: Settings },
 ];
 
+const superAdminMenus = [
+  ...adminMenus,
+  { path: '/kelola-admin', label: 'Kelola Admin', icon: Shield },
+];
+
+const siswaMenus = [
+  { path: '/siswa/dashboard', label: 'Beranda Siswa', icon: LayoutDashboard },
+  { path: '/siswa/modul', label: 'Modul Belajar', icon: GraduationCap },
+  { path: '/siswa/riwayat', label: 'Riwayat Ujian', icon: History },
+];
+
 function Sidebar({ collapsed }) {
   const navigate = useNavigate();
+  const userRole = localStorage.getItem('userRole') || 'admin';
+
+  let currentMenus = adminMenus;
+  if (userRole === 'super_admin') currentMenus = superAdminMenus;
+  else if (userRole === 'siswa') currentMenus = siswaMenus;
 
   const handleLogout = () => {
-    // Nanti hubungkan ke backend PHP
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userEmail');
     navigate('/login');
   };
 
@@ -48,12 +68,12 @@ function Sidebar({ collapsed }) {
 
       {/* Navigation */}
       <nav className="sidebar-nav">
-        {menuItems.map((item) => (
+        {currentMenus.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
-            id={`nav-${item.path.replace('/', '')}`}
+            id={`nav-${item.path.replace(/\//g, '-')}`}
           >
             <item.icon />
             <span>{item.label}</span>
