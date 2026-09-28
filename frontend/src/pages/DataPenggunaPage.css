@@ -12,7 +12,7 @@
   font-family: 'Inter', sans-serif;
 }
 
-/* ─── Mobile Screen / Phone Frame ─── */
+/* ─── Mobile Screen / Phone Frame (Desktop only) ─── */
 .mobile-screen {
   background-color: #f8fafc;
   width: 100%;
@@ -31,7 +31,7 @@
   border: 10px solid #1e293b;
 }
 
-/* Notch */
+/* Notch (Desktop only) */
 .mobile-screen::before {
   content: '';
   position: absolute;
@@ -43,6 +43,40 @@
   background: #1e293b;
   border-radius: 0 0 18px 18px;
   z-index: 10;
+}
+
+/* ─── RESPONSIVE: Saat dibuka di HP sungguhan ─── */
+@media (max-width: 480px) {
+  .mobile-app-container {
+    padding: 0;
+    background: #f8fafc; /* Hapus gradient background di HP */
+    align-items: stretch;
+  }
+
+  .mobile-screen {
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+    max-height: 100vh;
+    border-radius: 0;       /* Tidak ada border-radius */
+    border: none;           /* Tidak ada border hitam */
+    box-shadow: none;       /* Tidak ada shadow */
+  }
+
+  /* Sembunyikan notch palsu di HP sungguhan */
+  .mobile-screen::before {
+    display: none;
+  }
+
+  /* Sesuaikan status bar padding agar tidak tertutup notch asli HP */
+  .status-bar {
+    padding-top: env(safe-area-inset-top, 12px);
+  }
+
+  /* Sesuaikan home indicator dengan safe area HP */
+  .home-indicator {
+    padding-bottom: env(safe-area-inset-bottom, 10px);
+  }
 }
 
 /* ─── Status Bar ─── */
