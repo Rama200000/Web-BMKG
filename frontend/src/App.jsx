@@ -11,7 +11,7 @@ import PengaturanPage from './pages/PengaturanPage';
 import SiswaDashboardPage from './pages/SiswaDashboardPage';
 import KelolaAdminPage from './pages/KelolaAdminPage';
 import DataPenggunaPage from './pages/DataPenggunaPage';
-import ScanBarcodePage from './pages/ScanBarcodePage';
+
 import PretestIntroPage from './pages/PretestIntroPage';
 import PretestSoalPage from './pages/PretestSoalPage';
 import HasilPretestPage from './pages/SiswaHasilPretestPage';
@@ -77,7 +77,8 @@ function App() {
         } />
 
         {/* Siswa Public Routes (Tanpa Login) */}
-        <Route path="/scan" element={<ScanBarcodePage />} />
+        {/* /scan redirect langsung ke data-pengguna — siswa scan QR via Google Lens */}
+        <Route path="/scan" element={<Navigate to="/siswa/data-pengguna" replace />} />
         <Route path="/siswa/data-pengguna" element={<DataPenggunaPage />} />
         <Route path="/siswa/pretest-intro" element={<PretestIntroPage />} />
         <Route path="/siswa/pretest" element={<PretestSoalPage />} />
