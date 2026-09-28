@@ -18,6 +18,16 @@ function DataPenggunaPage() {
 
   const handleNext = (e) => {
     e.preventDefault();
+    // Simpan data diri sementara di localStorage
+    const newStudent = {
+      id: Date.now(),
+      nama: formData.nama,
+      sekolah: formData.kategoriSekolah,
+      jurusan: formData.jurusan,
+      kelas: formData.kelas,
+      tanggal: new Date().toISOString()
+    };
+    localStorage.setItem('currentStudent', JSON.stringify(newStudent));
     navigate('/siswa/pretest-intro');
   };
 

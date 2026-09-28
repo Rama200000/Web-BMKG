@@ -14,6 +14,24 @@ function SiswaHasilPosttestPage() {
     { name: 'Rina Wijaya', score: 85 }
   ];
 
+  const handleFinish = () => {
+    // Simpan nilai akhir dan push ke daftar siswa
+    const currentStudent = JSON.parse(localStorage.getItem('currentStudent') || '{}');
+    if (currentStudent && currentStudent.nama) {
+      currentStudent.nilaiPosttest = 90;
+      currentStudent.status = 'Selesai';
+      
+      const allStudents = JSON.parse(localStorage.getItem('studentRecords') || '[]');
+      allStudents.push(currentStudent);
+      localStorage.setItem('studentRecords', JSON.stringify(allStudents));
+      
+      // Hapus sesi saat ini
+      localStorage.removeItem('currentStudent');
+    }
+    
+    navigate('/scan');
+  };
+
   return (
     <div className="mobile-app-container">
       <div className="mobile-screen">
@@ -115,7 +133,7 @@ function SiswaHasilPosttestPage() {
           </div>
 
           <div className="submit-section" style={{ paddingBottom: 24 }}>
-            <button className="submit-btn" onClick={() => navigate('/scan')} style={{ backgroundColor: '#1e3a8a' }}>
+            <button className="submit-btn" onClick={handleFinish} style={{ backgroundColor: '#1e3a8a' }}>
               Selesai & Kembali ke Awal
               <ArrowRight size={18} />
             </button>

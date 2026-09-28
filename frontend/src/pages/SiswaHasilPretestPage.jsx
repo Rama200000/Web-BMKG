@@ -5,6 +5,16 @@ import './DataPenggunaPage.css';
 function SiswaHasilPretestPage() {
   const navigate = useNavigate();
 
+  const handleNext = () => {
+    // Simpan nilai pretest
+    const currentStudent = JSON.parse(localStorage.getItem('currentStudent') || '{}');
+    currentStudent.nilaiPretest = 80;
+    currentStudent.status = 'Sedang Modul';
+    localStorage.setItem('currentStudent', JSON.stringify(currentStudent));
+    
+    navigate('/siswa/modul');
+  };
+
   return (
     <div className="mobile-app-container">
       <div className="mobile-screen">
@@ -94,7 +104,7 @@ function SiswaHasilPretestPage() {
           </div>
 
           <div className="submit-section" style={{ marginTop: 24, paddingBottom: 24 }}>
-            <button className="submit-btn" onClick={() => navigate('/siswa/modul')}>
+            <button className="submit-btn" onClick={handleNext}>
               Lanjut ke Modul
               <ArrowRight size={18} />
             </button>

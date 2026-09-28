@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Menu,
@@ -18,7 +18,7 @@ import {
 import Sidebar from '../components/Sidebar';
 import './DataSiswaPage.css';
 
-const siswaData = [
+const dummySiswaData = [
   { no: 1, initials: 'AP', avatarColor: 'blue', nama: 'Alya Putri', nisn: '0064829101', sekolah: 'SMKN 1 Bandung', jurusan: 'RPL', kelas: 'XII RPL 1', nilai: 80, nilaiClass: 'medium', status: 'Selesai' },
   { no: 2, initials: 'BP', avatarColor: 'gray', nama: 'Bima Pratama', nisn: '0064829102', sekolah: 'SMAN 1 Cimahi', jurusan: 'IPA', kelas: 'XII IPA 2', nilai: 65, nilaiClass: 'medium', status: 'Dalam Proses' },
   { no: 3, initials: 'CL', avatarColor: 'green', nama: 'Citra Lestari', nisn: '0064829103', sekolah: 'SMKN 2 Bandung', jurusan: 'TKJ', kelas: 'XI TKJ 1', nilai: 70, nilaiClass: 'medium', status: 'Selesai' },
@@ -31,6 +31,53 @@ const siswaData = [
 function DataSiswaPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [siswaData, setSiswaData] = useState(dummySiswaData);
+
+  const loadData = () => {
+    const records = JSON.parse(localStorage.getItem('studentRecords') || '[]');
+    const currentStudent = JSON.parse(localStorage.getItem('currentStudent') || '{}');
+    
+    // Format records from localStorage
+    const formattedRecords = records.map((rec, index) => ({
+      no: dummySiswaData.length + index + 1,
+      initials: rec.nama.substring(0, 2).toUpperCase(),
+      avatarColor: 'blue',
+      nama: rec.nama,
+      nisn: 'Baru Scan',
+      sekolah: rec.sekolah,
+      jurusan: rec.jurusan,
+      kelas: rec.kelas,
+      nilai: rec.nilaiPretest || '-',
+      nilaiClass: rec.nilaiPretest >= 80 ? 'high' : rec.nilaiPretest >= 60 ? 'medium' : 'low',
+      status: rec.status || 'Selesai'
+    }));
+
+    // If there is a student currently doing it
+    if (currentStudent && currentStudent.nama) {
+      formattedRecords.push({
+        no: dummySiswaData.length + records.length + 1,
+        initials: currentStudent.nama.substring(0, 2).toUpperCase(),
+        avatarColor: 'gray',
+        nama: currentStudent.nama,
+        nisn: 'Sedang Aktif',
+        sekolah: currentStudent.sekolah,
+        jurusan: currentStudent.jurusan,
+        kelas: currentStudent.kelas,
+        nilai: currentStudent.nilaiPretest || '-',
+        nilaiClass: 'medium',
+        status: currentStudent.status || 'Dalam Proses'
+      });
+    }
+
+    setSiswaData([...dummySiswaData, ...formattedRecords]);
+  };
+
+  useEffect(() => {
+    loadData();
+    // Refresh data every 5 seconds to monitor in real-time
+    const interval = setInterval(loadData, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const getStatusClass = (status) => {
     switch (status) {
