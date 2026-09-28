@@ -18,15 +18,7 @@ import {
 import Sidebar from '../components/Sidebar';
 import './DataSiswaPage.css';
 
-const dummySiswaData = [
-  { no: 1, initials: 'AP', avatarColor: 'blue', nama: 'Alya Putri', nisn: '0064829101', sekolah: 'SMKN 1 Bandung', jurusan: 'RPL', kelas: 'XII RPL 1', nilai: 80, nilaiClass: 'medium', status: 'Selesai' },
-  { no: 2, initials: 'BP', avatarColor: 'gray', nama: 'Bima Pratama', nisn: '0064829102', sekolah: 'SMAN 1 Cimahi', jurusan: 'IPA', kelas: 'XII IPA 2', nilai: 65, nilaiClass: 'medium', status: 'Dalam Proses' },
-  { no: 3, initials: 'CL', avatarColor: 'green', nama: 'Citra Lestari', nisn: '0064829103', sekolah: 'SMKN 2 Bandung', jurusan: 'TKJ', kelas: 'XI TKJ 1', nilai: 70, nilaiClass: 'medium', status: 'Selesai' },
-  { no: 4, initials: 'DS', avatarColor: 'red', nama: 'Danu Saputra', nisn: '0064829104', sekolah: 'SMA 3 Bandung', jurusan: 'IPS', kelas: 'XI IPS 1', nilai: 55, nilaiClass: 'low', status: 'Tidak Selesai' },
-  { no: 5, initials: 'EW', avatarColor: 'blue', nama: 'Eka Wijaya', nisn: '0064829105', sekolah: 'SMAN 4 Cimahi', jurusan: 'IPA', kelas: 'XII IPA 1', nilai: 90, nilaiClass: 'high', status: 'Selesai' },
-  { no: 6, initials: 'FR', avatarColor: 'blue', nama: 'Fajar Ramadhan', nisn: '0064829106', sekolah: 'SMKN 1 Bandung', jurusan: 'RPL', kelas: 'XII RPL 2', nilai: 75, nilaiClass: 'medium', status: 'Selesai' },
-  { no: 7, initials: 'GP', avatarColor: 'blue', nama: 'Gita Permata', nisn: '0064829107', sekolah: 'SMAN 2 Bandung', jurusan: 'IPS', kelas: 'XI IPS 3', nilai: 85, nilaiClass: 'medium', status: 'Selesai' },
-];
+const dummySiswaData = [];
 
 function DataSiswaPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -132,7 +124,7 @@ function DataSiswaPage() {
             
             <div className="page-title-row">
               <h1 className="page-title">Data Siswa</h1>
-              <span className="badge-count">120 Terdaftar</span>
+              <span className="badge-count">{siswaData.length} Terdaftar</span>
             </div>
           </div>
 
@@ -143,8 +135,8 @@ function DataSiswaPage() {
               <div className="ds-stat-info">
                 <span className="ds-stat-label">Total Siswa</span>
                 <div className="ds-stat-value-row">
-                  <span className="ds-stat-value">120</span>
-                  <span className="ds-stat-change positive">↗ 12%</span>
+                  <span className="ds-stat-value">{siswaData.length}</span>
+                  <span className="ds-stat-change positive">↗ {siswaData.length > 0 ? '100%' : '0%'}</span>
                 </div>
               </div>
             </div>
@@ -153,8 +145,8 @@ function DataSiswaPage() {
               <div className="ds-stat-info">
                 <span className="ds-stat-label">Selesai Pretest</span>
                 <div className="ds-stat-value-row">
-                  <span className="ds-stat-value">98</span>
-                  <span className="ds-stat-change neutral">81.6%</span>
+                  <span className="ds-stat-value">{siswaData.filter(s => s.nilai !== '-').length}</span>
+                  <span className="ds-stat-change neutral">--</span>
                 </div>
               </div>
             </div>
@@ -163,8 +155,8 @@ function DataSiswaPage() {
               <div className="ds-stat-info">
                 <span className="ds-stat-label">Dalam Proses</span>
                 <div className="ds-stat-value-row">
-                  <span className="ds-stat-value">14</span>
-                  <span className="ds-stat-change neutral">11.6%</span>
+                  <span className="ds-stat-value">{siswaData.filter(s => s.status === 'Dalam Proses').length}</span>
+                  <span className="ds-stat-change neutral">--</span>
                 </div>
               </div>
             </div>
@@ -173,8 +165,8 @@ function DataSiswaPage() {
               <div className="ds-stat-info">
                 <span className="ds-stat-label">Tidak Selesai</span>
                 <div className="ds-stat-value-row">
-                  <span className="ds-stat-value">8</span>
-                  <span className="ds-stat-change negative">6.8%</span>
+                  <span className="ds-stat-value">{siswaData.filter(s => s.status === 'Tidak Selesai').length}</span>
+                  <span className="ds-stat-change negative">--</span>
                 </div>
               </div>
             </div>
@@ -218,7 +210,13 @@ function DataSiswaPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {siswaData.map((siswa) => (
+                  {siswaData.length === 0 ? (
+                    <tr>
+                      <td colSpan="8" style={{ textAlign: 'center', padding: '32px', color: '#64748b' }}>
+                        Belum ada data siswa. Silakan coba tambahkan melalui simulasi scan barcode.
+                      </td>
+                    </tr>
+                  ) : siswaData.map((siswa) => (
                     <tr key={siswa.no}>
                       <td className="cell-no">{siswa.no}</td>
                       <td>
@@ -263,7 +261,7 @@ function DataSiswaPage() {
 
             {/* Pagination */}
             <div className="ds-table-footer">
-              <span className="ds-table-info">Menampilkan 1 - 7 dari 120 data</span>
+              <span className="ds-table-info">Menampilkan {siswaData.length > 0 ? 1 : 0} - {siswaData.length} dari {siswaData.length} data</span>
               <div className="ds-pagination">
                 <button className="page-btn" disabled><ChevronLeft size={14} /></button>
                 <button className="page-btn active" onClick={() => setCurrentPage(1)}>1</button>
