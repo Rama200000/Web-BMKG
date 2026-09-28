@@ -45,8 +45,8 @@
   z-index: 10;
 }
 
-/* ─── RESPONSIVE: Saat dibuka di HP sungguhan ─── */
-@media (max-width: 768px) {
+/* ─── RESPONSIVE: Saat dibuka di HP sungguhan (Touch Device / Mobile) ─── */
+@media (max-width: 850px), (pointer: coarse) {
   .mobile-app-container {
     padding: 0;
     background: #f8fafc;
