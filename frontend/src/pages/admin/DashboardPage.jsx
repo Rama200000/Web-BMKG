@@ -19,7 +19,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell
 } from 'recharts';
-import Sidebar from '../components/Sidebar';
+import Sidebar from '../../components/Sidebar';
 import './DashboardPage.css';
 
 // Data statistik chart

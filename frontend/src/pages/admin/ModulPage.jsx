@@ -22,7 +22,7 @@ import {
   Trash2,
   ChevronLeft
 } from 'lucide-react';
-import Sidebar from '../components/Sidebar';
+import Sidebar from '../../components/Sidebar';
 import './ModulPage.css';
 
 const modulData = [

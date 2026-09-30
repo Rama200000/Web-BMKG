@@ -1,24 +1,24 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
-import DashboardPage from './pages/DashboardPage';
-import DataSiswaPage from './pages/DataSiswaPage';
-import ModulPage from './pages/ModulPage';
-import TambahModulPage from './pages/TambahModulPage';
-import SoalPage from './pages/SoalPage';
-import TambahSoalPage from './pages/TambahSoalPage';
-import HasilSkorPage from './pages/HasilSkorPage';
-import PengaturanPage from './pages/PengaturanPage';
-import SiswaDashboardPage from './pages/SiswaDashboardPage';
-import KelolaAdminPage from './pages/KelolaAdminPage';
-import DataPenggunaPage from './pages/DataPenggunaPage';
+import LoginPage from './pages/admin/LoginPage';
+import DashboardPage from './pages/admin/DashboardPage';
+import DataSiswaPage from './pages/admin/DataSiswaPage';
+import ModulPage from './pages/admin/ModulPage';
+import TambahModulPage from './pages/admin/TambahModulPage';
+import SoalPage from './pages/admin/SoalPage';
+import TambahSoalPage from './pages/admin/TambahSoalPage';
+import HasilSkorPage from './pages/admin/HasilSkorPage';
+import PengaturanPage from './pages/admin/PengaturanPage';
+import SiswaDashboardPage from './pages/siswa/SiswaDashboardPage';
+import KelolaAdminPage from './pages/admin/KelolaAdminPage';
+import DataPenggunaPage from './pages/siswa/DataPenggunaPage';
 
-import PretestIntroPage from './pages/PretestIntroPage';
-import PretestSoalPage from './pages/PretestSoalPage';
-import HasilPretestPage from './pages/SiswaHasilPretestPage';
-import ModulSiswaPage from './pages/ModulSiswaPage';
-import PosttestIntroPage from './pages/PosttestIntroPage';
-import PosttestSoalPage from './pages/PosttestSoalPage';
-import HasilPosttestPage from './pages/SiswaHasilPosttestPage';
+import PretestIntroPage from './pages/siswa/PretestIntroPage';
+import PretestSoalPage from './pages/siswa/PretestSoalPage';
+import HasilPretestPage from './pages/siswa/SiswaHasilPretestPage';
+import ModulSiswaPage from './pages/siswa/ModulSiswaPage';
+import PosttestIntroPage from './pages/siswa/PosttestIntroPage';
+import PosttestSoalPage from './pages/siswa/PosttestSoalPage';
+import HasilPosttestPage from './pages/siswa/SiswaHasilPosttestPage';
 import './index.css';
 
 // Komponen pelindung rute berdasarkan role

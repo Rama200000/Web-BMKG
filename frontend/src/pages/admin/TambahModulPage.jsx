@@ -19,7 +19,7 @@ import {
   ChevronDown,
   Cloud
 } from 'lucide-react';
-import Sidebar from '../components/Sidebar';
+import Sidebar from '../../components/Sidebar';
 import './TambahModulPage.css';
 
 function TambahModulPage() {

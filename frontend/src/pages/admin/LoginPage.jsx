@@ -11,8 +11,8 @@ import {
   GraduationCap,
   BookOpen
 } from 'lucide-react';
-import bmkgLogo from '../assets/bmkg-logo.png';
-import mascotImg from '../assets/mascot.png';
+import bmkgLogo from '../../assets/bmkg-logo.png';
+import mascotImg from '../../assets/mascot.png';
 import './LoginPage.css';
 
 function LoginPage() {

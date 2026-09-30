@@ -16,7 +16,7 @@ import {
   Save,
   MessageSquare
 } from 'lucide-react';
-import Sidebar from '../components/Sidebar';
+import Sidebar from '../../components/Sidebar';
 import './SoalPage.css';
 
 function SoalPage() {
