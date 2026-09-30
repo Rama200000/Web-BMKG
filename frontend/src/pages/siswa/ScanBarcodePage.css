@@ -1,0 +1,102 @@
+/* ScanBarcodePage.css */
+
+.scan-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 12px !important;
+}
+
+.scan-viewfinder {
+  width: 260px;
+  height: 260px;
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  margin: 0 auto 24px;
+}
+
+.scan-camera-bg {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, #111827, #1F2937);
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.scan-camera-icon {
+  color: #4B5563;
+  animation: m-float 3s ease-in-out infinite;
+}
+
+.scan-camera-text {
+  font-size: 12px;
+  color: #6B7280;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Corner Brackets */
+.scan-corner {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  border: 3.5px solid var(--green-400);
+}
+.scan-corner.tl { top: 0; left: 0; border-right: none; border-bottom: none; border-radius: 12px 0 0 0; }
+.scan-corner.tr { top: 0; right: 0; border-left: none; border-bottom: none; border-radius: 0 12px 0 0; }
+.scan-corner.bl { bottom: 0; left: 0; border-right: none; border-top: none; border-radius: 0 0 0 12px; }
+.scan-corner.br { bottom: 0; right: 0; border-left: none; border-top: none; border-radius: 0 0 12px 0; }
+
+/* Scan line animation */
+.scan-line-anim {
+  position: absolute;
+  left: 8%;
+  width: 84%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--green-400), var(--green-400), transparent);
+  border-radius: 4px;
+  box-shadow: 0 0 16px rgba(16,185,129,0.6);
+  animation: m-scan-line 2s ease-in-out infinite;
+}
+
+/* Alerts */
+.scan-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto 16px;
+  animation: m-slideUp 0.3s ease;
+}
+.scan-alert.fail {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  color: #DC2626;
+}
+.scan-alert.success {
+  background: var(--green-50);
+  border: 1px solid var(--green-200);
+  color: var(--green-700);
+}
+.scan-alert strong { display: block; font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+.scan-alert p { margin: 0; font-size: 11px; opacity: 0.8; }
+
+/* Spinner */
+.scan-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }

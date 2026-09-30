@@ -1,0 +1,133 @@
+/* ModulPembelajaranPage.css */
+
+.modul-body { padding-bottom: 80px !important; }
+
+.modul-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, var(--green-600), var(--green-700));
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.modul-cover {
+  width: 100%;
+  height: 160px;
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  background: linear-gradient(145deg, var(--green-100), var(--green-50));
+  border: 1px dashed var(--green-300);
+}
+
+.modul-cover-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  color: var(--green-400);
+}
+
+.modul-cover-placeholder span {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--green-400);
+}
+
+.modul-download-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: var(--green-50);
+  border-radius: 16px;
+  border: 1px dashed var(--green-300);
+  margin-bottom: 24px;
+}
+
+.modul-download-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--green-600);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: var(--font);
+  white-space: nowrap;
+}
+.modul-download-btn:hover { background: var(--green-700); }
+
+/* ─── Content ─── */
+.modul-content { margin-bottom: 24px; }
+.modul-content p {
+  font-size: 14px;
+  color: var(--gray-600);
+  line-height: 1.7;
+  margin: 0 0 16px 0;
+}
+
+.modul-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.modul-section-bar {
+  width: 4px;
+  height: 18px;
+  background: var(--green-500);
+  border-radius: 4px;
+}
+.modul-section-heading h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0;
+}
+
+.modul-note {
+  background: var(--gray-50);
+  border-left: 4px solid var(--green-500);
+  border-radius: 0 14px 14px 0;
+  padding: 16px;
+  margin: 16px 0;
+}
+.modul-note-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--green-700);
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+.modul-note p {
+  font-size: 13px !important;
+  color: var(--gray-600) !important;
+  margin: 0 !important;
+  line-height: 1.6;
+}
+
+/* ─── Sticky Footer ─── */
+.modul-sticky-footer {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 20px;
+  background: linear-gradient(to top, var(--gray-50) 70%, transparent);
+  z-index: 20;
+}

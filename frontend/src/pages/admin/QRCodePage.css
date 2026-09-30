@@ -1,0 +1,245 @@
+/* QRCodePage.css */
+
+.qr-page-grid {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+@media (max-width: 900px) {
+  .qr-page-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── QR Preview Card ─── */
+.qr-preview-card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border: 1px solid #f1f5f9;
+  overflow: hidden;
+}
+
+.qr-preview-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 18px 24px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #059669;
+}
+
+.qr-preview-header h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1F2937;
+  margin: 0;
+}
+
+.qr-preview-body {
+  padding: 32px 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.qr-image-wrap {
+  padding: 16px;
+  background: #fff;
+  border: 2px solid #E5E7EB;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  margin-bottom: 16px;
+}
+
+.qr-image {
+  width: 240px;
+  height: 240px;
+  border-radius: 8px;
+  display: block;
+}
+
+.qr-brand {
+  font-size: 15px;
+  font-weight: 700;
+  color: #059669;
+  margin: 0 0 4px 0;
+}
+
+.qr-hint {
+  font-size: 12px;
+  color: #9CA3AF;
+  margin: 0;
+}
+
+.qr-preview-actions {
+  display: flex;
+  gap: 10px;
+  padding: 16px 24px 24px;
+}
+
+.qr-action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  border: none;
+}
+
+.qr-action-btn.primary {
+  background: linear-gradient(135deg, #047857, #059669);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(5,150,105,0.3);
+}
+.qr-action-btn.primary:hover {
+  box-shadow: 0 6px 18px rgba(5,150,105,0.4);
+  transform: translateY(-1px);
+}
+
+.qr-action-btn.outline {
+  background: #fff;
+  color: #059669;
+  border: 1.5px solid #D1FAE5;
+}
+.qr-action-btn.outline:hover {
+  background: #ECFDF5;
+  border-color: #A7F3D0;
+}
+
+/* ─── Info Panel ─── */
+.qr-info-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.qr-info-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  border: 1px solid #f1f5f9;
+}
+
+.qr-info-card h4 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1F2937;
+  margin: 0 0 14px 0;
+}
+
+.qr-info-card.tip {
+  background: linear-gradient(135deg, #ECFDF5, #F0FDF4);
+  border-color: rgba(16,185,129,0.15);
+}
+
+.qr-info-card.tip ul {
+  padding-left: 18px;
+  margin: 0;
+}
+
+.qr-info-card.tip li {
+  font-size: 13px;
+  color: #065F46;
+  line-height: 1.7;
+  margin-bottom: 4px;
+}
+
+/* URL Box */
+.qr-url-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+}
+
+.qr-url-box code {
+  flex: 1;
+  font-size: 12px;
+  color: #374151;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  word-break: break-all;
+}
+
+.qr-copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: #059669;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+}
+.qr-copy-btn:hover { background: #047857; }
+
+.qr-info-note {
+  font-size: 12px;
+  color: #9CA3AF;
+  margin: 0;
+}
+
+/* Steps */
+.qr-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.qr-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.qr-step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+  color: #065F46;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.qr-step strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1F2937;
+  margin-bottom: 2px;
+}
+
+.qr-step p {
+  font-size: 12px;
+  color: #6B7280;
+  margin: 0;
+  line-height: 1.5;
+}

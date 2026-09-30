@@ -1,0 +1,254 @@
+/* HasilAkhirPage.css */
+
+/* ─── Gradient Header ─── */
+.akhir-header {
+  background: linear-gradient(135deg, #064E3B 0%, #059669 100%);
+  padding: 24px 20px 32px;
+  text-align: center;
+  color: #fff;
+  border-radius: 0 0 24px 24px;
+  margin-bottom: -20px; /* Pull content up */
+}
+.akhir-trophy-icon {
+  font-size: 44px;
+  margin-bottom: 8px;
+  animation: m-float 3s ease-in-out infinite;
+}
+.akhir-header-title {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0 0 4px 0;
+}
+.akhir-header-sub {
+  font-size: 13px;
+  margin: 0;
+  color: rgba(255,255,255,0.8);
+  font-weight: 500;
+}
+
+/* ─── Body & Dashboard Card ─── */
+.akhir-body {
+  padding-top: 0 !important;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.akhir-dashboard-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border: 1px solid var(--gray-100);
+}
+
+.akhir-score-split {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px dashed var(--gray-200);
+}
+
+.akhir-score-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+.akhir-score-lbl {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-500);
+  margin-bottom: 4px;
+}
+.akhir-score-val {
+  font-size: 24px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.akhir-score-divider {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--gray-50);
+}
+
+.akhir-stats-row {
+  display: flex;
+  gap: 12px;
+}
+.akhir-stat-item {
+  flex: 1;
+  background: var(--gray-50);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.akhir-stat-lbl {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-500);
+}
+
+.akhir-improvement {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+.akhir-improvement.up { background: var(--green-100); color: var(--green-700); }
+.akhir-improvement.down { background: var(--red-100); color: var(--red-700); }
+.akhir-improvement.neutral { background: var(--gray-200); color: var(--gray-700); }
+
+.akhir-time-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--gray-700);
+  background: #fff;
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--gray-200);
+}
+
+/* ─── Leaderboard ─── */
+.akhir-leaderboard {
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px 14px;
+  border: 1px solid var(--gray-100);
+  box-shadow: var(--shadow-sm);
+}
+
+.akhir-lb-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  padding: 0 4px;
+}
+.akhir-lb-header h3 {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--gray-900);
+  margin: 0;
+}
+
+.akhir-lb-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.akhir-lb-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--gray-50);
+  border-radius: 14px;
+  transition: all 0.2s ease;
+}
+.akhir-lb-item.top {
+  background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+  border: 1px solid rgba(245,158,11,0.15);
+}
+.akhir-lb-item.is-me {
+  background: linear-gradient(135deg, #ECFDF5, #D1FAE5);
+  border: 1px solid rgba(5,150,105,0.2);
+}
+
+.akhir-lb-rank {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+.akhir-lb-item.top .akhir-lb-rank { background: rgba(245,158,11,0.12); box-shadow: none; }
+.akhir-lb-item.is-me .akhir-lb-rank { background: rgba(5,150,105,0.12); box-shadow: none; }
+
+.akhir-lb-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.akhir-lb-name-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.akhir-lb-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.akhir-lb-time-mini {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--gray-500);
+  background: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.akhir-lb-scores {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+}
+.lb-score-mini {
+  font-weight: 600;
+  color: var(--gray-600);
+}
+.lb-score-diff {
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--gray-200);
+  color: var(--gray-700);
+  font-size: 10px;
+  margin-left: auto;
+}
+.lb-score-diff.up { background: var(--green-100); color: var(--green-700); }
+.lb-score-diff.down { background: var(--red-100); color: var(--red-700); }
+
+.akhir-lb-score-final {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--green-700);
+  flex-shrink: 0;
+  width: 36px;
+  text-align: right;
+}
+.akhir-lb-item.top .akhir-lb-score-final { color: #B45309; }

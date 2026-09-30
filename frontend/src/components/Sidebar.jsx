@@ -9,7 +9,8 @@ import {
   LogOut,
   Shield,
   GraduationCap,
-  History
+  History,
+  QrCode
 } from 'lucide-react';
 import bmkgLogo from '../assets/bmkg-logo.png';
 import './Sidebar.css';
@@ -20,6 +21,7 @@ const adminMenus = [
   { path: '/modul', label: 'Modul', icon: BookOpen },
   { path: '/soal', label: 'Soal', icon: FileQuestion },
   { path: '/hasil-skor', label: 'Hasil Skor', icon: ClipboardCheck },
+  { path: '/qr-code', label: 'QR Code Siswa', icon: QrCode },
   { path: '/pengaturan', label: 'Pengaturan', icon: Settings },
 ];
 

@@ -1,0 +1,82 @@
+/* VerifikasiUlangPage.css */
+
+.verif-body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ─── Step Indicator ─── */
+.verif-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 16px 0 8px;
+}
+
+.verif-step-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--gray-400);
+}
+
+.verif-step-item.active { color: var(--green-700); }
+
+.verif-step-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  background: var(--gray-200);
+  color: var(--gray-500);
+  transition: all 0.3s ease;
+}
+
+.verif-step-item.active .verif-step-num {
+  background: var(--green-500);
+  color: #fff;
+}
+
+.verif-step-item span {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.verif-step-line {
+  width: 50px;
+  height: 2px;
+  background: var(--gray-200);
+  margin: 0 12px;
+  margin-bottom: 20px;
+  border-radius: 2px;
+}
+
+/* ─── Mini Viewfinder ─── */
+.verif-scan-viewfinder {
+  width: 200px;
+  height: 200px;
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 16px auto 20px;
+}
+
+.verif-scan-bg {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(145deg, #111827, #1F2937);
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.verif-scan-viewfinder .scan-corner { width: 28px; height: 28px; }
+
+/* Reuse scan-line-anim and scan-spinner from ScanBarcodePage.css */
