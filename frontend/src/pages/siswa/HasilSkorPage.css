@@ -1,27 +1,56 @@
-/* HasilSkorPage.css — style umum ada di siswa-navy.css */
+/* HasilSkorPage.css — Modern gradient results page */
 
-/* Judul */
+/* Judul — gradient text */
 .hasil-title {
   margin: 0 0 6px;
   font-size: 24px;
   font-weight: 800;
   letter-spacing: -0.4px;
-  color: var(--gray-900);
+  background: linear-gradient(135deg, var(--gray-900), var(--nv-navy));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: hasil-title-enter 0.5s ease;
+}
+@keyframes hasil-title-enter {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 .hasil-subtitle {
   margin: 0 0 22px;
   font-size: 14px;
   line-height: 1.55;
   color: var(--nv-muted);
+  animation: hasil-fade 0.5s ease 0.1s both;
+}
+@keyframes hasil-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* Kartu hasil */
+/* Kartu hasil — glass + gradient border */
 .hasil-card {
-  background: #fff;
-  border: 1px solid #E3E8EE;
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(227, 232, 238, 0.5);
+  border-radius: 20px;
   padding: 24px 24px 22px;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.05), 0 2px 8px rgba(15, 23, 42, 0.03);
+  position: relative;
+  overflow: hidden;
+  animation: hasil-card-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+.hasil-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--nv-navy), #2E5DAA, var(--green-500));
+}
+@keyframes hasil-card-enter {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .hasil-score {
@@ -30,18 +59,25 @@
   align-items: center;
   text-align: center;
   padding-bottom: 20px;
-  border-bottom: 1px solid #E3E8EE;
+  border-bottom: 1px solid rgba(227, 232, 238, 0.5);
 }
 .hasil-score-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 14px;
-  background: #E6F4EF;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #D5F5E8 0%, #A7ECCC 100%);
   color: var(--nv-navy);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 14px;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.2);
+  animation: hasil-icon-pop 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+@keyframes hasil-icon-pop {
+  0% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
 }
 .hasil-score-eyebrow {
   margin: 0;
@@ -50,15 +86,24 @@
   letter-spacing: 0.4px;
   text-transform: uppercase;
   color: var(--nv-navy);
+  opacity: 0.7;
 }
 .hasil-score-number {
   margin: 2px 0 0;
-  font-size: 60px;
+  font-size: 64px;
   font-weight: 800;
   line-height: 1.05;
-  letter-spacing: -2px;
-  color: var(--gray-900);
+  letter-spacing: -3px;
+  background: linear-gradient(135deg, var(--nv-navy), #1E3A7B);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   font-variant-numeric: tabular-nums;
+  animation: hasil-number-count 0.6s ease 0.4s both;
+}
+@keyframes hasil-number-count {
+  from { opacity: 0; transform: scale(0.7); }
+  to { opacity: 1; transform: scale(1); }
 }
 .hasil-score-caption {
   margin: 2px 0 0;
@@ -66,7 +111,7 @@
   color: #9AA5B5;
 }
 
-/* Skor tertinggi / terendah */
+/* Stats — gradient dividers */
 .hasil-stats {
   list-style: none;
   margin: 0;
@@ -80,7 +125,10 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  padding: 8px 0;
+  transition: transform 0.2s ease;
 }
+.hasil-stat:hover { transform: translateX(4px); }
 .hasil-stat-title {
   margin: 0;
   font-size: 14px;
@@ -100,15 +148,16 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Info di dalam kartu */
+/* Info — gradient background */
 .hasil-info {
   display: flex;
   align-items: flex-start;
   gap: 12px;
   margin-top: 20px;
   padding: 14px 16px;
-  background: #E6F4EF;
-  border-radius: 12px;
+  background: linear-gradient(135deg, #E0F7EE 0%, #D0F0E4 100%);
+  border-radius: 14px;
+  border: 1px solid rgba(16, 185, 129, 0.12);
 }
 .hasil-info-icon { color: var(--nv-navy); flex-shrink: 0; margin-top: 1px; }
 .hasil-info p {
@@ -118,14 +167,16 @@
   color: var(--nv-navy);
 }
 
-/* ─── Posttest: kartu catatan terpisah di bawah kartu skor ─── */
+/* Posttest note — glass card */
 .hasil-note {
   margin-top: 16px;
-  background: #fff;
-  border: 1px solid #E3E8EE;
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(227, 232, 238, 0.5);
+  border-radius: 18px;
   padding: 18px 20px 20px;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  animation: hasil-card-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
 }
 .hasil-note-head {
   display: flex;
@@ -134,15 +185,16 @@
   margin-bottom: 12px;
 }
 .hasil-note-icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  background: #E6F4EF;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #D5F5E8, #A7ECCC);
   color: var(--nv-navy);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15);
 }
 .hasil-note h2 {
   margin: 0;

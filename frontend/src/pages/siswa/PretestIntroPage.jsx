@@ -90,29 +90,29 @@ function PretestIntroPage({ mode = 'pretest' }) {
               <li className="pi-rule-item pi-rule-danger">
                 <div className="pi-rule-icon danger"><Ban size={14} /></div>
                 <div>
-                  <strong>Dilarang keluar halaman / pindah tab</strong>
-                  <p>Jika kamu meninggalkan halaman ujian atau berpindah ke aplikasi lain, jawaban akan <strong>langsung otomatis terkirim</strong> tanpa peringatan.</p>
+                  <strong>Keluar Tab = Otomatis Submit</strong>
+                  <p>Jawaban terkirim jika pindah aplikasi.</p>
                 </div>
               </li>
               <li className="pi-rule-item">
                 <div className="pi-rule-icon warning"><Clock size={14} /></div>
                 <div>
-                  <strong>Waktu terbatas {UJIAN_DURASI_MENIT} menit</strong>
-                  <p>Setelah waktu habis, seluruh jawaban akan dikirim secara otomatis meskipun belum selesai.</p>
+                  <strong>Waktu {UJIAN_DURASI_MENIT} Menit</strong>
+                  <p>Sistem otomatis submit saat waktu habis.</p>
                 </div>
               </li>
               <li className="pi-rule-item">
                 <div className="pi-rule-icon warning"><AlertTriangle size={14} /></div>
                 <div>
-                  <strong>Tidak bisa mengulang</strong>
-                  <p>Setelah jawaban terkirim, kamu tidak dapat mengerjakan ulang {mode === 'pretest' ? 'pretest' : 'posttest'} ini.</p>
+                  <strong>Tidak Bisa Mengulang</strong>
+                  <p>Jawaban terkirim bersifat final.</p>
                 </div>
               </li>
               <li className="pi-rule-item">
                 <div className="pi-rule-icon info"><ShieldAlert size={14} /></div>
                 <div>
-                  <strong>Pastikan jawaban sudah benar</strong>
-                  <p>Gunakan tombol "Ragu" untuk menandai soal yang ingin diperiksa ulang sebelum submit.</p>
+                  <strong>Gunakan Tombol Ragu</strong>
+                  <p>Tandai soal yang ingin diperiksa ulang.</p>
                 </div>
               </li>
             </ul>

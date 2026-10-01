@@ -1,20 +1,27 @@
-/* ModulPembelajaranPage.css — style umum ada di siswa-navy.css */
+/* ModulPembelajaranPage.css — Modern gradient modul page */
 
 .modul-page {
-  --modul-tint: #EAF2FB;   /* latar kartu unduh, catatan, chip */
-  --modul-cyan: #A9E2EC;   /* ikon & tombol unduh (sama dengan timer ujian) */
-  --modul-blue: #1C84C6;   /* tombol Selesai Membaca */
+  --modul-tint: #E8F4F8;
+  --modul-cyan: #A9E2EC;
+  --modul-blue: #1C84C6;
   --modul-blue-hover: #176FA8;
 }
 
 .modul-body { gap: 16px; padding-bottom: 8px !important; }
 
-/* Kartu dasar */
+/* Kartu dasar — glassmorphism */
 .modul-card {
-  background: #fff;
-  border: 1px solid #E8EDF2;
-  border-radius: 18px;
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(227, 232, 238, 0.6);
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.03);
+  animation: modul-card-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes modul-card-enter {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* ─── Kartu judul ─── */
@@ -30,39 +37,42 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: var(--nv-navy);
+  background: linear-gradient(135deg, var(--nv-navy), #1E3A7B);
   color: #fff;
   padding: 5px 12px;
   border-radius: 999px;
-  font-size: 12.5px;
-  font-weight: 600;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(11, 26, 79, 0.2);
 }
 .modul-offline {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   font-size: 11.5px;
-  color: var(--gray-700);
+  font-weight: 600;
+  color: var(--gray-600);
 }
 .modul-judul {
   margin: 0 0 6px;
   font-size: 23px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.4px;
   color: var(--gray-900);
 }
 .modul-subtitle {
-  margin: 0 0 14px;
+  margin: 0 0 16px;
   font-size: 14px;
   line-height: 1.6;
   color: var(--gray-700);
 }
 .modul-cover {
   position: relative;
-  height: 150px;
-  border-radius: 14px;
+  height: 160px;
+  border-radius: 16px;
   overflow: hidden;
   background: var(--modul-tint);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08);
 }
 .modul-cover img {
   width: 100%;
@@ -70,56 +80,63 @@
   object-fit: cover;
   object-position: center 62%;
   display: block;
+  transition: transform 0.5s ease;
 }
+.modul-cover:hover img { transform: scale(1.05); }
 .modul-cover::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent 55%);
+  background: linear-gradient(to top, rgba(11, 26, 79, 0.7), transparent 60%);
 }
 .modul-cover-caption {
   position: absolute;
-  left: 12px;
-  bottom: 10px;
+  left: 14px;
+  bottom: 12px;
   z-index: 1;
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 11.5px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
   color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
-/* ─── Salinan digital ─── */
+/* ─── Salinan digital — gradient box ─── */
 .modul-download {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px 16px;
-  background: var(--modul-tint);
-  border-radius: 16px;
+  padding: 16px;
+  background: linear-gradient(135deg, #E6F4F8 0%, #D8ECF1 100%);
+  border-radius: 18px;
+  border: 1px solid rgba(169, 226, 236, 0.35);
+  box-shadow: 0 2px 8px rgba(34, 140, 170, 0.06);
+  margin-top: 16px;
 }
 .modul-icon-tile {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 12px;
-  background: var(--modul-cyan);
+  background: linear-gradient(135deg, #B5E8F0, #8DD8E8);
   color: var(--nv-navy);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(141, 216, 232, 0.3);
 }
 .modul-download-text { flex: 1; min-width: 0; }
 .modul-download-text p { margin: 0; }
 .modul-download-title {
-  font-size: 13.5px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   color: var(--gray-900);
 }
 .modul-download-desc {
   font-size: 12px;
-  color: var(--gray-700);
+  color: var(--gray-600);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -128,9 +145,9 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 14px;
-  background: var(--modul-cyan);
-  color: var(--nv-navy);
+  padding: 10px 14px;
+  background: linear-gradient(135deg, var(--nv-navy), #1A3078);
+  color: #fff;
   border: none;
   border-radius: 12px;
   font-family: var(--font);
@@ -138,14 +155,19 @@
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  transition: filter 0.15s ease;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 12px rgba(11, 26, 79, 0.2);
 }
-.modul-download-btn:hover { filter: brightness(0.95); }
+.modul-download-btn:hover { 
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(11, 26, 79, 0.3);
+}
+.modul-download-btn:active { transform: scale(0.95); }
 
 /* ─── Isi materi ─── */
-.modul-materi { padding: 22px 20px 22px; }
+.modul-materi { padding: 24px 20px; }
 .modul-materi p {
-  margin: 0 0 14px;
+  margin: 0 0 16px;
   font-size: 15px;
   line-height: 1.65;
   color: var(--gray-800);
@@ -154,50 +176,53 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 0 0 14px;
-  font-size: 18px;
-  font-weight: 600;
+  margin: 0 0 16px;
+  font-size: 19px;
+  font-weight: 800;
   color: var(--gray-900);
 }
 .modul-section-heading::before {
   content: '';
   width: 6px;
-  height: 20px;
+  height: 22px;
   border-radius: 99px;
-  background: var(--nv-navy);
+  background: linear-gradient(180deg, var(--nv-navy), #2E5DAA);
 }
 .modul-divider {
   border: none;
-  border-top: 1px solid #E8EDF2;
-  margin: 22px 0 24px;
+  border-top: 1px solid rgba(227, 232, 238, 0.6);
+  margin: 24px 0;
 }
 
+/* Note box — gradient */
 .modul-note {
   display: flex;
-  gap: 10px;
-  margin: 2px 0 18px;
-  padding: 16px 16px 16px 14px;
-  background: var(--modul-tint);
-  border-radius: 12px;
+  gap: 12px;
+  margin: 4px 0 20px;
+  padding: 16px;
+  background: linear-gradient(135deg, #F0F4F8 0%, #E2E8F0 100%);
+  border-radius: 14px;
+  border: 1px solid rgba(203, 213, 225, 0.5);
 }
 .modul-note-icon { color: var(--nv-navy); flex-shrink: 0; margin-top: 1px; }
 .modul-note-title {
   margin: 0 0 4px !important;
-  font-size: 13.5px !important;
-  font-weight: 600;
+  font-size: 14px !important;
+  font-weight: 700;
   color: var(--nv-navy) !important;
 }
 .modul-note-text {
   margin: 0 !important;
   font-size: 13px !important;
   line-height: 1.6 !important;
-  color: var(--nv-muted) !important;
+  color: var(--gray-700) !important;
 }
 
+/* Chips */
 .modul-materi .modul-focus-label {
-  margin: 22px 0 10px;
-  font-size: 11.5px;
-  font-weight: 600;
+  margin: 24px 0 12px;
+  font-size: 12px;
+  font-weight: 700;
   letter-spacing: 0.6px;
   text-transform: uppercase;
   color: var(--nv-muted);
@@ -208,52 +233,59 @@
   padding: 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 .modul-chip {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
-  background: var(--modul-tint);
+  padding: 8px 14px;
+  background: linear-gradient(135deg, #F8FAFC, #F1F5F9);
+  border: 1px solid #E2E8F0;
   border-radius: 999px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--nv-navy);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+  transition: all 0.2s ease;
+}
+.modul-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
 }
 
 /* ─── Simpan modul ─── */
 .modul-save {
-  padding: 18px 16px 16px;
+  padding: 22px 20px;
   text-align: center;
 }
 .modul-save .modul-icon-tile {
-  width: 48px;
-  height: 48px;
-  margin: 0 auto 12px;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 14px;
+  border-radius: 16px;
 }
 .modul-save-title {
-  margin: 0 0 4px;
-  font-size: 17px;
-  font-weight: 600;
+  margin: 0 0 6px;
+  font-size: 18px;
+  font-weight: 700;
   color: var(--gray-900);
 }
 .modul-save-desc {
   max-width: 290px;
-  margin: 0 auto 16px;
-  font-size: 13px;
+  margin: 0 auto 18px;
+  font-size: 13.5px;
   line-height: 1.5;
   color: var(--gray-700);
 }
-.modul-save .nv-btn { padding: 14px 20px; font-size: 15px; }
 
-/* ─── Tombol Selesai Membaca (menempel di bawah) ─── */
+/* ─── Tombol Selesai Membaca — gradient + glow ─── */
 .modul-sticky-footer {
   position: sticky;
   bottom: 0;
   z-index: 20;
-  padding: 12px 24px 8px;
-  background: linear-gradient(to top, var(--nv-bg) 70%, transparent);
+  padding: 16px 24px 12px;
+  background: linear-gradient(to top, var(--nv-bg) 75%, transparent);
 }
 .modul-finish-btn {
   width: 100%;
@@ -261,27 +293,41 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 13px 20px;
-  background: var(--modul-blue);
+  padding: 16px 20px;
+  background: linear-gradient(135deg, var(--modul-blue), #106399);
   color: #fff;
   border: none;
   border-radius: 999px;
   font-family: var(--font);
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 6px 16px rgba(28, 132, 198, 0.28);
-  transition: background 0.15s ease, transform 0.15s ease;
+  box-shadow: 0 8px 24px rgba(28, 132, 198, 0.35);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
-.modul-finish-btn:hover { background: var(--modul-blue-hover); }
-.modul-finish-btn:active { transform: scale(0.98); }
+.modul-finish-btn::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -50%; bottom: 0; width: 30%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transform: skewX(-15deg);
+  animation: dash-shimmer 2.5s ease-in-out infinite;
+}
+.modul-finish-btn:hover { 
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(28, 132, 198, 0.45);
+}
+.modul-finish-btn:active { transform: scale(0.97); }
 .modul-finish-check {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   background: #fff;
   color: var(--modul-blue);
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
