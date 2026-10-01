@@ -1,0 +1,92 @@
+/* BiodataPage.css — style umum ada di siswa-navy.css */
+
+.bio-body { padding-top: 8px !important; }
+
+/* Judul */
+.bio-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--nv-navy);
+  letter-spacing: -0.4px;
+  margin: 0 0 6px;
+}
+.bio-subtitle {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--nv-muted);
+  margin: 0 0 22px;
+}
+
+/* Form */
+.bio-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.bio-field { margin-bottom: 18px; }
+.bio-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--nv-navy);
+  margin-bottom: 8px;
+}
+.bio-label .req { color: var(--red-500); margin-left: 1px; }
+
+.bio-input {
+  width: 100%;
+  box-sizing: border-box;
+  height: 52px; /* tinggi tetap: select kosong/terisi tidak bergeser */
+  padding: 0 16px;
+  font-size: 16px; /* ≥16px agar iOS Safari tidak auto-zoom */
+  font-weight: 500;
+  font-family: var(--font);
+  color: var(--gray-900);
+  background: #fff;
+  border: 1.5px solid #E1E6EB;
+  border-radius: 14px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.bio-input::placeholder { color: #A7B1BF; font-weight: 400; }
+.bio-input:focus {
+  outline: none;
+  border-color: var(--nv-navy);
+  box-shadow: 0 0 0 4px rgba(11, 26, 79, 0.08);
+}
+
+.bio-select-wrap { position: relative; }
+.bio-select {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 48px;
+  cursor: pointer;
+}
+.bio-select.empty { color: #A7B1BF; font-weight: 400; }
+.bio-select option { color: var(--gray-900); }
+.bio-select-icon {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--nv-muted);
+  pointer-events: none;
+}
+
+/* Info box */
+.bio-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-top: 4px;
+  background: #EEF6F2;
+  border: 1px solid #DDEEE6;
+  border-radius: 14px;
+}
+.bio-info-icon { color: var(--nv-navy); flex-shrink: 0; margin-top: 1px; }
+.bio-info p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #3E4A5E;
+}

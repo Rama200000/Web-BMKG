@@ -1,13 +1,64 @@
 import { useState, useEffect } from 'react';
-import { ChevronLeft, Leaf, User, ArrowRight, Info } from 'lucide-react';
+import { ChevronLeft, ChevronDown, GraduationCap, ArrowRight, Info } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './mobile-green-theme.css';
+import './siswa-navy.css';
+import './BiodataPage.css';
+
+// Daftar sementara (sama dengan data contoh di dashboard admin).
+// Ganti dengan data dari backend setelah fitur kelola sekolah tersedia.
+const SEKOLAH_OPTIONS = [
+  'SMA 3 Bandung',
+  'SMAN 1 Cimahi',
+  'SMAN 4 Cimahi',
+  'SMKN 1 Bandung',
+  'SMKN 2 Bandung',
+];
+
+const JURUSAN_OPTIONS = [
+  { value: 'IPA', label: 'IPA' },
+  { value: 'IPS', label: 'IPS' },
+  { value: 'RPL', label: 'RPL (Rekayasa Perangkat Lunak)' },
+  { value: 'TKJ', label: 'TKJ (Teknik Komputer Jaringan)' },
+  { value: 'Bahasa', label: 'Bahasa' },
+];
+
+const KELAS_OPTIONS = [
+  { value: 'X', label: 'Kelas X' },
+  { value: 'XI', label: 'Kelas XI' },
+  { value: 'XII', label: 'Kelas XII' },
+];
+
+function SelectField({ id, name, label, placeholder, value, onChange, options }) {
+  return (
+    <div className="bio-field">
+      <label className="bio-label" htmlFor={id}>{label} <span className="req">*</span></label>
+      <div className="bio-select-wrap">
+        <select
+          id={id}
+          name={name}
+          className={`bio-input bio-select${value ? '' : ' empty'}`}
+          value={value}
+          onChange={onChange}
+          required
+        >
+          <option value="" disabled hidden>{placeholder}</option>
+          {options.map((opt) => {
+            const { value: v, label: l } = typeof opt === 'string' ? { value: opt, label: opt } : opt;
+            return <option key={v} value={v}>{l}</option>;
+          })}
+        </select>
+        <ChevronDown size={18} className="bio-select-icon" />
+      </div>
+    </div>
+  );
+}
 
 function BiodataPage() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     nama: '',
-    kategoriSekolah: '',
+    sekolah: '',
     jurusan: '',
     kelas: ''
   });
@@ -27,15 +78,15 @@ function BiodataPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const isValid = formData.nama && formData.kategoriSekolah && formData.jurusan && formData.kelas;
+  const isValid = formData.nama.trim() && formData.sekolah && formData.jurusan && formData.kelas;
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const phone = localStorage.getItem('siswaPhone') || '';
     const student = {
       id: Date.now(),
-      nama: formData.nama,
-      sekolah: formData.kategoriSekolah,
+      nama: formData.nama.trim(),
+      sekolah: formData.sekolah,
       jurusan: formData.jurusan,
       kelas: formData.kelas,
       phone: phone,
@@ -57,7 +108,7 @@ function BiodataPage() {
 
   return (
     <div className="m-app">
-      <div className="m-screen">
+      <div className="m-screen nv-page">
         <div className="m-statusbar">
           <span>{currentTime}</span>
           <div className="m-statusbar-icons">
@@ -67,42 +118,32 @@ function BiodataPage() {
           </div>
         </div>
 
-        <header className="m-header">
-          <button className="m-back-btn" onClick={() => navigate(-1)}><ChevronLeft size={18} /></button>
+        {/* Header */}
+        <header className="m-header nv-header">
+          <button type="button" className="nv-back-btn" onClick={() => navigate(-1)} aria-label="Kembali">
+            <ChevronLeft size={18} />
+          </button>
           <div className="m-app-title">
-            <div className="m-app-logo"><Leaf size={16} color="#059669" /></div>
+            <div className="nv-logo"><GraduationCap size={16} strokeWidth={2} /></div>
             <span>Si Iklim Muda</span>
           </div>
-          <div className="m-badge"><div className="m-badge-dot"></div> Portal Siswa</div>
+          <div className="nv-badge"><div className="nv-badge-dot"></div> Siswa</div>
         </header>
 
-        <div className="m-progress">
-          <div className="m-progress-text">
-            <span className="m-progress-step">Langkah 2 dari 4</span>
-            <span className="m-progress-label">Data Diri</span>
-          </div>
-          <div className="m-progress-bars">
-            <div className="m-progress-bar active"></div>
-            <div className="m-progress-bar active"></div>
-            <div className="m-progress-bar"></div>
-            <div className="m-progress-bar"></div>
-          </div>
-        </div>
+        {/* Body */}
+        <div className="m-body nv-body bio-body">
+          <h1 className="bio-title">Data Pengguna</h1>
+          <p className="bio-subtitle">Lengkapi data diri sebelum memulai pretest.</p>
 
-        <div className="m-body">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-            <div className="m-icon-circle green"><User size={20} /></div>
-            <h1 className="m-title" style={{ fontSize: 22 }}>Biodata Diri</h1>
-          </div>
-          <p className="m-subtitle">Lengkapi data diri kamu untuk memulai sesi pembelajaran.</p>
-
-          <form onSubmit={handleSubmit}>
-            <div className="m-form-group">
-              <label className="m-label">Nama Lengkap <span className="req">*</span></label>
+          <form className="bio-form" onSubmit={handleSubmit}>
+            <div className="bio-field">
+              <label className="bio-label" htmlFor="bio-nama">Nama Lengkap <span className="req">*</span></label>
               <input
-                className="m-input"
+                id="bio-nama"
+                className="bio-input"
                 type="text"
                 name="nama"
+                autoComplete="name"
                 placeholder="Masukkan nama lengkap"
                 value={formData.nama}
                 onChange={handleChange}
@@ -110,53 +151,44 @@ function BiodataPage() {
               />
             </div>
 
-            <div className="m-form-group">
-              <label className="m-label">Kategori Sekolah <span className="req">*</span></label>
-              <div className="m-select-wrap">
-                <select className="m-select" name="kategoriSekolah" value={formData.kategoriSekolah} onChange={handleChange} required>
-                  <option value="" disabled hidden>Pilih kategori sekolah</option>
-                  <option value="SMA">SMA (Sekolah Menengah Atas)</option>
-                  <option value="SMK">SMK (Sekolah Menengah Kejuruan)</option>
-                  <option value="MA">MA (Madrasah Aliyah)</option>
-                </select>
-              </div>
+            <SelectField
+              id="bio-sekolah"
+              name="sekolah"
+              label="Nama Sekolah"
+              placeholder="Pilih nama sekolah"
+              value={formData.sekolah}
+              onChange={handleChange}
+              options={SEKOLAH_OPTIONS}
+            />
+
+            <SelectField
+              id="bio-jurusan"
+              name="jurusan"
+              label="Jurusan"
+              placeholder="Pilih jurusan"
+              value={formData.jurusan}
+              onChange={handleChange}
+              options={JURUSAN_OPTIONS}
+            />
+
+            <SelectField
+              id="bio-kelas"
+              name="kelas"
+              label="Kelas"
+              placeholder="Pilih kelas"
+              value={formData.kelas}
+              onChange={handleChange}
+              options={KELAS_OPTIONS}
+            />
+
+            <div className="bio-info">
+              <Info size={16} className="bio-info-icon" />
+              <p>Informasi ini akan terhubung langsung dengan riwayat nilai dan asesmen pretest Anda.</p>
             </div>
 
-            <div className="m-form-group">
-              <label className="m-label">Jurusan <span className="req">*</span></label>
-              <div className="m-select-wrap">
-                <select className="m-select" name="jurusan" value={formData.jurusan} onChange={handleChange} required>
-                  <option value="" disabled hidden>Pilih jurusan</option>
-                  <option value="IPA">IPA</option>
-                  <option value="IPS">IPS</option>
-                  <option value="RPL">RPL (Rekayasa Perangkat Lunak)</option>
-                  <option value="TKJ">TKJ (Teknik Komputer Jaringan)</option>
-                  <option value="Bahasa">Bahasa</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="m-form-group">
-              <label className="m-label">Kelas <span className="req">*</span></label>
-              <div className="m-select-wrap">
-                <select className="m-select" name="kelas" value={formData.kelas} onChange={handleChange} required>
-                  <option value="" disabled hidden>Pilih kelas</option>
-                  <option value="X">Kelas X</option>
-                  <option value="XI">Kelas XI</option>
-                  <option value="XII">Kelas XII</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="m-info-box">
-              <Info size={16} className="m-info-icon" />
-              <p>Data ini akan terhubung dengan riwayat nilai dan asesmen Anda selama program berlangsung.</p>
-            </div>
-
-            <div style={{ marginTop: 20 }}>
-              <button type="submit" className="m-btn-primary" disabled={!isValid}>
-                Simpan & Lanjut
-                <ArrowRight size={17} />
+            <div className="nv-footer">
+              <button type="submit" className="nv-btn" disabled={!isValid}>
+                Lanjut ke Pretest <ArrowRight size={18} />
               </button>
             </div>
           </form>

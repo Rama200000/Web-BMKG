@@ -1,39 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Leaf, Clock, ChevronLeft, ChevronRight, Flag, Send, ShieldAlert, Grid3X3, X } from 'lucide-react';
+import { Clock, ChevronLeft, ChevronRight, Flag, Send, ShieldAlert, Grid3X3, X, GraduationCap, LogOut, CheckCircle2 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { UJIAN_DURASI_MENIT } from './ujianConfig';
+import { bankSoal } from './bankSoal';
 import './mobile-green-theme.css';
+import './siswa-navy.css';
 import './UjianPage.css';
 
-// ─── Bank Soal (25 soal simulasi) ───
-const bankSoal = [
-  { id:1, pertanyaan:'Manakah pernyataan yang paling tepat mengenai perubahan iklim global?', pilihan:['Perubahan iklim hanya terjadi di daerah tropis','Peningkatan suhu bumi akibat emisi gas rumah kaca','Perubahan iklim tidak berpengaruh pada curah hujan','Perubahan iklim adalah fenomena alam biasa'], kunci:1 },
-  { id:2, pertanyaan:'Apa yang dimaksud dengan efek rumah kaca?', pilihan:['Proses pertanian di dalam rumah kaca','Fenomena memanasnya Bumi akibat gas atmosfer menyerap radiasi inframerah','Penggunaan energi surya untuk rumah tangga','Metode penyimpanan karbon di lautan'], kunci:1 },
-  { id:3, pertanyaan:'Gas apakah yang paling banyak berkontribusi terhadap pemanasan global?', pilihan:['Oksigen (O₂)','Nitrogen (N₂)','Karbon Dioksida (CO₂)','Hidrogen (H₂)'], kunci:2 },
-  { id:4, pertanyaan:'Apa dampak utama pemanasan global terhadap laut?', pilihan:['Air laut menjadi lebih dingin','Permukaan air laut naik akibat mencairnya es kutub','Jumlah ikan meningkat drastis','Salinitas air laut menurun tajam'], kunci:1 },
-  { id:5, pertanyaan:'Organisasi PBB yang menangani isu perubahan iklim adalah...', pilihan:['WHO','UNICEF','IPCC','UNESCO'], kunci:2 },
-  { id:6, pertanyaan:'Apa perbedaan utama antara cuaca dan iklim?', pilihan:['Cuaca bersifat jangka pendek, iklim jangka panjang','Keduanya sama saja','Iklim hanya berlaku di kutub','Cuaca tidak dapat berubah'], kunci:0 },
-  { id:7, pertanyaan:'Lapisan atmosfer yang melindungi Bumi dari radiasi UV adalah...', pilihan:['Troposfer','Stratosfer (Lapisan Ozon)','Mesosfer','Termosfer'], kunci:1 },
-  { id:8, pertanyaan:'Apa yang menyebabkan lubang ozon?', pilihan:['Peningkatan oksigen','Penggunaan CFC dan halokarbon','Peningkatan nitrogen','Penurunan suhu global'], kunci:1 },
-  { id:9, pertanyaan:'El Niño adalah fenomena yang terjadi di...', pilihan:['Samudra Atlantik','Samudra Hindia','Samudra Pasifik','Laut Mediterania'], kunci:2 },
-  { id:10, pertanyaan:'Dampak El Niño di Indonesia umumnya berupa...', pilihan:['Curah hujan meningkat drastis','Kekeringan berkepanjangan','Suhu menurun drastis','Badai salju'], kunci:1 },
-  { id:11, pertanyaan:'Apa yang dimaksud dengan adaptasi perubahan iklim?', pilihan:['Menghentikan semua aktivitas industri','Menyesuaikan diri dengan dampak perubahan iklim','Mengabaikan perubahan iklim','Memindahkan semua penduduk ke kutub'], kunci:1 },
-  { id:12, pertanyaan:'Mitigasi perubahan iklim bertujuan untuk...', pilihan:['Meningkatkan emisi gas rumah kaca','Mengurangi penyebab perubahan iklim','Mempercepat pemanasan global','Menghilangkan semua gas di atmosfer'], kunci:1 },
-  { id:13, pertanyaan:'Sektor mana yang menyumbang emisi CO₂ terbesar?', pilihan:['Pertanian','Energi dan transportasi','Perikanan','Pariwisata'], kunci:1 },
-  { id:14, pertanyaan:'Apa fungsi utama BMKG?', pilihan:['Mengelola keuangan negara','Monitoring meteorologi, klimatologi, dan geofisika','Mengatur lalu lintas udara','Mengelola sumber daya air'], kunci:1 },
-  { id:15, pertanyaan:'Alat untuk mengukur curah hujan disebut...', pilihan:['Termometer','Barometer','Penakar hujan (Rain gauge)','Anemometer'], kunci:2 },
-  { id:16, pertanyaan:'Apa yang dimaksud dengan carbon footprint?', pilihan:['Jejak kaki di pasir','Total emisi gas rumah kaca yang dihasilkan oleh individu/organisasi','Jenis bahan bakar fosil','Metode pertanian organik'], kunci:1 },
-  { id:17, pertanyaan:'Pohon berperan penting dalam mengurangi pemanasan global karena...', pilihan:['Menghasilkan CO₂','Menyerap CO₂ dan menghasilkan O₂','Meningkatkan suhu tanah','Mengurangi curah hujan'], kunci:1 },
-  { id:18, pertanyaan:'Energi terbarukan yang paling banyak digunakan di dunia adalah...', pilihan:['Energi nuklir','Energi surya dan angin','Energi batu bara','Energi minyak bumi'], kunci:1 },
-  { id:19, pertanyaan:'La Niña umumnya menyebabkan di Indonesia...', pilihan:['Kekeringan panjang','Curah hujan di atas normal','Suhu sangat panas','Gempa bumi'], kunci:1 },
-  { id:20, pertanyaan:'Apa yang dimaksud dengan Iklim Muson?', pilihan:['Iklim yang hanya memiliki 1 musim','Iklim dengan pergantian musim hujan dan kemarau akibat angin muson','Iklim di daerah kutub','Iklim tanpa hujan'], kunci:1 },
-  { id:21, pertanyaan:'Deforestasi berkontribusi terhadap pemanasan global karena...', pilihan:['Menambah jumlah pohon','Mengurangi penyerapan CO₂ dan melepaskan karbon tersimpan','Menurunkan suhu global','Meningkatkan produksi oksigen'], kunci:1 },
-  { id:22, pertanyaan:'Perjanjian internasional tentang perubahan iklim yang ditandatangani tahun 2015 adalah...', pilihan:['Protokol Kyoto','Perjanjian Paris','Perjanjian Montreal','Konvensi Basel'], kunci:1 },
-  { id:23, pertanyaan:'Apa dampak kenaikan permukaan air laut?', pilihan:['Daratan bertambah luas','Banjir rob dan tenggelamnya pulau kecil','Suhu laut menurun','Ikan bertambah banyak'], kunci:1 },
-  { id:24, pertanyaan:'Indeks Kualitas Udara (AQI) yang menunjukkan "Tidak Sehat" berada pada rentang...', pilihan:['0-50','51-100','101-150','151-200'], kunci:3 },
-  { id:25, pertanyaan:'Apa peran generasi muda dalam menghadapi perubahan iklim?', pilihan:['Tidak perlu peduli karena bukan urusan mereka','Aktif dalam edukasi, advokasi, dan aksi nyata pelestarian lingkungan','Hanya mengandalkan pemerintah','Menghindari semua teknologi modern'], kunci:1 },
-];
-
-const TIMER_SECONDS = 15 * 60;
+const TIMER_SECONDS = UJIAN_DURASI_MENIT * 60;
 
 function UjianPage() {
   const navigate = useNavigate();
@@ -51,6 +25,9 @@ function UjianPage() {
   const [warningCount, setWarningCount] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [showGrid, setShowGrid] = useState(false);
+  const [confirmExit, setConfirmExit] = useState(false);
+  // Ujian selesai → dialog dulu sebelum ke halaman hasil. 'submit' | 'waktu' | null
+  const [selesai, setSelesai] = useState(null);
 
   // Clock & Shuffle Options
   useEffect(() => {
@@ -81,9 +58,11 @@ function UjianPage() {
   }, []);
 
   // Submit handler
-  const doSubmit = useCallback(() => {
+  const doSubmit = useCallback((alasan = 'submit') => {
     if (submitted || soalList.length === 0) return;
     setSubmitted(true);
+    setShowGrid(false);
+    setShowWarning(false);
 
     const elapsed = Math.round((Date.now() - startTime) / 1000);
     let benar = 0;
@@ -100,14 +79,17 @@ function UjianPage() {
     const users = JSON.parse(localStorage.getItem('registeredUsers') || '{}');
     const student = JSON.parse(localStorage.getItem('currentStudent') || '{}');
 
+    const rekap = JSON.stringify({ benar, total: soalList.length });
     if (mode === 'pretest') {
       localStorage.setItem('skorPretest', skor.toString());
+      localStorage.setItem('rekapPretest', rekap);
       localStorage.setItem('pretestDone', 'true');
       localStorage.setItem('pretestTime', elapsed.toString());
       // Update registry
       if (users[phone]) {
         users[phone].pretestDone = true;
         users[phone].skorPretest = skor.toString();
+        users[phone].rekapPretest = rekap;
         localStorage.setItem('registeredUsers', JSON.stringify(users));
       }
       if (student.phone) {
@@ -115,23 +97,24 @@ function UjianPage() {
         student.skorPretest = skor.toString();
         localStorage.setItem('currentStudent', JSON.stringify(student));
       }
-      navigate('/siswa/hasil-pretest');
     } else {
       localStorage.setItem('skorPosttest', skor.toString());
+      localStorage.setItem('rekapPosttest', rekap);
       localStorage.setItem('posttestTime', elapsed.toString());
       if (users[phone]) {
         users[phone].skorPosttest = skor.toString();
+        users[phone].rekapPosttest = rekap;
         users[phone].posttestTime = elapsed.toString();
         localStorage.setItem('registeredUsers', JSON.stringify(users));
       }
-      navigate('/siswa/hasil-akhir');
     }
-  }, [jawaban, mode, navigate, submitted, startTime]);
+    setSelesai(alasan);
+  }, [jawaban, mode, submitted, startTime, soalList]);
 
   // Countdown timer
   useEffect(() => {
     if (submitted) return;
-    if (timeLeft <= 0) { doSubmit(); return; }
+    if (timeLeft <= 0) { doSubmit('waktu'); return; }
     const timer = setInterval(() => setTimeLeft(p => p - 1), 1000);
     return () => clearInterval(timer);
   }, [timeLeft, submitted, doSubmit]);
@@ -178,7 +161,7 @@ function UjianPage() {
 
   return (
     <div className="m-app">
-      <div className="m-screen">
+      <div className="m-screen nv-page">
         <div className="m-statusbar">
           <span>{currentTime}</span>
           <div className="m-statusbar-icons">
@@ -188,16 +171,28 @@ function UjianPage() {
           </div>
         </div>
 
-        {/* Header */}
+        {/* App Header */}
+        <header className="m-header nv-header">
+          <button type="button" className="nv-back-btn" onClick={() => setConfirmExit(true)} aria-label="Keluar dari ujian">
+            <ChevronLeft size={18} />
+          </button>
+          <div className="m-app-title">
+            <div className="nv-logo"><GraduationCap size={16} strokeWidth={2} /></div>
+            <span>Si Iklim Muda</span>
+          </div>
+          <div className="nv-badge"><div className="nv-badge-dot"></div> Siswa</div>
+        </header>
+
+        {/* Ujian Header */}
         <div className="ujian-header">
           <div className="ujian-header-top">
-            <div className="ujian-mode-badge">{mode === 'pretest' ? '📝 Pretest' : '🏆 Posttest'}</div>
-            <div className={`ujian-timer ${isWarningTime ? 'warning' : ''}`}>
+            <h1 className="ujian-mode-badge">{mode === 'pretest' ? 'Pretest' : 'Posttest'}</h1>
+            <div className={`ujian-timer ${isWarningTime ? 'warning' : ''}`} role="timer" aria-label="Sisa waktu">
               <Clock size={14} />
               <span>{formatTime(timeLeft)}</span>
             </div>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+          <div className="ujian-header-sub">
             <span className="ujian-question-info">Soal {currentQ + 1} dari {totalSoal}</span>
             <button className="ujian-grid-toggle" onClick={() => setShowGrid(true)}>
               <Grid3X3 size={16} />
@@ -220,21 +215,29 @@ function UjianPage() {
 
           {soal && (
             <div className="ujian-question-card">
-              <p className="ujian-question-text">{soal.pertanyaan}</p>
+              <span className="ujian-question-eyebrow">Pertanyaan</span>
+              <p className="ujian-question-text" id="ujian-question-text">{soal.pertanyaan}</p>
             </div>
           )}
 
-          <div className="ujian-options">
-            {soal && soal.pilihanShuffled.map((pil, i) => (
-              <button
-                key={i}
-                className={`ujian-option ${jawaban[currentQ] === i ? 'selected' : ''}`}
-                onClick={() => setJawaban({ ...jawaban, [currentQ]: i })}
-              >
-                <span className="ujian-option-label">{label[i]}</span>
-                <span className="ujian-option-text">{pil.text}</span>
-              </button>
-            ))}
+          <div className="ujian-options" role="radiogroup" aria-labelledby="ujian-question-text">
+            {soal && soal.pilihanShuffled.map((pil, i) => {
+              const selected = jawaban[currentQ] === i;
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  className={`ujian-option ${selected ? 'selected' : ''}`}
+                  onClick={() => setJawaban({ ...jawaban, [currentQ]: i })}
+                >
+                  <span className="ujian-option-label">{label[i]}</span>
+                  <span className="ujian-option-text">{pil.text}</span>
+                  <span className="ujian-option-radio" aria-hidden="true"></span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -266,7 +269,7 @@ function UjianPage() {
               <ChevronRight size={18} />
             </button>
           ) : (
-            <button className="ujian-nav-btn submit" onClick={doSubmit}>
+            <button className="ujian-nav-btn submit" onClick={() => doSubmit()}>
               <Send size={16} />
               <span>Submit</span>
             </button>
@@ -304,12 +307,65 @@ function UjianPage() {
                 ))}
               </div>
 
-              <button className="m-btn-primary" style={{ marginTop: 16 }} onClick={doSubmit}>
+              <button className="m-btn-primary" style={{ marginTop: 16 }} onClick={() => doSubmit()}>
                 <Send size={16} /> Submit Semua Jawaban
               </button>
               <p style={{ fontSize: 11, color: '#9CA3AF', textAlign: 'center', marginTop: 8 }}>
                 {answeredCount}/{totalSoal} soal terjawab • {flaggedCount} ragu-ragu
               </p>
+            </div>
+          </div>
+        )}
+
+        {/* Konfirmasi keluar dari ujian */}
+        {confirmExit && (
+          <div className="m-overlay" onClick={() => setConfirmExit(false)}>
+            <div
+              className="m-modal nv-dialog"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="ujian-exit-title"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="nv-dialog-icon"><LogOut size={22} /></div>
+              <h3 id="ujian-exit-title">Keluar dari {mode === 'pretest' ? 'pretest' : 'posttest'}?</h3>
+              <p>Jawaban yang sudah kamu pilih tidak akan disimpan, dan kamu harus mengulang dari awal.</p>
+              <div className="nv-dialog-actions">
+                <button type="button" className="nv-btn secondary" onClick={() => setConfirmExit(false)}>Batal</button>
+                <button type="button" className="nv-btn" onClick={() => navigate('/siswa/dashboard', { replace: true })}>Keluar</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Ujian selesai → lanjut ke halaman hasil */}
+        {selesai && (
+          <div className="m-overlay">
+            <div
+              className="m-modal nv-dialog ujian-done-dialog"
+              role="alertdialog"
+              aria-modal="true"
+              aria-labelledby="ujian-done-title"
+              aria-describedby="ujian-done-desc"
+            >
+              <div className="ujian-done-icon">
+                {selesai === 'waktu' ? <Clock size={26} strokeWidth={1.75} /> : <CheckCircle2 size={26} strokeWidth={1.75} />}
+              </div>
+              <h3 id="ujian-done-title">{selesai === 'waktu' ? 'Waktu Habis' : 'Jawaban Terkirim'}</h3>
+              <p id="ujian-done-desc">
+                {selesai === 'waktu'
+                  ? `Durasi pengerjaan ${mode} sudah selesai. Jawaban Anda akan segera dikirim.`
+                  : `Semua jawaban ${mode} Anda sudah terkirim. Lihat skor yang Anda peroleh.`}
+              </p>
+              {/* replace: tombol back dari halaman hasil tidak membuka soal lagi */}
+              <button
+                type="button"
+                className="nv-btn"
+                autoFocus
+                onClick={() => navigate(mode === 'pretest' ? '/siswa/hasil-pretest' : '/siswa/hasil-posttest', { replace: true })}
+              >
+                Lihat Hasil
+              </button>
             </div>
           </div>
         )}

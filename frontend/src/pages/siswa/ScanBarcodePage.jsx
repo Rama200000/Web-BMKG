@@ -1,14 +1,65 @@
 import { useState, useEffect, useRef } from 'react';
-import { ScanLine, Camera, AlertTriangle, CheckCircle2, Leaf } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ChevronLeft, ScanBarcode, Scan, Zap, ZapOff, Info, X, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import QrScanner from 'qr-scanner';
 import './mobile-green-theme.css';
+import './siswa-navy.css';
 import './ScanBarcodePage.css';
+
+// QR dari halaman admin berisi URL `${origin}/siswa/scan?src=qr`.
+// Origin & query tidak dicek agar QR yang dicetak dari localhost / domain produksi tetap valid.
+const isValidCode = (text) => {
+  try {
+    return new URL(text).pathname.replace(/\/+$/, '') === '/siswa/scan';
+  } catch {
+    return false;
+  }
+};
+
+// Pindai seluruh frame kamera (default qr-scanner hanya 2/3 bagian tengah),
+// diperkecil maksimal 720px agar tetap ringan di HP
+const scanWholeFrame = (video) => {
+  const { videoWidth: w, videoHeight: h } = video;
+  const scale = Math.min(1, 720 / Math.max(w, h));
+  return {
+    x: 0,
+    y: 0,
+    width: w,
+    height: h,
+    downScaledWidth: Math.round(w * scale),
+    downScaledHeight: Math.round(h * scale),
+  };
+};
+
+const cameraErrorMessage = (err) => {
+  const name = err?.name || '';
+  const msg = String(err?.message || err || '').toLowerCase();
+  if (name === 'NotAllowedError' || name === 'SecurityError' || msg.includes('permission')) {
+    return 'Izin kamera ditolak. Aktifkan izin kamera untuk situs ini di pengaturan browser, lalu coba lagi.';
+  }
+  if (name === 'NotFoundError' || msg.includes('not found')) {
+    return 'Kamera tidak ditemukan di perangkat ini.';
+  }
+  if (name === 'NotReadableError') {
+    return 'Kamera sedang dipakai aplikasi lain. Tutup aplikasi tersebut, lalu coba lagi.';
+  }
+  return 'Kamera tidak dapat dibuka. Silakan coba lagi.';
+};
 
 function ScanBarcodePage() {
   const navigate = useNavigate();
-  const [scanning, setScanning] = useState(false);
-  const [result, setResult] = useState(null); // 'success' | 'fail' | null
+  const [searchParams] = useSearchParams();
+  const videoRef = useRef(null);
+  const scannerRef = useRef(null);
+  const doneRef = useRef(false);
+  const [status, setStatus] = useState('idle'); // 'idle' | 'starting' | 'scanning' | 'success'
+  const [error, setError] = useState(null);
+  const [invalid, setInvalid] = useState(false);
+  const [flashSupported, setFlashSupported] = useState(false);
+  const [flashOn, setFlashOn] = useState(false);
   const [currentTime, setCurrentTime] = useState('');
+  // Dibuka dari kartu Posttest di Dashboard → setelah scan, verifikasi ulang nomor lalu ke info posttest
+  const untukPosttest = searchParams.get('untuk') === 'posttest';
 
   useEffect(() => {
     const updateTime = () => {
@@ -20,23 +71,85 @@ function ScanBarcodePage() {
     return () => clearInterval(t);
   }, []);
 
-  const handleScan = () => {
-    setScanning(true);
-    setResult(null);
-    // Simulate scan: 70% success
-    setTimeout(() => {
-      const isSuccess = Math.random() > 0.3;
-      setResult(isSuccess ? 'success' : 'fail');
-      setScanning(false);
-      if (isSuccess) {
-        setTimeout(() => navigate('/siswa/verifikasi-id'), 800);
-      }
-    }, 2200);
+  // Matikan kamera saat keluar dari halaman
+  useEffect(() => () => {
+    scannerRef.current?.destroy();
+    scannerRef.current = null;
+  }, []);
+
+  const handleDecode = (result) => {
+    if (doneRef.current) return;
+    if (isValidCode(result.data)) {
+      doneRef.current = true;
+      scannerRef.current?.stop();
+      setInvalid(false);
+      setFlashOn(false);
+      setStatus('success');
+      setTimeout(() => navigate(untukPosttest ? '/siswa/verifikasi-id?untuk=posttest' : '/siswa/verifikasi-id'), 800);
+    } else {
+      setInvalid(true);
+    }
   };
+
+  const startScan = async () => {
+    setError(null);
+    setInvalid(false);
+
+    if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
+      setError('Kamera hanya bisa diakses lewat koneksi aman (HTTPS). Buka halaman ini melalui alamat https://');
+      return;
+    }
+
+    setStatus('starting');
+    try {
+      if (!scannerRef.current) {
+        scannerRef.current = new QrScanner(videoRef.current, handleDecode, {
+          preferredCamera: 'environment',
+          returnDetailedScanResult: true,
+          maxScansPerSecond: 10,
+          calculateScanRegion: scanWholeFrame,
+        });
+      }
+      await scannerRef.current.start();
+      setStatus('scanning');
+      setFlashSupported(await scannerRef.current.hasFlash());
+    } catch (err) {
+      scannerRef.current?.stop();
+      setStatus('idle');
+      setError(cameraErrorMessage(err));
+    }
+  };
+
+  const stopScan = () => {
+    scannerRef.current?.stop();
+    setStatus('idle');
+    setInvalid(false);
+    setFlashOn(false);
+    setFlashSupported(false);
+  };
+
+  const toggleFlash = async () => {
+    const scanner = scannerRef.current;
+    if (!scanner || !flashSupported) return;
+    try {
+      await scanner.toggleFlash();
+      setFlashOn(scanner.isFlashOn());
+    } catch {
+      setFlashSupported(false);
+    }
+  };
+
+  const cameraActive = status === 'scanning';
+  const busy = status === 'starting' || status === 'success';
+
+  // Dibuka dari QR lewat kamera HP / Google Lens → QR sudah terpindai, tidak perlu scan lagi
+  if (searchParams.get('src') === 'qr') {
+    return <Navigate to="/siswa/verifikasi-id" replace />;
+  }
 
   return (
     <div className="m-app">
-      <div className="m-screen">
+      <div className="m-screen nv-page">
         <div className="m-statusbar">
           <span>{currentTime}</span>
           <div className="m-statusbar-icons">
@@ -47,50 +160,74 @@ function ScanBarcodePage() {
         </div>
 
         {/* Header */}
-        <header className="m-header" style={{ borderBottom: 'none', background: 'transparent' }}>
-          <div className="m-app-title">
-            <div className="m-app-logo"><Leaf size={16} color="#059669" /></div>
-            <span>Si Iklim Muda</span>
-          </div>
-          <div className="m-badge"><div className="m-badge-dot"></div> Portal Siswa</div>
+        <header className="m-header nv-header">
+          {untukPosttest && (
+            <button type="button" className="nv-back-btn" onClick={() => navigate('/siswa/dashboard')} aria-label="Kembali ke Dashboard">
+              <ChevronLeft size={18} />
+            </button>
+          )}
+          <div className="m-app-title">Si Iklim Muda</div>
+          <div className="nv-badge"><div className="nv-badge-dot"></div> Siswa</div>
         </header>
 
         {/* Body */}
-        <div className="m-body scan-body">
-          <div className="scan-hero-text">
-            <h1 className="m-title" style={{ textAlign: 'center', fontSize: 22 }}>Scan QR Code</h1>
-            <p className="m-subtitle" style={{ textAlign: 'center', marginBottom: 24 }}>
-              Arahkan kamera ke QR Code yang tersedia untuk memulai sesi pembelajaran.
-            </p>
-          </div>
+        <div className="m-body nv-body">
+          <h1 className="nv-title">Scan Barcode</h1>
 
-          {/* Camera Viewfinder */}
-          <div className="scan-viewfinder">
-            <div className="scan-camera-bg">
-              <Camera size={48} strokeWidth={1.5} className="scan-camera-icon" />
-              <span className="scan-camera-text">Area Kamera</span>
+          {/* Viewfinder Card */}
+          <div className={`scan-card${cameraActive ? ' live' : ''}`}>
+            <video ref={videoRef} className="scan-video" playsInline muted />
+
+            <button
+              type="button"
+              className={`scan-flash-btn${flashOn ? ' active' : ''}`}
+              onClick={toggleFlash}
+              disabled={!cameraActive || !flashSupported}
+              aria-label={flashOn ? 'Matikan senter' : 'Nyalakan senter'}
+              aria-pressed={flashOn}
+              title={cameraActive && !flashSupported ? 'Senter tidak didukung perangkat ini' : undefined}
+            >
+              {cameraActive && !flashSupported ? <ZapOff size={14} /> : <Zap size={14} />}
+            </button>
+
+            <div className="scan-frame">
+              <div className="scan-corner tl"></div>
+              <div className="scan-corner tr"></div>
+              <div className="scan-corner bl"></div>
+              <div className="scan-corner br"></div>
+
+              {!cameraActive && (
+                <div className="scan-center">
+                  <div className="scan-center-icon"><Scan size={24} strokeWidth={1.75} /></div>
+                  <span className="scan-hint">Arahkan ke barcode</span>
+                </div>
+              )}
+
+              <div className={`scan-line${cameraActive ? ' moving' : ''}`}></div>
             </div>
-            {/* Corner Brackets */}
-            <div className="scan-corner tl"></div>
-            <div className="scan-corner tr"></div>
-            <div className="scan-corner bl"></div>
-            <div className="scan-corner br"></div>
-            {/* Animated Scan Line */}
-            {scanning && <div className="scan-line-anim"></div>}
           </div>
 
           {/* Status */}
-          {result === 'fail' && (
-            <div className="scan-alert fail">
+          {error && (
+            <div className="nv-alert fail">
               <AlertTriangle size={18} />
               <div>
-                <strong>Barcode Tidak Valid</strong>
-                <p>QR Code tidak dikenali. Coba scan ulang.</p>
+                <strong>Kamera Tidak Tersedia</strong>
+                <p>{error}</p>
               </div>
             </div>
           )}
-          {result === 'success' && (
-            <div className="scan-alert success">
+          {invalid && cameraActive && (
+            <div className="nv-alert fail">
+              <AlertTriangle size={18} />
+              <div>
+                <strong>Barcode Tidak Valid</strong>
+                <p>Barcode ini bukan milik Si Iklim Muda. Arahkan ke barcode dari guru.</p>
+              </div>
+            </div>
+          )}
+          {status === 'success' && (
+            <div className="nv-alert success">
               <CheckCircle2 size={18} />
               <div>
                 <strong>Scan Berhasil!</strong>
@@ -100,27 +237,32 @@ function ScanBarcodePage() {
           )}
 
           {/* Scan Button */}
-          <div style={{ marginTop: 'auto', paddingTop: 16 }}>
+          <div className="nv-footer">
             <button
-              className="m-btn-primary"
-              onClick={handleScan}
-              disabled={scanning}
-              style={scanning ? { opacity: 0.7 } : {}}
+              className={`nv-btn${cameraActive ? ' secondary' : ''}${busy ? ' loading' : ''}`}
+              onClick={cameraActive ? stopScan : startScan}
+              disabled={busy}
             >
-              {scanning ? (
+              {busy ? (
                 <>
-                  <div className="scan-spinner"></div>
-                  Memindai...
+                  <div className="nv-spinner"></div>
+                  {status === 'starting' ? 'Membuka kamera...' : 'Mengarahkan...'}
+                </>
+              ) : cameraActive ? (
+                <>
+                  <X size={18} />
+                  Batalkan
                 </>
               ) : (
                 <>
-                  <ScanLine size={18} />
-                  Mulai Scan
+                  <ScanBarcode size={18} />
+                  Scan Barcode
                 </>
               )}
             </button>
-            <p style={{ textAlign: 'center', fontSize: 11, color: '#9CA3AF', marginTop: 12 }}>
-              Pastikan QR Code terlihat jelas dan berada dalam bingkai kamera.
+            <p className="nv-note">
+              <Info size={14} className="nv-note-icon" />
+              <span>Pastikan barcode terlihat jelas dan masuk ke dalam bingkai.</span>
             </p>
           </div>
         </div>

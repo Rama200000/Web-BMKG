@@ -1,0 +1,233 @@
+/* ══════════════════════════════════════════════════════════════
+   siswa-navy.css — Tema terang + aksen navy untuk halaman siswa
+   Dipakai bersama mobile-green-theme.css (frame, statusbar, m-body)
+   ══════════════════════════════════════════════════════════════ */
+
+.nv-page {
+  --nv-navy: #0B1A4F;
+  --nv-navy-hover: #13266A;
+  --nv-bg: #F5F7F7;
+  --nv-muted: #6B7A90;
+  --nv-line: #E6EBEE;
+  background-color: var(--nv-bg);
+}
+.nv-page .m-statusbar,
+.nv-page .m-home-indicator { background: var(--nv-bg); }
+.nv-page .m-home-indicator-line { background: #CBD5E1; }
+
+/* Header */
+.nv-header {
+  background: transparent;
+  border-bottom: none;
+  padding: 14px 24px 10px;
+}
+.nv-header .m-app-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--gray-900);
+  letter-spacing: -0.2px;
+}
+.nv-back-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--nv-line);
+  background: #fff;
+  color: var(--nv-navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  transition: all 0.15s ease;
+}
+.nv-back-btn:hover { background: #F8FAFC; }
+.nv-back-btn:active { transform: scale(0.92); }
+
+.nv-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: #E8F7F1;
+  border: 1px solid #CDEFE2;
+  color: var(--nv-navy);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.nv-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--nv-navy);
+}
+
+/* Body & judul */
+.nv-body {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 24px 20px !important;
+  background: var(--nv-bg);
+}
+.nv-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--gray-900);
+  letter-spacing: -0.4px;
+  margin: 12px 0 32px;
+}
+.nv-subtitle {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--nv-muted);
+  margin: -24px 0 28px;
+}
+
+/* Kartu abu-abu terang */
+.nv-card {
+  background: linear-gradient(180deg, #F1F4F5 0%, #EEF2F3 100%);
+  border: 1px solid var(--nv-line);
+  border-radius: 28px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
+}
+
+/* Tombol utama */
+.nv-footer {
+  margin-top: auto;
+  padding-top: 16px;
+}
+.nv-btn {
+  width: 100%;
+  background: var(--nv-navy);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  padding: 17px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: var(--font);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px -6px rgba(16, 185, 129, 0.45), 0 4px 10px rgba(11, 26, 79, 0.18);
+  transition: all 0.2s ease;
+}
+.nv-btn:hover { background: var(--nv-navy-hover); transform: translateY(-1px); }
+.nv-btn:active { transform: scale(0.98); }
+.nv-btn:disabled {
+  background: #B8C0CE;
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+.nv-btn.secondary {
+  background: #fff;
+  color: var(--nv-navy);
+  border: 1.5px solid #D6DCE5;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+.nv-btn.secondary:hover { background: #F8FAFC; }
+
+/* Catatan kecil di bawah tombol */
+.nv-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 16px 0 0;
+  padding: 0 4px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--nv-muted);
+}
+.nv-note span { flex: 1; text-align: center; }
+.nv-note-icon { flex-shrink: 0; margin-top: 2px; }
+
+/* Alert */
+.nv-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+  animation: m-slideUp 0.3s ease;
+}
+.nv-alert.fail {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  color: #DC2626;
+}
+.nv-alert.success {
+  background: var(--green-50);
+  border: 1px solid var(--green-200);
+  color: var(--green-700);
+}
+.nv-alert strong { display: block; font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+.nv-alert p { margin: 0; font-size: 11px; opacity: 0.8; }
+
+/* Spinner */
+.nv-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2.5px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: nv-spin 0.7s linear infinite;
+}
+@keyframes nv-spin { to { transform: rotate(360deg); } }
+
+/* Tombol saat proses (spinner) — tetap navy, bukan abu-abu */
+.nv-btn.loading:disabled {
+  background: var(--nv-navy);
+  opacity: 0.8;
+  box-shadow: 0 4px 10px rgba(11, 26, 79, 0.18);
+}
+
+/* Logo kecil di header */
+.nv-logo {
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background: #E8F7F1;
+  border: 1px solid #CDEFE2;
+  color: var(--nv-navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Dialog konfirmasi (dipakai bersama .m-overlay + .m-modal) */
+.nv-dialog { padding: 28px 22px 22px; }
+.nv-dialog-icon {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 14px;
+  border-radius: 16px;
+  background: #EEF2F7;
+  color: var(--nv-navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nv-dialog h3 {
+  margin: 0 0 8px;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--gray-900);
+}
+.nv-dialog p {
+  margin: 0 0 20px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--nv-muted);
+}
+.nv-dialog-actions { display: flex; gap: 10px; }
+.nv-dialog-actions .nv-btn { padding: 14px 16px; font-size: 14px; }

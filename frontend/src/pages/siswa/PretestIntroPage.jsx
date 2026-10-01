@@ -1,9 +1,16 @@
 import { useState, useEffect } from 'react';
-import { ChevronLeft, GraduationCap, Battery, Wifi, Signal, Clock, Info, Zap } from 'lucide-react';
+import { ChevronLeft, GraduationCap, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import './DataPenggunaPage.css';
+import { UJIAN_DURASI_MENIT } from './ujianConfig';
+import './mobile-green-theme.css';
+import './siswa-navy.css';
+import './PretestIntroPage.css';
 
-function PretestIntroPage() {
+/**
+ * Informasi sebelum pretest / posttest dimulai (durasi & aturan waktu habis).
+ * Timer baru berjalan setelah siswa menekan "Mulai Mengerjakan".
+ */
+function PretestIntroPage({ mode = 'pretest' }) {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState('');
 
@@ -17,81 +24,76 @@ function PretestIntroPage() {
     return () => clearInterval(t);
   }, []);
 
-  const rules = [
-    { icon: '📋', text: '10 soal pilihan ganda' },
-    { icon: '⏱️', text: 'Durasi 15 menit pengerjaan' },
-    { icon: '🚫', text: 'Tidak dapat kembali ke soal sebelumnya' },
-    { icon: '✅', text: 'Jawab semua soal sebelum waktu habis' },
-  ];
+  useEffect(() => {
+    if (mode === 'pretest') {
+      // Pretest sudah dikerjakan → langsung ke hasil, tidak bisa mengulang
+      if (localStorage.getItem('pretestDone') === 'true') {
+        navigate('/siswa/hasil-pretest', { replace: true });
+      }
+      return;
+    }
+    // Posttest: sudah dikerjakan → hasil posttest; belum scan & verifikasi nomor → scan dulu
+    if (localStorage.getItem('skorPosttest') !== null) {
+      navigate('/siswa/hasil-posttest', { replace: true });
+    } else if (sessionStorage.getItem('posttestVerified') !== 'true') {
+      navigate('/siswa/scan?untuk=posttest', { replace: true });
+    }
+  }, [mode, navigate]);
+
+  // replace: tombol kembali dari halaman soal tidak kembali ke halaman info ini
+  const handleStart = () => {
+    if (mode === 'posttest') sessionStorage.removeItem('posttestVerified');
+    navigate(`/siswa/ujian?mode=${mode}`, { replace: true });
+  };
 
   return (
-    <div className="mobile-app-container">
-      <div className="mobile-screen">
-        <div className="status-bar">
-          <span className="time">{currentTime}</span>
-          <div className="status-icons"><Signal size={13} /><Wifi size={13} /><Battery size={15} /></div>
+    <div className="m-app">
+      <div className="m-screen nv-page">
+        <div className="m-statusbar">
+          <span>{currentTime}</span>
+          <div className="m-statusbar-icons">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 20h.01M7 20v-4M12 20v-8M17 20V8M22 20V4"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="6" width="18" height="12" rx="2"/><line x1="23" y1="10" x2="23" y2="14"/></svg>
+          </div>
         </div>
 
-        <header className="mobile-header">
-          <button className="back-btn" onClick={() => navigate(-1)}><ChevronLeft size={18} /></button>
-          <div className="app-title">
-            <div className="app-logo-bg"><GraduationCap size={16} color="#1d4ed8" /></div>
+        {/* Header */}
+        <header className="m-header nv-header">
+          <button type="button" className="nv-back-btn" onClick={() => navigate('/siswa/dashboard')} aria-label="Kembali ke menu">
+            <ChevronLeft size={18} />
+          </button>
+          <div className="m-app-title">
+            <div className="nv-logo"><GraduationCap size={16} strokeWidth={2} /></div>
             <span>Si Iklim Muda</span>
           </div>
-          <div className="badge-portal"><div className="dot"></div>Portal Siswa</div>
+          <div className="nv-badge"><div className="nv-badge-dot"></div> Siswa</div>
         </header>
 
-        <div className="progress-section">
-          <div className="progress-text">
-            <span className="step-count">Langkah 2 dari 4</span>
-            <span className="step-name">Pretest</span>
-          </div>
-          <div className="progress-bars">
-            <div className="bar active"></div><div className="bar active"></div>
-            <div className="bar"></div><div className="bar"></div>
-          </div>
-        </div>
+        {/* Body */}
+        <div className="m-body nv-body pi-body">
+          {/* Durasi */}
+          <section className="pi-duration" aria-label={`Durasi pengerjaan ${UJIAN_DURASI_MENIT} menit`}>
+            <div className="pi-duration-icon"><Clock size={20} strokeWidth={2.25} /></div>
+            <h1 className="pi-duration-label">Durasi Pengerjaan</h1>
+            <div className="pi-duration-value">{UJIAN_DURASI_MENIT}</div>
+            <div className="pi-duration-unit">Menit</div>
+          </section>
 
-        <div className="form-content" style={{ display: 'flex', flexDirection: 'column' }}>
-
-          {/* Hero card */}
-          <div style={{ background: 'linear-gradient(135deg, #1e3a8a, #2563eb)', borderRadius: 20, padding: '28px 24px', textAlign: 'center', marginBottom: 20, boxShadow: '0 8px 24px rgba(30,58,138,0.3)' }}>
-            <div style={{ width: 56, height: 56, background: 'rgba(255,255,255,0.15)', borderRadius: 16, display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '0 auto 12px', backdropFilter: 'blur(8px)' }}>
-              <Clock size={28} color="white" />
-            </div>
-            <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Durasi Pengerjaan</div>
-            <div style={{ fontSize: 52, fontWeight: 900, color: 'white', lineHeight: 1, letterSpacing: -2 }}>15</div>
-            <div style={{ fontSize: 18, color: 'rgba(255,255,255,0.8)', fontWeight: 600 }}>Menit</div>
+          {/* Info */}
+          <div className="pi-info">
+            <Clock size={20} className="pi-info-icon" />
+            <p>Setelah waktu habis, soal akan secara otomatis terkirim.</p>
           </div>
 
-          {/* Rules */}
-          <div style={{ marginBottom: 20 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 10 }}>Petunjuk Pengerjaan</div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {rules.map((r, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', background: '#ffffff', borderRadius: 12, border: '1px solid #f1f5f9' }}>
-                  <span style={{ fontSize: 16 }}>{r.icon}</span>
-                  <span style={{ fontSize: 13, color: '#374151', fontWeight: 500 }}>{r.text}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Info box */}
-          <div className="info-box" style={{ marginBottom: 0 }}>
-            <Info size={16} className="info-icon" />
-            <p>Setelah waktu habis, soal akan secara otomatis terkirim dan tidak bisa diubah.</p>
-          </div>
-
-          <div className="submit-section" style={{ marginTop: 'auto', paddingTop: 16 }}>
-            <button className="submit-btn" onClick={() => navigate('/siswa/pretest')}>
-              <Zap size={17} />
+          <div className="nv-footer">
+            <button type="button" className="nv-btn" onClick={handleStart}>
               Mulai Mengerjakan
             </button>
           </div>
         </div>
 
-        <div className="home-indicator"><div className="indicator-line"></div></div>
+        <div className="m-home-indicator"><div className="m-home-indicator-line"></div></div>
       </div>
     </div>
   );

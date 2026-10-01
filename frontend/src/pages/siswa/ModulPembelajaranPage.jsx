@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react';
-import { ChevronLeft, Leaf, Book, Download, FileText, NotebookPen, CheckCircle2, ArrowRight } from 'lucide-react';
+import { ChevronLeft, GraduationCap, BookOpen, BookOpenText, CircleCheck, Download, Lightbulb, MonitorSmartphone, Check, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import imgCover from '../../assets/modul-cover.jpg';
 import './mobile-green-theme.css';
+import './siswa-navy.css';
 import './ModulPembelajaranPage.css';
+
+const FOKUS_PEMBAHASAN = ['Iklim & Cuaca', 'Efek Rumah Kaca', 'Dampak & Mitigasi'];
 
 function ModulPembelajaranPage() {
   const navigate = useNavigate();
@@ -21,12 +25,21 @@ function ModulPembelajaranPage() {
 
   const handleSelesai = () => {
     localStorage.setItem('modulDone', 'true');
+
+    // Simpan juga ke registry (per nomor telepon) agar progres tidak hilang setelah keluar & masuk lagi
+    const phone = localStorage.getItem('siswaPhone') || '';
+    const users = JSON.parse(localStorage.getItem('registeredUsers') || '{}');
+    if (users[phone]) {
+      users[phone].modulDone = true;
+      localStorage.setItem('registeredUsers', JSON.stringify(users));
+    }
+
     navigate('/siswa/dashboard');
   };
 
   return (
     <div className="m-app">
-      <div className="m-screen">
+      <div className="m-screen nv-page modul-page">
         <div className="m-statusbar">
           <span>{currentTime}</span>
           <div className="m-statusbar-icons">
@@ -36,124 +49,130 @@ function ModulPembelajaranPage() {
           </div>
         </div>
 
-        <header className="m-header">
-          <button className="m-back-btn" onClick={() => navigate(-1)}><ChevronLeft size={18} /></button>
+        {/* Header */}
+        <header className="m-header nv-header">
+          <button type="button" className="nv-back-btn" onClick={() => navigate(-1)} aria-label="Kembali">
+            <ChevronLeft size={18} />
+          </button>
           <div className="m-app-title">
-            <div className="m-app-logo"><Leaf size={16} color="#059669" /></div>
+            <div className="nv-logo"><GraduationCap size={16} strokeWidth={2} /></div>
             <span>Si Iklim Muda</span>
           </div>
-          <div className="m-badge"><div className="m-badge-dot"></div> Modul</div>
+          <div className="nv-badge"><div className="nv-badge-dot"></div> Modul</div>
         </header>
 
-        <div className="m-body modul-body">
-          {/* Module Badge */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-            <div className="modul-badge">
-              <Book size={14} />
-              <span>Modul 1</span>
+        <div className="m-body nv-body modul-body">
+          {/* Judul modul */}
+          <section className="modul-card modul-hero">
+            <div className="modul-hero-top">
+              <span className="modul-badge"><BookOpenText size={15} /> Modul 1</span>
+              <span className="modul-offline"><CircleCheck size={13} /> Tersedia Luring</span>
             </div>
-            <span style={{ fontSize: 12, color: '#6B7280', fontWeight: 600 }}>⏱ 10 Menit Baca</span>
-          </div>
-
-          <h1 className="m-title" style={{ fontSize: 22 }}>Pengenalan Iklim & Cuaca</h1>
-          <p className="m-subtitle">Pelajari konsep dasar iklim dan cuaca beserta fenomena perubahannya.</p>
-
-          {/* Image */}
-          <div className="modul-cover">
-            <div className="modul-cover-placeholder">
-              <Leaf size={40} strokeWidth={1.2} />
-              <span>Ilustrasi Modul</span>
+            <h1 className="modul-judul">Pengenalan Iklim &amp; Cuaca</h1>
+            <p className="modul-subtitle">Pelajari konsep dasar iklim dan cuaca beserta fenomena perubahannya.</p>
+            <div className="modul-cover">
+              <img src={imgCover} alt="Buku catatan terbuka di atas meja belajar" />
+              <span className="modul-cover-caption"><BookOpen size={15} /> Bahan Bacaan Pokok Siswa</span>
             </div>
-          </div>
+          </section>
 
-          {/* Download */}
-          <div className="modul-download-card">
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
-              <div className="m-icon-circle green"><FileText size={18} /></div>
-              <div>
-                <p style={{ fontSize: 13, fontWeight: 700, color: '#1F2937', margin: 0 }}>Salinan Digital</p>
-                <p style={{ fontSize: 11, color: '#6B7280', margin: 0 }}>PDF • Bisa dibaca offline</p>
-              </div>
+          {/* Salinan digital */}
+          <section className="modul-download">
+            <div className="modul-icon-tile"><Download size={18} /></div>
+            <div className="modul-download-text">
+              <p className="modul-download-title">Salinan Digital Tersedia</p>
+              <p className="modul-download-desc">Akses kapan saja tanpa koneksi internet</p>
             </div>
-            <button className="modul-download-btn">
-              <Download size={14} /> Unduh
+            <button type="button" className="modul-download-btn">
+              <Download size={15} /> Unduh
             </button>
-          </div>
+          </section>
 
-          {/* Content */}
-          <div className="modul-content">
-            <div className="modul-section-heading">
-              <div className="modul-section-bar"></div>
-              <h2>Pengantar</h2>
-            </div>
+          {/* Isi materi */}
+          <article className="modul-card modul-materi">
+            <h2 className="modul-section-heading">Pengantar</h2>
             <p>
               Iklim dan cuaca merupakan dua konsep yang saling berhubungan tetapi memiliki perbedaan fundamental.
-              <strong> Cuaca</strong> merujuk pada kondisi atmosfer dalam jangka pendek, sedangkan <strong>iklim</strong>
-              mencakup rata-rata pola cuaca selama periode waktu yang panjang (biasanya 30 tahun atau lebih).
+              <strong> Cuaca</strong> merujuk pada kondisi atmosfer dalam jangka pendek, sedangkan <strong>iklim</strong> mencakup
+              rata-rata pola cuaca selama periode waktu yang panjang (biasanya 30 tahun atau lebih).
             </p>
 
-            <div className="modul-section-heading" style={{ marginTop: 24 }}>
-              <div className="modul-section-bar"></div>
-              <h2>Perubahan Iklim</h2>
-            </div>
+            <hr className="modul-divider" />
+
+            <h2 className="modul-section-heading">Materi</h2>
             <p>
               Perubahan iklim global disebabkan oleh peningkatan konsentrasi gas rumah kaca di atmosfer,
               terutama karbon dioksida (CO₂) dan metana (CH₄). Aktivitas manusia seperti pembakaran bahan
               bakar fosil dan deforestasi mempercepat proses ini secara signifikan.
             </p>
-
-            {/* Note */}
-            <div className="modul-note">
-              <div className="modul-note-header">
-                <NotebookPen size={16} />
-                <span>Catatan Penting</span>
-              </div>
-              <p>
-                Perhatikan konsep efek rumah kaca, perbedaan iklim dan cuaca, serta dampak pemanasan global
-                — topik ini akan diujikan dalam Posttest nanti.
-              </p>
-            </div>
-
-            <div className="modul-section-heading" style={{ marginTop: 24 }}>
-              <div className="modul-section-bar"></div>
-              <h2>Dampak & Mitigasi</h2>
-            </div>
             <p>
               Dampak perubahan iklim meliputi kenaikan permukaan laut, peningkatan frekuensi bencana alam,
               dan perubahan pola curah hujan. BMKG berperan penting dalam monitoring dan prediksi perubahan
               iklim di Indonesia melalui stasiun-stasiun observasi yang tersebar di seluruh nusantara.
             </p>
-          </div>
+
+            <div className="modul-note">
+              <Lightbulb size={18} className="modul-note-icon" />
+              <div>
+                <p className="modul-note-title">Catatan Penting</p>
+                <p className="modul-note-text">
+                  Perhatikan konsep efek rumah kaca, perbedaan iklim dan cuaca, serta dampak pemanasan global
+                  agar kamu dapat mempersiapkan diri secara optimal saat evaluasi posttest nanti.
+                </p>
+              </div>
+            </div>
+
+            <p>
+              Setelah selesai membaca materi ini, pastikan kamu telah memahami poin-poin utama sebelum
+              melanjutkan ke tahapan uji kompetensi berikutnya.
+            </p>
+
+            <p className="modul-focus-label">Fokus Pembahasan</p>
+            <ul className="modul-chips">
+              {FOKUS_PEMBAHASAN.map((f) => (
+                <li key={f} className="modul-chip"><CircleCheck size={14} /> {f}</li>
+              ))}
+            </ul>
+          </article>
+
+          {/* Simpan modul */}
+          <section className="modul-card modul-save">
+            <div className="modul-icon-tile"><MonitorSmartphone size={22} /></div>
+            <h2 className="modul-save-title">Simpan Modul Pembelajaran</h2>
+            <p className="modul-save-desc">Modul ini dapat disimpan ke perangkat untuk dibaca secara luring.</p>
+            <button type="button" className="nv-btn">
+              <Download size={18} /> Download Modul
+            </button>
+          </section>
         </div>
 
-        {/* Sticky Finish Button */}
+        {/* Tombol selesai (menempel di bawah) */}
         <div className="modul-sticky-footer">
-          <button className="m-btn-primary" onClick={() => setShowConfirm(true)}>
-            <CheckCircle2 size={18} />
-            Selesai Membaca
+          <button type="button" className="modul-finish-btn" onClick={() => setShowConfirm(true)}>
+            <span className="modul-finish-check"><Check size={17} strokeWidth={3} /></span>
+            Selesai Membaca <ArrowRight size={18} />
           </button>
         </div>
 
         <div className="m-home-indicator"><div className="m-home-indicator-line"></div></div>
 
-        {/* Confirmation Modal */}
+        {/* Konfirmasi selesai membaca */}
         {showConfirm && (
-          <div className="m-overlay">
-            <div className="m-modal">
-              <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#ECFDF5', display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '0 auto 16px' }}>
-                <CheckCircle2 size={28} color="#059669" />
+          <div className="m-overlay" onClick={() => setShowConfirm(false)}>
+            <div
+              className="m-modal nv-dialog"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="modul-confirm-title"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="nv-dialog-icon"><CircleCheck size={22} /></div>
+              <h3 id="modul-confirm-title">Sudah selesai membaca?</h3>
+              <p>Pastikan kamu sudah memahami seluruh materi. Setelah ini, <strong>Posttest</strong> akan terbuka di Dashboard.</p>
+              <div className="nv-dialog-actions">
+                <button type="button" className="nv-btn secondary" onClick={() => setShowConfirm(false)}>Baca Lagi</button>
+                <button type="button" className="nv-btn" onClick={handleSelesai}>Ya, Selesai</button>
               </div>
-              <h3 style={{ fontSize: 18, fontWeight: 800, color: '#1F2937', margin: '0 0 8px 0' }}>Sudah Selesai Membaca?</h3>
-              <p style={{ fontSize: 13, color: '#6B7280', margin: '0 0 20px 0', lineHeight: 1.6 }}>
-                Pastikan kamu sudah memahami seluruh materi. Setelah ini, <strong>Posttest</strong> akan terbuka di Dashboard.
-              </p>
-              <button className="m-btn-primary" onClick={handleSelesai}>
-                Ya, Saya Sudah Selesai
-                <ArrowRight size={17} />
-              </button>
-              <button className="m-btn-outline" style={{ marginTop: 10 }} onClick={() => setShowConfirm(false)}>
-                Baca Lagi
-              </button>
             </div>
           </div>
         )}

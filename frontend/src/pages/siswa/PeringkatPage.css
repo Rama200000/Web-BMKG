@@ -1,0 +1,143 @@
+/* PeringkatPage.css — style umum ada di siswa-navy.css */
+
+/* Bulatan biru lembut di belakang konten */
+.peringkat-body {
+  position: relative;
+  overflow-x: hidden;
+}
+.peringkat-body::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 18%;
+  width: 560px;
+  height: 560px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, #DCE8FB 0%, #E6EFFC 55%, rgba(230, 239, 252, 0) 72%);
+  pointer-events: none;
+}
+.peringkat-body > * { position: relative; }
+
+/* ─── Ucapan ─── */
+.peringkat-hero {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 4px;
+}
+.peringkat-hero-text { flex: 1; min-width: 0; }
+.peringkat-hero-title {
+  margin: 4px 0 8px;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.6;
+  color: var(--gray-900);
+}
+.peringkat-hero-sub {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.75;
+  color: var(--nv-muted);
+}
+.peringkat-hero-art {
+  position: relative;
+  width: 112px;
+  height: 120px;
+  margin: 70px -24px 0 0;   /* ilustrasi menempel ke tepi kanan layar */
+  flex-shrink: 0;
+}
+.peringkat-hero-art img { position: absolute; pointer-events: none; user-select: none; }
+.peringkat-art-books  { width: 76px; left: 26px; bottom: 6px; }
+.peringkat-art-cap    { width: 86px; left: 24px; bottom: 40px; filter: drop-shadow(0 4px 6px rgba(11, 26, 79, 0.18)); }
+.peringkat-art-scroll { width: 48px; left: 0; bottom: 4px; transform: rotate(-18deg); }
+
+/* ─── Papan peringkat ─── */
+.peringkat-title {
+  margin: 0 0 2px;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: var(--gray-900);
+}
+.peringkat-sub {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: var(--nv-muted);
+}
+
+.peringkat-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.peringkat-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 58px;
+  padding: 8px 18px 8px 14px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+}
+.peringkat-row.rank-1 { background: #F8E4B4; }
+.peringkat-row.rank-2 { background: #E1E1E1; }
+.peringkat-row.rank-3 { background: #FBD7CB; }
+.peringkat-row.rank-4 { background: #A9E2EC; }
+.peringkat-row.rank-5 { background: #CFE2F8; }
+.peringkat-row.me { box-shadow: 0 0 0 2px var(--nv-navy), 0 2px 6px rgba(15, 23, 42, 0.06); }
+
+.peringkat-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #C9CDD3;
+  color: #9AA0A8;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.peringkat-avatar svg { width: 34px; height: 34px; margin-bottom: -6px; fill: #9AA0A8; }
+
+.peringkat-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.peringkat-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #4FDDA4;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ─── Pesan ─── */
+.peringkat-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+  padding: 14px 16px;
+  background: #BDEBF5;
+  border-radius: 12px;
+}
+.peringkat-info .peringkat-check { width: 22px; height: 22px; }
+.peringkat-info p {
+  margin: 0;
+  padding-left: 16px;
+  border-left: 1.5px solid rgba(11, 26, 79, 0.35);
+  font-size: 11.5px;
+  line-height: 1.7;
+  color: #3D5A80;
+}

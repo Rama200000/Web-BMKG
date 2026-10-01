@@ -1,133 +1,287 @@
-/* ModulPembelajaranPage.css */
+/* ModulPembelajaranPage.css — style umum ada di siswa-navy.css */
 
-.modul-body { padding-bottom: 80px !important; }
-
-.modul-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: linear-gradient(135deg, var(--green-600), var(--green-700));
-  color: #fff;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 700;
+.modul-page {
+  --modul-tint: #EAF2FB;   /* latar kartu unduh, catatan, chip */
+  --modul-cyan: #A9E2EC;   /* ikon & tombol unduh (sama dengan timer ujian) */
+  --modul-blue: #1C84C6;   /* tombol Selesai Membaca */
+  --modul-blue-hover: #176FA8;
 }
 
-.modul-cover {
-  width: 100%;
-  height: 160px;
+.modul-body { gap: 16px; padding-bottom: 8px !important; }
+
+/* Kartu dasar */
+.modul-card {
+  background: #fff;
+  border: 1px solid #E8EDF2;
   border-radius: 18px;
-  overflow: hidden;
-  margin-bottom: 20px;
-  background: linear-gradient(145deg, var(--green-100), var(--green-50));
-  border: 1px dashed var(--green-300);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
 }
 
-.modul-cover-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 8px;
-  color: var(--green-400);
-}
-
-.modul-cover-placeholder span {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--green-400);
-}
-
-.modul-download-card {
+/* ─── Kartu judul ─── */
+.modul-hero { padding: 16px 16px 16px; }
+.modul-hero-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px;
-  background: var(--green-50);
-  border-radius: 16px;
-  border: 1px dashed var(--green-300);
-  margin-bottom: 24px;
-}
-
-.modul-download-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  background: var(--green-600);
-  color: #fff;
-  border: none;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  font-family: var(--font);
-  white-space: nowrap;
-}
-.modul-download-btn:hover { background: var(--green-700); }
-
-/* ─── Content ─── */
-.modul-content { margin-bottom: 24px; }
-.modul-content p {
-  font-size: 14px;
-  color: var(--gray-600);
-  line-height: 1.7;
-  margin: 0 0 16px 0;
-}
-
-.modul-section-heading {
-  display: flex;
-  align-items: center;
   gap: 8px;
   margin-bottom: 12px;
 }
-.modul-section-bar {
-  width: 4px;
-  height: 18px;
-  background: var(--green-500);
-  border-radius: 4px;
+.modul-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--nv-navy);
+  color: #fff;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
 }
-.modul-section-heading h2 {
-  font-size: 16px;
+.modul-offline {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  color: var(--gray-700);
+}
+.modul-judul {
+  margin: 0 0 6px;
+  font-size: 23px;
   font-weight: 700;
+  letter-spacing: -0.4px;
   color: var(--gray-900);
-  margin: 0;
 }
-
-.modul-note {
-  background: var(--gray-50);
-  border-left: 4px solid var(--green-500);
-  border-radius: 0 14px 14px 0;
-  padding: 16px;
-  margin: 16px 0;
+.modul-subtitle {
+  margin: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--gray-700);
 }
-.modul-note-header {
+.modul-cover {
+  position: relative;
+  height: 150px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--modul-tint);
+}
+.modul-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 62%;
+  display: block;
+}
+.modul-cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent 55%);
+}
+.modul-cover-caption {
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  z-index: 1;
   display: flex;
   align-items: center;
   gap: 8px;
-  color: var(--green-700);
-  font-weight: 700;
-  font-size: 13px;
-  margin-bottom: 8px;
-}
-.modul-note p {
-  font-size: 13px !important;
-  color: var(--gray-600) !important;
-  margin: 0 !important;
-  line-height: 1.6;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #fff;
 }
 
-/* ─── Sticky Footer ─── */
+/* ─── Salinan digital ─── */
+.modul-download {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--modul-tint);
+  border-radius: 16px;
+}
+.modul-icon-tile {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--modul-cyan);
+  color: var(--nv-navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.modul-download-text { flex: 1; min-width: 0; }
+.modul-download-text p { margin: 0; }
+.modul-download-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+.modul-download-desc {
+  font-size: 12px;
+  color: var(--gray-700);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.modul-download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--modul-cyan);
+  color: var(--nv-navy);
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font);
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: filter 0.15s ease;
+}
+.modul-download-btn:hover { filter: brightness(0.95); }
+
+/* ─── Isi materi ─── */
+.modul-materi { padding: 22px 20px 22px; }
+.modul-materi p {
+  margin: 0 0 14px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--gray-800);
+}
+.modul-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+.modul-section-heading::before {
+  content: '';
+  width: 6px;
+  height: 20px;
+  border-radius: 99px;
+  background: var(--nv-navy);
+}
+.modul-divider {
+  border: none;
+  border-top: 1px solid #E8EDF2;
+  margin: 22px 0 24px;
+}
+
+.modul-note {
+  display: flex;
+  gap: 10px;
+  margin: 2px 0 18px;
+  padding: 16px 16px 16px 14px;
+  background: var(--modul-tint);
+  border-radius: 12px;
+}
+.modul-note-icon { color: var(--nv-navy); flex-shrink: 0; margin-top: 1px; }
+.modul-note-title {
+  margin: 0 0 4px !important;
+  font-size: 13.5px !important;
+  font-weight: 600;
+  color: var(--nv-navy) !important;
+}
+.modul-note-text {
+  margin: 0 !important;
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+  color: var(--nv-muted) !important;
+}
+
+.modul-materi .modul-focus-label {
+  margin: 22px 0 10px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--nv-muted);
+}
+.modul-chips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.modul-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--modul-tint);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--nv-navy);
+}
+
+/* ─── Simpan modul ─── */
+.modul-save {
+  padding: 18px 16px 16px;
+  text-align: center;
+}
+.modul-save .modul-icon-tile {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 12px;
+}
+.modul-save-title {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+.modul-save-desc {
+  max-width: 290px;
+  margin: 0 auto 16px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--gray-700);
+}
+.modul-save .nv-btn { padding: 14px 20px; font-size: 15px; }
+
+/* ─── Tombol Selesai Membaca (menempel di bawah) ─── */
 .modul-sticky-footer {
   position: sticky;
   bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 12px 20px;
-  background: linear-gradient(to top, var(--gray-50) 70%, transparent);
   z-index: 20;
+  padding: 12px 24px 8px;
+  background: linear-gradient(to top, var(--nv-bg) 70%, transparent);
+}
+.modul-finish-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 20px;
+  background: var(--modul-blue);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-family: var(--font);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(28, 132, 198, 0.28);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.modul-finish-btn:hover { background: var(--modul-blue-hover); }
+.modul-finish-btn:active { transform: scale(0.98); }
+.modul-finish-check {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--modul-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

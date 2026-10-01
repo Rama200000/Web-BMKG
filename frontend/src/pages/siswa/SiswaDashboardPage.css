@@ -1,165 +1,179 @@
-/* SiswaDashboardPage.css */
+/* SiswaDashboardPage.css — style umum ada di siswa-navy.css */
 
-/* ─── Dashboard Header ─── */
-.dash-header {
-  background: linear-gradient(135deg, #064E3B 0%, #059669 100%);
-  padding: 14px 20px 20px;
-  color: #fff;
+.dash-body {
+  --dash-cyan: #A9E2EC;
+  --dash-cyan-soft: #E1F2F6;
+  --dash-cyan-line: #CDE8EF;
+  padding-top: 12px !important;
+  overflow-x: hidden;
 }
-.dash-header-top {
+
+/* ─── Hero ─── */
+.dash-hero {
+  position: relative;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
+  align-items: flex-start;
+  margin: 0 -24px 22px 0; /* ilustrasi menempel ke tepi kanan layar */
+  min-height: 150px;
 }
-.dash-header-top .m-app-title span { color: #fff; }
-.dash-header-top .m-app-logo {
-  background: rgba(255,255,255,0.2);
-  box-shadow: none;
+.dash-hero-text {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  padding-right: 8px;
 }
-.dash-header-top .m-app-logo svg { stroke: #fff !important; }
+.dash-hero-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--gray-900);
+  letter-spacing: -0.4px;
+  line-height: 1.25;
+  margin: 8px 0 10px;
+  white-space: nowrap;
+}
+.dash-hero-sub {
+  max-width: 230px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--nv-muted);
+  margin: 0;
+}
 
-.dash-logout {
-  background: rgba(255,255,255,0.15);
-  border: none; border-radius: 50%;
-  width: 36px; height: 36px;
-  display: flex; justify-content: center; align-items: center;
-  color: rgba(255,255,255,0.9);
-  cursor: pointer;
-  transition: all 0.15s ease;
+.dash-hero-art {
+  position: absolute;
+  right: 0;
+  top: 40px;
+  width: 128px;
+  height: 150px;
+  border-radius: 64% 0 0 58% / 52% 0 0 48%;
+  background: linear-gradient(160deg, #B8E3FB 0%, #8CC8F5 100%);
 }
-.dash-logout:hover { background: rgba(255,255,255,0.25); }
+.dash-hero-art img { position: absolute; pointer-events: none; user-select: none; }
+.dash-hero-books  { width: 92px; left: 20px; bottom: 26px; }
+.dash-hero-cap    { width: 80px; left: 34px; bottom: 62px; filter: drop-shadow(0 4px 6px rgba(11, 26, 79, 0.18)); }
+.dash-hero-scroll { width: 58px; left: 0; bottom: 30px; transform: rotate(-18deg); }
 
-.dash-welcome {
+/* ─── Judul seksi ─── */
+.dash-section-title {
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--gray-900);
+  letter-spacing: -0.3px;
+  margin: 0 0 4px;
+}
+.dash-section-sub {
+  font-size: 13px;
+  color: var(--nv-muted);
+  margin: 0 0 16px;
+}
+
+/* ─── Kartu menu ─── */
+.dash-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.dash-menu-card {
   display: flex;
   align-items: center;
   gap: 14px;
+  width: 100%;
+  padding: 16px 14px;
+  border: none;
+  border-radius: 16px;
+  text-align: left;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
-.dash-avatar {
-  width: 48px; height: 48px;
-  background: rgba(255,255,255,0.2);
-  border-radius: 14px;
-  display: flex; justify-content: center; align-items: center;
-  font-size: 20px; font-weight: 800; color: #fff;
-  border: 2px solid rgba(255,255,255,0.3);
+.dash-menu-card.active {
+  background: var(--dash-cyan);
+  box-shadow: 0 6px 16px -8px rgba(34, 140, 170, 0.45);
 }
-.dash-greeting {
-  font-size: 12px;
-  color: rgba(255,255,255,0.7);
-  margin: 0 0 2px 0;
-  font-weight: 500;
+.dash-menu-card.done {
+  background: var(--dash-cyan-soft);
+  border: 1.5px solid var(--dash-cyan-line);
 }
-.dash-name {
-  font-size: 18px; font-weight: 800;
-  margin: 0 0 2px 0; color: #fff;
+.dash-menu-card.locked {
+  background: var(--dash-cyan-soft);
+  cursor: not-allowed;
 }
-.dash-school {
-  font-size: 11px;
-  color: rgba(255,255,255,0.6);
-  margin: 0;
-  font-weight: 500;
+.dash-menu-card:not(:disabled):hover { transform: translateY(-1px); }
+.dash-menu-card:not(:disabled):active { transform: scale(0.985); }
+.dash-menu-card:focus-visible {
+  outline: 2px solid var(--nv-navy);
+  outline-offset: 2px;
 }
 
-/* ─── Progress Summary Bar ─── */
-.dash-progress-summary {
+.dash-menu-icon {
+  width: 66px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 14px 20px;
-  background: #fff;
-  border-bottom: 1px solid var(--gray-100);
 }
-.dash-progress-item {
-  display: flex; align-items: center; gap: 4px;
-  font-size: 11px; font-weight: 600; color: var(--gray-400);
-}
-.dash-progress-item.completed { color: var(--green-600); }
-.dash-progress-item.current { color: var(--green-700); font-weight: 700; }
-.dash-progress-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--gray-300);
-}
-.dash-progress-item.current .dash-progress-dot {
-  background: var(--green-500);
-  box-shadow: 0 0 6px rgba(16,185,129,0.5);
-}
-.dash-progress-divider {
-  width: 20px; height: 2px;
-  background: var(--gray-200);
-  border-radius: 2px;
-  flex-shrink: 0;
-}
+.dash-menu-icon img { width: 48px; height: 48px; }
+.dash-menu-card.locked .dash-menu-icon { background: rgba(255, 255, 255, 0.6); box-shadow: none; }
+.dash-menu-card.locked .dash-menu-icon img { opacity: 0.55; filter: saturate(0.6); }
 
-/* ─── Dashboard Cards ─── */
-.dash-card {
+.dash-menu-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.dash-menu-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--nv-navy);
+}
+.dash-menu-desc {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #3E4A5E;
+}
+.dash-menu-card.locked .dash-menu-title { color: #8A97AD; }
+.dash-menu-card.locked .dash-menu-desc { color: #7C889C; }
+
+.dash-menu-status {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.dash-menu-status.lock { background: #D3E8DE; color: #7F9A8D; }
+.dash-menu-status.done { background: #D1FAE5; color: var(--green-700); }
+.dash-menu-status.go   { background: rgba(255, 255, 255, 0.7); color: var(--nv-navy); }
+
+/* ─── Info ─── */
+.dash-info {
   display: flex;
   align-items: center;
   gap: 14px;
-  background: #fff;
-  border-radius: 18px;
-  padding: 18px;
-  margin-bottom: 12px;
-  border: 1.5px solid var(--gray-100);
-  transition: all 0.25s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-}
-.dash-card.active:hover {
-  border-color: var(--green-300);
-  box-shadow: 0 4px 16px rgba(16,185,129,0.12);
-  transform: translateY(-2px);
-}
-.dash-card.active:active { transform: scale(0.98); }
-.dash-card.locked {
-  opacity: 0.55;
-}
-.dash-card.done {
-  border-color: var(--green-200);
-  background: linear-gradient(135deg, #ECFDF5, #F0FDF4);
-}
-
-.dash-card-icon {
-  width: 48px; height: 48px;
+  margin-top: 24px;
+  padding: 16px 18px;
+  background: var(--dash-cyan-soft);
   border-radius: 14px;
-  display: flex; justify-content: center; align-items: center;
+}
+.dash-info-icon { color: var(--nv-navy); flex-shrink: 0; }
+.dash-info-divider {
+  align-self: stretch;
+  width: 2px;
+  border-radius: 2px;
+  background: #5B6B85;
   flex-shrink: 0;
 }
-.dash-card-icon.green {
-  background: linear-gradient(135deg, var(--green-100), var(--green-200));
-  color: var(--green-700);
-}
-.dash-card-icon.gray {
-  background: var(--gray-100);
-  color: var(--gray-400);
-}
-
-.dash-card-info { flex: 1; min-width: 0; }
-.dash-card-info h4 {
-  font-size: 15px; font-weight: 700;
-  color: var(--gray-900); margin: 0 0 3px 0;
-}
-.dash-card-info p {
-  font-size: 12px; color: var(--gray-500);
-  margin: 0; line-height: 1.4;
-}
-
-.dash-card-action { flex-shrink: 0; }
-.dash-badge {
-  display: flex; align-items: center; gap: 4px;
-  font-size: 11px; font-weight: 700;
-  padding: 6px 12px; border-radius: 20px;
-  white-space: nowrap;
-}
-.dash-badge.open {
-  background: linear-gradient(135deg, var(--green-500), var(--green-600));
-  color: #fff;
-}
-.dash-badge.locked {
-  background: var(--gray-100);
-  color: var(--gray-400);
-}
-.dash-badge.done {
-  background: var(--green-100);
-  color: var(--green-700);
+.dash-info p {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.6;
+  color: #3E4A5E;
 }

@@ -1,16 +1,27 @@
 import { useState, useEffect } from 'react';
-import { Leaf, FileText, BookOpen, Award, Lock, ChevronRight, CheckCircle2, LogOut } from 'lucide-react';
+import { ChevronLeft, GraduationCap, Lock, CheckCircle2, ChevronRight, Info, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import imgGraduationCap from '../../assets/fluent-emoji/graduation-cap.png';
+import imgBooks from '../../assets/fluent-emoji/books.png';
+import imgScroll from '../../assets/fluent-emoji/scroll.png';
+import imgMemo from '../../assets/fluent-emoji/memo.png';
+import imgClipboard from '../../assets/fluent-emoji/clipboard.png';
 import './mobile-green-theme.css';
+import './siswa-navy.css';
 import './SiswaDashboardPage.css';
 
 function SiswaDashboardPage() {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState('');
-  const [pretestDone, setPretestDone] = useState(false);
-  const [modulDone, setModulDone] = useState(false);
-  const [posttestDone, setPosttestDone] = useState(false);
-  const [student, setStudent] = useState(null);
+  const [confirmExit, setConfirmExit] = useState(false);
+
+  // Status dibaca sekali saat halaman dibuka
+  const [progress] = useState(() => ({
+    pretestDone: localStorage.getItem('pretestDone') === 'true',
+    modulDone: localStorage.getItem('modulDone') === 'true',
+    posttestDone: localStorage.getItem('skorPosttest') !== null,
+  }));
+  const { pretestDone, modulDone, posttestDone } = progress;
 
   useEffect(() => {
     const updateTime = () => {
@@ -22,25 +33,15 @@ function SiswaDashboardPage() {
     return () => clearInterval(t);
   }, []);
 
-  useEffect(() => {
-    // Load unlock states
-    setPretestDone(localStorage.getItem('pretestDone') === 'true');
-    setModulDone(localStorage.getItem('modulDone') === 'true');
-    setPosttestDone(localStorage.getItem('skorPosttest') !== null);
-    // Load student data
-    const s = localStorage.getItem('currentStudent');
-    if (s) setStudent(JSON.parse(s));
-  }, []);
-
   const handleCardClick = (type) => {
     if (type === 'pretest') {
       if (pretestDone) navigate('/siswa/hasil-pretest');
-      else navigate('/siswa/ujian?mode=pretest');
+      else navigate('/siswa/pretest-info');
     } else if (type === 'modul' && pretestDone) {
       navigate('/siswa/modul');
     } else if (type === 'posttest' && modulDone) {
-      if (posttestDone) navigate('/siswa/hasil-akhir');
-      else navigate('/siswa/verifikasi-ulang');
+      if (posttestDone) navigate('/siswa/hasil-posttest');
+      else navigate('/siswa/scan?untuk=posttest');
     }
   };
 
@@ -50,23 +51,50 @@ function SiswaDashboardPage() {
     localStorage.removeItem('pretestDone');
     localStorage.removeItem('modulDone');
     localStorage.removeItem('skorPretest');
+    localStorage.removeItem('rekapPretest');
     localStorage.removeItem('skorPosttest');
+    localStorage.removeItem('rekapPosttest');
     localStorage.removeItem('pretestTime');
     localStorage.removeItem('posttestTime');
     navigate('/siswa/scan');
   };
 
-  const getGreeting = () => {
-    const h = new Date().getHours();
-    if (h < 12) return 'Selamat Pagi';
-    if (h < 15) return 'Selamat Siang';
-    if (h < 18) return 'Selamat Sore';
-    return 'Selamat Malam';
-  };
+  const menus = [
+    {
+      key: 'pretest',
+      title: 'Pretest',
+      desc: 'Uji kemampuan awalmu sebelum memulai pembelajaran.',
+      doneDesc: 'Sudah dikerjakan. Ketuk untuk lihat hasil.',
+      img: imgMemo,
+      unlocked: true,
+      done: pretestDone,
+      lockHint: '',
+    },
+    {
+      key: 'modul',
+      title: 'Modul',
+      desc: 'Pelajari dan tambah wawasanmu disini',
+      doneDesc: 'Sudah dipelajari. Ketuk untuk baca lagi.',
+      img: imgBooks,
+      unlocked: pretestDone,
+      done: modulDone,
+      lockHint: 'Selesaikan Pretest terlebih dahulu',
+    },
+    {
+      key: 'posttest',
+      title: 'Posttest',
+      desc: 'Uji kembali pemahamanmu setelah mempelajari modul.',
+      doneDesc: 'Sudah dikerjakan. Ketuk untuk lihat hasil.',
+      img: imgClipboard,
+      unlocked: modulDone,
+      done: posttestDone,
+      lockHint: 'Selesaikan Modul terlebih dahulu',
+    },
+  ];
 
   return (
     <div className="m-app">
-      <div className="m-screen">
+      <div className="m-screen nv-page">
         <div className="m-statusbar">
           <span>{currentTime}</span>
           <div className="m-statusbar-icons">
@@ -76,134 +104,103 @@ function SiswaDashboardPage() {
           </div>
         </div>
 
-        {/* Dashboard Header */}
-        <div className="dash-header">
-          <div className="dash-header-top">
-            <div className="m-app-title">
-              <div className="m-app-logo"><Leaf size={16} color="#059669" /></div>
-              <span>Si Iklim Muda</span>
-            </div>
-            <button className="dash-logout" onClick={handleLogout}>
-              <LogOut size={16} />
-            </button>
+        {/* Header */}
+        <header className="m-header nv-header">
+          <button type="button" className="nv-back-btn" onClick={() => setConfirmExit(true)} aria-label="Keluar dari portal">
+            <ChevronLeft size={18} />
+          </button>
+          <div className="m-app-title">
+            <div className="nv-logo"><GraduationCap size={16} strokeWidth={2} /></div>
+            <span>Si Iklim Muda</span>
           </div>
-          <div className="dash-welcome">
-            <div className="dash-avatar">{student?.nama?.charAt(0)?.toUpperCase() || 'S'}</div>
-            <div>
-              <p className="dash-greeting">{getGreeting()} 👋</p>
-              <h2 className="dash-name">{student?.nama || 'Siswa'}</h2>
-              <p className="dash-school">{student?.sekolah || ''} • Kelas {student?.kelas || ''}</p>
-            </div>
-          </div>
-        </div>
+          <div className="nv-badge"><div className="nv-badge-dot"></div> Siswa</div>
+        </header>
 
-        {/* Progress Summary */}
-        <div className="dash-progress-summary">
-          <div className="dash-progress-item completed">
-            <CheckCircle2 size={14} />
-            <span>Registrasi</span>
-          </div>
-          <div className="dash-progress-divider"></div>
-          <div className={`dash-progress-item ${pretestDone ? 'completed' : 'current'}`}>
-            {pretestDone ? <CheckCircle2 size={14} /> : <div className="dash-progress-dot"></div>}
-            <span>Pretest</span>
-          </div>
-          <div className="dash-progress-divider"></div>
-          <div className={`dash-progress-item ${modulDone ? 'completed' : pretestDone ? 'current' : ''}`}>
-            {modulDone ? <CheckCircle2 size={14} /> : <div className="dash-progress-dot"></div>}
-            <span>Modul</span>
-          </div>
-          <div className="dash-progress-divider"></div>
-          <div className="dash-progress-divider"></div>
-          <div className={`dash-progress-item ${posttestDone ? 'completed' : modulDone ? 'current' : ''}`}>
-            {posttestDone ? <CheckCircle2 size={14} /> : <div className="dash-progress-dot"></div>}
-            <span>Posttest</span>
-          </div>
-        </div>
+        {/* Body */}
+        <div className="m-body nv-body dash-body">
+          {/* Hero */}
+          <section className="dash-hero">
+            <div className="dash-hero-text">
+              <h1 className="dash-hero-title">Halo, Selamat Datang! <span aria-hidden="true">👋</span></h1>
+              <p className="dash-hero-sub">
+                Tingkatkan pengetahuanmu tentang keselamatan kerja dan lingkungan bersama Si Iklim Muda.
+              </p>
+            </div>
+            <div className="dash-hero-art" aria-hidden="true">
+              <img src={imgScroll} alt="" className="dash-hero-scroll" />
+              <img src={imgBooks} alt="" className="dash-hero-books" />
+              <img src={imgGraduationCap} alt="" className="dash-hero-cap" />
+            </div>
+          </section>
 
-        <div className="m-body" style={{ paddingTop: 8 }}>
-          <h3 style={{ fontSize: 16, fontWeight: 700, color: '#1F2937', margin: '0 0 14px 0' }}>
-            📚 Menu Pembelajaran
-          </h3>
+          {/* Menu */}
+          <h2 className="dash-section-title">Menu Utama</h2>
+          <p className="dash-section-sub">Pilih menu yang ingin kamu akses.</p>
 
-          {/* Card: Pretest */}
-          <div
-            className={`dash-card ${pretestDone ? 'done' : 'active'}`}
-            onClick={() => handleCardClick('pretest')}
-            style={{ cursor: 'pointer' }}
-          >
-            <div className="dash-card-icon green">
-              <FileText size={22} />
-            </div>
-            <div className="dash-card-info">
-              <h4>Pretest</h4>
-              <p>{pretestDone ? 'Sudah dikerjakan ✓ (Lihat Hasil)' : 'Uji pengetahuan awal kamu'}</p>
-            </div>
-            <div className="dash-card-action">
-              {pretestDone ? (
-                <span className="dash-badge done"><CheckCircle2 size={14} /> Selesai</span>
-              ) : (
-                <span className="dash-badge open">Mulai <ChevronRight size={14} /></span>
-              )}
-            </div>
+          <div className="dash-menu">
+            {menus.map((m) => {
+              const state = !m.unlocked ? 'locked' : m.done ? 'done' : 'active';
+              return (
+                <button
+                  key={m.key}
+                  type="button"
+                  className={`dash-menu-card ${state}`}
+                  onClick={() => handleCardClick(m.key)}
+                  disabled={!m.unlocked}
+                  aria-label={!m.unlocked ? `${m.title}, terkunci. ${m.lockHint}` : undefined}
+                  title={!m.unlocked ? m.lockHint : undefined}
+                >
+                  <span className="dash-menu-icon">
+                    <img src={m.img} alt="" />
+                  </span>
+                  <span className="dash-menu-text">
+                    <span className="dash-menu-title">{m.title}</span>
+                    <span className="dash-menu-desc">{m.done ? m.doneDesc : m.desc}</span>
+                  </span>
+                  {state === 'locked' && (
+                    <span className="dash-menu-status lock"><Lock size={16} strokeWidth={2.25} /></span>
+                  )}
+                  {state === 'done' && (
+                    <span className="dash-menu-status done"><CheckCircle2 size={18} strokeWidth={2.25} /></span>
+                  )}
+                  {state === 'active' && m.key !== 'pretest' && (
+                    <span className="dash-menu-status go"><ChevronRight size={18} /></span>
+                  )}
+                </button>
+              );
+            })}
           </div>
 
-          {/* Card: Modul */}
-          <div
-            className={`dash-card ${modulDone ? 'done' : pretestDone ? 'active' : 'locked'}`}
-            onClick={() => pretestDone && handleCardClick('modul')}
-            style={{ cursor: pretestDone ? 'pointer' : 'default' }}
-          >
-            <div className={`dash-card-icon ${pretestDone ? 'green' : 'gray'}`}>
-              {pretestDone ? <BookOpen size={22} /> : <Lock size={22} />}
-            </div>
-            <div className="dash-card-info">
-              <h4>{pretestDone ? 'Modul Pembelajaran' : '🔒 Modul Pembelajaran'}</h4>
-              <p>{modulDone ? 'Sudah dipelajari ✓ (Baca Lagi)' : pretestDone ? 'Pelajari materi iklim' : 'Selesaikan Pretest terlebih dahulu'}</p>
-            </div>
-            <div className="dash-card-action">
-              {modulDone ? (
-                <span className="dash-badge done"><CheckCircle2 size={14} /> Selesai</span>
-              ) : pretestDone ? (
-                <span className="dash-badge open">Buka <ChevronRight size={14} /></span>
-              ) : (
-                <span className="dash-badge locked"><Lock size={12} /> Terkunci</span>
-              )}
-            </div>
-          </div>
-
-          {/* Card: Posttest */}
-          <div
-            className={`dash-card ${posttestDone ? 'done' : modulDone ? 'active' : 'locked'}`}
-            onClick={() => modulDone && handleCardClick('posttest')}
-            style={{ cursor: modulDone ? 'pointer' : 'default' }}
-          >
-            <div className={`dash-card-icon ${posttestDone || modulDone ? 'green' : 'gray'}`}>
-              {posttestDone || modulDone ? <Award size={22} /> : <Lock size={22} />}
-            </div>
-            <div className="dash-card-info">
-              <h4>{modulDone ? 'Posttest' : '🔒 Posttest'}</h4>
-              <p>{posttestDone ? 'Sudah dikerjakan ✓ (Lihat Hasil)' : modulDone ? 'Uji pemahaman akhir' : 'Selesaikan Modul terlebih dahulu'}</p>
-            </div>
-            <div className="dash-card-action">
-              {posttestDone ? (
-                <span className="dash-badge done"><CheckCircle2 size={14} /> Selesai</span>
-              ) : modulDone ? (
-                <span className="dash-badge open">Mulai <ChevronRight size={14} /></span>
-              ) : (
-                <span className="dash-badge locked"><Lock size={12} /> Terkunci</span>
-              )}
-            </div>
-          </div>
-
-          {/* Tips */}
-          <div className="m-info-box" style={{ marginTop: 20 }}>
-            <Leaf size={16} className="m-info-icon" />
-            <p>Ikuti alur pembelajaran secara berurutan: <strong>Pretest → Modul → Posttest</strong> untuk hasil terbaik.</p>
+          {/* Info */}
+          <div className="dash-info">
+            <Info size={18} className="dash-info-icon" />
+            <span className="dash-info-divider" aria-hidden="true"></span>
+            <p>Kerjakan setiap tahapan dengan sungguh - sungguh untuk mendapatkan hasil terbaik!</p>
           </div>
         </div>
 
         <div className="m-home-indicator"><div className="m-home-indicator-line"></div></div>
+
+        {/* Konfirmasi keluar */}
+        {confirmExit && (
+          <div className="m-overlay" onClick={() => setConfirmExit(false)}>
+            <div
+              className="m-modal nv-dialog"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="dash-exit-title"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="nv-dialog-icon"><LogOut size={22} /></div>
+              <h3 id="dash-exit-title">Keluar dari portal?</h3>
+              <p>Progres kamu tetap tersimpan. Masuk lagi dengan nomor telepon yang sama untuk melanjutkan.</p>
+              <div className="nv-dialog-actions">
+                <button type="button" className="nv-btn secondary" onClick={() => setConfirmExit(false)}>Batal</button>
+                <button type="button" className="nv-btn" onClick={handleLogout}>Keluar</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

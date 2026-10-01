@@ -68,7 +68,9 @@ function HasilAkhirPage() {
     localStorage.removeItem('pretestDone');
     localStorage.removeItem('modulDone');
     localStorage.removeItem('skorPretest');
+    localStorage.removeItem('rekapPretest');
     localStorage.removeItem('skorPosttest');
+    localStorage.removeItem('rekapPosttest');
     localStorage.removeItem('pretestTime');
     localStorage.removeItem('posttestTime');
     navigate('/siswa/scan');

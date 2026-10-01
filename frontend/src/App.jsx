@@ -16,11 +16,12 @@ import ScanBarcodePage from './pages/siswa/ScanBarcodePage';
 import VerifikasiIDPage from './pages/siswa/VerifikasiIDPage';
 import BiodataPage from './pages/siswa/BiodataPage';
 import SiswaDashboardPage from './pages/siswa/SiswaDashboardPage';
+import PretestIntroPage from './pages/siswa/PretestIntroPage';
 import UjianPage from './pages/siswa/UjianPage';
 import HasilSkorPage from './pages/siswa/HasilSkorPage';
+import PretestSelesaiPage from './pages/siswa/PretestSelesaiPage';
 import ModulPembelajaranPage from './pages/siswa/ModulPembelajaranPage';
-import VerifikasiUlangPage from './pages/siswa/VerifikasiUlangPage';
-import HasilAkhirPage from './pages/siswa/HasilAkhirPage';
+import PeringkatPage from './pages/siswa/PeringkatPage';
 
 import './index.css';
 
@@ -85,16 +86,24 @@ function App() {
         } />
 
         {/* ═══ Siswa Routes (Green Theme — Public, Tanpa Login) ═══ */}
-        {/* Alur: Scan → Verifikasi ID → Biodata → Dashboard → Pretest → Hasil → Modul → Verifikasi Ulang → Posttest → Hasil Akhir */}
+        {/* Alur: Scan → Verifikasi ID → Biodata → Dashboard → Info Pretest → Pretest → Hasil → Pretest Selesai → Modul → Scan → Verifikasi ID → Info Posttest → Posttest → Hasil Posttest → Posttest Selesai → Peringkat → Dashboard */}
         <Route path="/siswa/scan" element={<ScanBarcodePage />} />
         <Route path="/siswa/verifikasi-id" element={<VerifikasiIDPage />} />
         <Route path="/siswa/biodata" element={<BiodataPage />} />
         <Route path="/siswa/dashboard" element={<SiswaDashboardPage />} />
+        <Route path="/siswa/pretest-info" element={<PretestIntroPage />} />
+        <Route path="/siswa/posttest-info" element={<PretestIntroPage mode="posttest" />} />
         <Route path="/siswa/ujian" element={<UjianPage />} />
         <Route path="/siswa/hasil-pretest" element={<HasilSkorPage />} />
+        <Route path="/siswa/pretest-selesai" element={<PretestSelesaiPage />} />
         <Route path="/siswa/modul" element={<ModulPembelajaranPage />} />
-        <Route path="/siswa/verifikasi-ulang" element={<VerifikasiUlangPage />} />
-        <Route path="/siswa/hasil-akhir" element={<HasilAkhirPage />} />
+        {/* Alamat lama sebelum posttest → alur baru: scan dulu */}
+        <Route path="/siswa/verifikasi-ulang" element={<Navigate to="/siswa/scan?untuk=posttest" replace />} />
+        <Route path="/siswa/hasil-posttest" element={<HasilSkorPage mode="posttest" />} />
+        <Route path="/siswa/posttest-selesai" element={<PretestSelesaiPage mode="posttest" />} />
+        <Route path="/siswa/peringkat" element={<PeringkatPage />} />
+        {/* Alamat lama hasil posttest → alur hasil yang baru */}
+        <Route path="/siswa/hasil-akhir" element={<Navigate to="/siswa/hasil-posttest" replace />} />
 
         {/* Redirect /scan ke halaman scan baru */}
         <Route path="/scan" element={<Navigate to="/siswa/scan" replace />} />

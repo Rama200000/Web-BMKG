@@ -1,19 +1,26 @@
 import { useState, useEffect } from 'react';
-import { ChevronLeft, Leaf, Phone, ArrowRight, ShieldCheck, Info, UserCheck, RotateCcw } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ChevronLeft, Phone, ArrowRight, ShieldCheck, Info } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import './mobile-green-theme.css';
+import './siswa-navy.css';
+import './VerifikasiIDPage.css';
 
 /**
  * VerifikasiIDPage — Session Recovery System
  * 1 Nomor Telepon = 1 Data User (Primary Key)
  * - Nomor BARU → arahkan ke Form Biodata
  * - Nomor SUDAH ADA → langsung ke Dashboard (recovery sesi)
+ * Mode `?untuk=posttest` (setelah scan dari kartu Posttest): nomor harus sama dengan
+ * nomor siswa yang sedang masuk, lalu lanjut ke informasi waktu posttest.
  */
 function VerifikasiIDPage() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const untukPosttest = searchParams.get('untuk') === 'posttest';
   const [phone, setPhone] = useState('');
   const [currentTime, setCurrentTime] = useState('');
   const [checking, setChecking] = useState(false);
+  const [mismatch, setMismatch] = useState(false);
 
   useEffect(() => {
     const updateTime = () => {
@@ -38,6 +45,18 @@ function VerifikasiIDPage() {
 
     // Simulate a brief check delay
     setTimeout(() => {
+      if (untukPosttest) {
+        setChecking(false);
+        if (phone !== localStorage.getItem('siswaPhone')) {
+          setMismatch(true);
+          return;
+        }
+        sessionStorage.setItem('posttestVerified', 'true');
+        // replace: tombol kembali dari halaman info tidak membuka verifikasi lagi
+        navigate('/siswa/posttest-info', { replace: true });
+        return;
+      }
+
       const users = getRegisteredUsers();
       const existingUser = users[phone];
 
@@ -50,7 +69,9 @@ function VerifikasiIDPage() {
         if (existingUser.pretestDone) localStorage.setItem('pretestDone', 'true');
         if (existingUser.modulDone) localStorage.setItem('modulDone', 'true');
         if (existingUser.skorPretest) localStorage.setItem('skorPretest', existingUser.skorPretest);
+        if (existingUser.rekapPretest) localStorage.setItem('rekapPretest', existingUser.rekapPretest);
         if (existingUser.skorPosttest) localStorage.setItem('skorPosttest', existingUser.skorPosttest);
+        if (existingUser.rekapPosttest) localStorage.setItem('rekapPosttest', existingUser.rekapPosttest);
         if (existingUser.posttestTime) localStorage.setItem('posttestTime', existingUser.posttestTime);
 
         setChecking(false);
@@ -65,10 +86,12 @@ function VerifikasiIDPage() {
   };
 
   const isValid = phone.length >= 10;
+  const tooShort = phone.length > 0 && !isValid;
+  const inputError = tooShort || mismatch;
 
   return (
     <div className="m-app">
-      <div className="m-screen">
+      <div className="m-screen nv-page">
         <div className="m-statusbar">
           <span>{currentTime}</span>
           <div className="m-statusbar-icons">
@@ -78,69 +101,76 @@ function VerifikasiIDPage() {
           </div>
         </div>
 
-        <header className="m-header">
-          <button className="m-back-btn" onClick={() => navigate(-1)}><ChevronLeft size={18} /></button>
-          <div className="m-app-title">
-            <div className="m-app-logo"><Leaf size={16} color="#059669" /></div>
-            <span>Si Iklim Muda</span>
-          </div>
-          <div className="m-badge"><div className="m-badge-dot"></div> Portal Siswa</div>
+        {/* Header */}
+        <header className="m-header nv-header">
+          <button type="button" className="nv-back-btn" onClick={() => navigate(-1)} aria-label="Kembali">
+            <ChevronLeft size={18} />
+          </button>
+          <div className="m-app-title">Si Iklim Muda</div>
+          <div className="nv-badge"><div className="nv-badge-dot"></div> Siswa</div>
         </header>
 
-        <div className="m-progress">
-          <div className="m-progress-text">
-            <span className="m-progress-step">Langkah 1 dari 4</span>
-            <span className="m-progress-label">Verifikasi ID</span>
-          </div>
-          <div className="m-progress-bars">
-            <div className="m-progress-bar active"></div>
-            <div className="m-progress-bar"></div>
-            <div className="m-progress-bar"></div>
-            <div className="m-progress-bar"></div>
-          </div>
-        </div>
+        {/* Body */}
+        <div className="m-body nv-body">
+          <h1 className="nv-title">Verifikasi ID</h1>
+          <p className="nv-subtitle">
+            {untukPosttest
+              ? 'Masukkan kembali nomor telepon Anda untuk memulai posttest.'
+              : 'Masukkan nomor telepon Anda sebagai ID siswa untuk verifikasi identitas.'}
+          </p>
 
-        <div className="m-body">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-            <div className="m-icon-circle green"><ShieldCheck size={20} /></div>
-            <h1 className="m-title" style={{ fontSize: 22 }}>Verifikasi ID</h1>
-          </div>
-          <p className="m-subtitle">Masukkan nomor telepon Anda sebagai ID siswa untuk verifikasi identitas.</p>
-
-          <form onSubmit={handleSubmit}>
-            <div className="m-form-group">
-              <label className="m-label">Nomor Telepon (ID Siswa) <span className="req">*</span></label>
-              <div style={{ position: 'relative' }}>
-                <Phone size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#9CA3AF' }} />
+          <form className="vid-form" onSubmit={handleSubmit}>
+            {/* Input Card */}
+            <div className="nv-card vid-card">
+              <div className="vid-card-icon"><ShieldCheck size={26} strokeWidth={1.75} /></div>
+              <label className="vid-label" htmlFor="vid-phone">
+                Nomor Telepon (ID Siswa) <span className="req">*</span>
+              </label>
+              <div className="vid-input-wrap">
+                <Phone size={17} className="vid-input-icon" />
                 <input
-                  className="m-input"
+                  id="vid-phone"
+                  className={`vid-input${inputError ? ' invalid' : ''}`}
                   type="tel"
+                  inputMode="numeric"
+                  autoComplete="tel"
                   placeholder="08xxxxxxxxxx"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                  style={{ paddingLeft: 40 }}
+                  onChange={(e) => { setPhone(e.target.value.replace(/\D/g, '')); setMismatch(false); }}
                   required
                   maxLength={13}
+                  aria-invalid={inputError}
+                  aria-describedby="vid-phone-help"
                 />
               </div>
-              {phone.length > 0 && phone.length < 10 && (
-                <p style={{ fontSize: 11, color: '#EF4444', marginTop: 6, fontWeight: 500 }}>Minimal 10 digit nomor telepon.</p>
-              )}
+              <p id="vid-phone-help" className={`vid-help${inputError ? ' error' : ''}`} role={mismatch ? 'alert' : undefined}>
+                {mismatch
+                  ? 'Nomor telepon tidak cocok dengan data Anda.'
+                  : tooShort ? 'Minimal 10 digit nomor telepon.' : 'Gunakan nomor aktif, 10–13 digit angka.'}
+              </p>
             </div>
 
-            <div className="m-info-box">
-              <Info size={16} className="m-info-icon" />
-              <p>Nomor ini menjadi ID unik Anda. Jika Anda sudah pernah mendaftar, Anda akan otomatis masuk ke Dashboard.</p>
-            </div>
-
-            <div style={{ marginTop: 32 }}>
-              <button type="submit" className="m-btn-primary" disabled={!isValid || checking}>
+            {/* Submit */}
+            <div className="nv-footer">
+              <button
+                type="submit"
+                className={`nv-btn${checking ? ' loading' : ''}`}
+                disabled={!isValid || checking}
+              >
                 {checking ? (
-                  <><div className="scan-spinner"></div> Memeriksa...</>
+                  <><div className="nv-spinner"></div> Memeriksa...</>
                 ) : (
-                  <>Lanjut<ArrowRight size={17} /></>
+                  <>Lanjut <ArrowRight size={18} /></>
                 )}
               </button>
+              <p className="nv-note">
+                <Info size={14} className="nv-note-icon" />
+                <span>
+                  {untukPosttest
+                    ? 'Gunakan nomor telepon yang sama dengan saat Anda mendaftar.'
+                    : 'Nomor ini menjadi ID unik Anda. Jika sudah pernah mendaftar, Anda akan otomatis masuk ke Dashboard.'}
+                </span>
+              </p>
             </div>
           </form>
         </div>

@@ -6,15 +6,23 @@ import './QRCodePage.css';
 function QRCodePage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [baseUrl, setBaseUrl] = useState('');
+  // VITE_PUBLIC_URL (opsional) memaksa domain tertentu, mis. https://si-iklim-muda.vercel.app
+  const [baseUrl, setBaseUrl] = useState(
+    (import.meta.env.VITE_PUBLIC_URL || window.location.origin).replace(/\/+$/, '')
+  );
+  const isLocalOnly = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|$)/.test(baseUrl);
 
   useEffect(() => {
-    // Auto-detect base URL
-    const url = window.location.origin;
-    setBaseUrl(url);
-  }, []);
+    // Dev: `localhost` tidak bisa dibuka dari HP → pakai alamat WiFi dev server
+    if (!import.meta.env.DEV || import.meta.env.VITE_PUBLIC_URL || !isLocalOnly) return;
+    fetch('/__dev/lan-origin')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => { if (d?.origin) setBaseUrl(d.origin); })
+      .catch(() => {});
+  }, [isLocalOnly]);
 
-  const studentUrl = `${baseUrl}/siswa/scan`;
+  // ?src=qr → dibuka dari kamera HP, langsung lanjut ke alur siswa tanpa scan ulang
+  const studentUrl = `${baseUrl}/siswa/scan?src=qr`;
   const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(studentUrl)}&color=059669&bgcolor=ffffff&margin=20`;
 
   const handleCopy = () => {
@@ -138,6 +146,12 @@ function QRCodePage() {
                   </button>
                 </div>
                 <p className="qr-info-note">QR Code di samping mengarahkan ke link ini.</p>
+                {isLocalOnly && (
+                  <p className="qr-info-note qr-info-warn">
+                    Link ini memakai <code>localhost</code> dan hanya bisa dibuka di komputer ini, tidak dari HP.
+                    Jalankan <code>npm run dev:https</code> atau buka halaman ini lewat alamat WiFi / domain online.
+                  </p>
+                )}
               </div>
 
               {/* Instructions Card */}

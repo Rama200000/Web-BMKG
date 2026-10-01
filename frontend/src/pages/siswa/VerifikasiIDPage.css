@@ -1,0 +1,84 @@
+/* VerifikasiIDPage.css — style umum ada di siswa-navy.css */
+
+.vid-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* Kartu input */
+.vid-card {
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.vid-card-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid #E9EEF0;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  color: var(--nv-navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+.vid-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--nv-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 18px;
+}
+.vid-label .req { color: var(--red-500); margin-left: 2px; }
+
+.vid-input-wrap {
+  position: relative;
+  width: 100%;
+}
+.vid-input-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--nv-muted);
+  pointer-events: none;
+}
+.vid-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16px 16px 16px 46px;
+  font-size: 16px; /* ≥16px agar iOS Safari tidak auto-zoom */
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  font-family: var(--font);
+  color: var(--gray-900);
+  background: #fff;
+  border: 1.5px solid #DDE3E8;
+  border-radius: 16px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.vid-input::placeholder { color: #A7B1BF; font-weight: 500; }
+.vid-input:focus {
+  outline: none;
+  border-color: var(--nv-navy);
+  box-shadow: 0 0 0 4px rgba(11, 26, 79, 0.08);
+}
+.vid-input.invalid { border-color: #FCA5A5; }
+.vid-input.invalid:focus { box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1); }
+
+.vid-help {
+  margin: 10px 0 0;
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--nv-muted);
+  align-self: flex-start;
+  text-align: left;
+}
+.vid-help.error { color: #DC2626; font-weight: 500; }

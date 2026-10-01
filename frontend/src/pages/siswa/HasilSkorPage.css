@@ -1,97 +1,164 @@
-/* HasilSkorPage.css */
+/* HasilSkorPage.css — style umum ada di siswa-navy.css */
 
-.hasil-body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* ─── Score Circle ─── */
-.hasil-score-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 8px 0 16px;
-}
-
-.hasil-score-circle {
-  position: relative;
-  margin-bottom: 12px;
-}
-
-.hasil-score-ring {
-  position: relative;
-  width: 160px;
-  height: 160px;
-}
-
-.hasil-ring-svg {
-  width: 100%;
-  height: 100%;
-}
-
-.hasil-score-value {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: baseline;
-  gap: 2px;
-}
-
-.hasil-score-number {
-  font-size: 42px;
-  font-weight: 900;
-  letter-spacing: -2px;
-  line-height: 1;
-}
-
-.hasil-score-max {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--gray-400);
-}
-
-.hasil-score-label {
-  font-size: 15px;
-  font-weight: 700;
-  margin: 0;
-  text-align: center;
-}
-
-/* ─── Comparison Cards ─── */
-.hasil-comparison {
-  display: flex;
-  gap: 12px;
-  width: 100%;
-  margin-top: 16px;
-}
-
-.hasil-comp-card {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: #fff;
-  border-radius: 16px;
-  padding: 16px;
-  border: 1px solid var(--gray-100);
-  box-shadow: var(--shadow-sm);
-}
-
-.hasil-comp-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--gray-500);
-  margin: 0 0 2px 0;
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
-}
-
-.hasil-comp-value {
+/* Judul */
+.hasil-title {
+  margin: 0 0 6px;
   font-size: 24px;
   font-weight: 800;
+  letter-spacing: -0.4px;
+  color: var(--gray-900);
+}
+.hasil-subtitle {
+  margin: 0 0 22px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--nv-muted);
+}
+
+/* Kartu hasil */
+.hasil-card {
+  background: #fff;
+  border: 1px solid #E3E8EE;
+  border-radius: 16px;
+  padding: 24px 24px 22px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.hasil-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #E3E8EE;
+}
+.hasil-score-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: #E6F4EF;
+  color: var(--nv-navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+.hasil-score-eyebrow {
   margin: 0;
-  letter-spacing: -1px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--nv-navy);
+}
+.hasil-score-number {
+  margin: 2px 0 0;
+  font-size: 60px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -2px;
+  color: var(--gray-900);
+  font-variant-numeric: tabular-nums;
+}
+.hasil-score-caption {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: #9AA5B5;
+}
+
+/* Skor tertinggi / terendah */
+.hasil-stats {
+  list-style: none;
+  margin: 0;
+  padding: 16px 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.hasil-stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.hasil-stat-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+.hasil-stat-desc {
+  margin: 2px 0 0;
+  font-size: 11.5px;
+  color: #9AA5B5;
+}
+.hasil-stat-value {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--gray-900);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Info di dalam kartu */
+.hasil-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 14px 16px;
+  background: #E6F4EF;
+  border-radius: 12px;
+}
+.hasil-info-icon { color: var(--nv-navy); flex-shrink: 0; margin-top: 1px; }
+.hasil-info p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--nv-navy);
+}
+
+/* ─── Posttest: kartu catatan terpisah di bawah kartu skor ─── */
+.hasil-note {
+  margin-top: 16px;
+  background: #fff;
+  border: 1px solid #E3E8EE;
+  border-radius: 16px;
+  padding: 18px 20px 20px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+.hasil-note-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.hasil-note-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #E6F4EF;
+  color: var(--nv-navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.hasil-note h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+.hasil-note-lead {
+  margin: 0 0 6px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--gray-900);
+}
+.hasil-note-desc {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--nv-muted);
 }

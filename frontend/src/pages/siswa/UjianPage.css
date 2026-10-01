@@ -2,39 +2,44 @@
 
 /* ─── Ujian Header ─── */
 .ujian-header {
-  background: #fff;
-  padding: 12px 20px 14px;
-  border-bottom: 1px solid var(--gray-100);
+  background: var(--nv-bg);
+  padding: 8px 24px 4px;
 }
 .ujian-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.ujian-header-sub {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
 }
 .ujian-mode-badge {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--gray-800);
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  color: var(--nv-navy);
 }
 .ujian-timer {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 15px;
-  font-weight: 800;
-  color: var(--green-700);
-  background: var(--green-50);
-  padding: 6px 14px;
-  border-radius: 12px;
-  border: 1px solid var(--green-200);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--nv-navy);
+  background: #A9E2EC;
+  padding: 6px 12px;
+  border-radius: 999px;
   font-variant-numeric: tabular-nums;
   transition: all 0.3s ease;
 }
 .ujian-timer.warning {
   color: var(--red-600);
-  background: var(--red-50);
-  border-color: #FECACA;
+  background: #FEE2E2;
   animation: timerPulse 1s infinite;
 }
 @keyframes timerPulse {
@@ -43,9 +48,9 @@
 }
 
 .ujian-question-info {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--gray-500);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--nv-muted);
 }
 
 .ujian-grid-toggle {
@@ -53,25 +58,28 @@
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  font-weight: 700;
-  color: var(--green-700);
-  background: var(--green-50);
-  border: 1px solid var(--green-200);
-  padding: 6px 10px;
-  border-radius: 8px;
+  font-weight: 600;
+  font-family: var(--font);
+  color: var(--nv-navy);
+  background: #fff;
+  border: 1px solid #D6DCE5;
+  padding: 6px 12px;
+  border-radius: 999px;
   cursor: pointer;
+  transition: background 0.15s ease;
 }
+.ujian-grid-toggle:hover { background: #F8FAFC; }
 
 .ujian-progress-bar {
   width: 100%;
-  height: 4px;
-  background: var(--gray-200);
+  height: 5px;
+  background: #E1E6EB;
   border-radius: 99px;
   overflow: hidden;
 }
 .ujian-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--green-500), var(--green-400));
+  background: var(--nv-navy);
   border-radius: 99px;
   transition: width 0.4s ease;
 }
@@ -80,7 +88,8 @@
 .ujian-body {
   display: flex;
   flex-direction: column;
-  padding-bottom: 100px; /* Space for bottom nav */
+  background: var(--nv-bg);
+  padding: 12px 24px 100px; /* bawah: ruang untuk bottom nav */
 }
 
 .ujian-flag-indicator {
@@ -100,17 +109,26 @@
 
 .ujian-question-card {
   background: #fff;
-  border-radius: 18px;
-  padding: 20px;
+  border-radius: 12px;
+  padding: 18px 20px 20px;
   margin-bottom: 16px;
-  border: 1px solid var(--gray-100);
-  box-shadow: var(--shadow-sm);
+  border: 1px solid #E3E8EE;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+}
+.ujian-question-eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: var(--nv-navy);
 }
 .ujian-question-text {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--gray-800);
-  line-height: 1.6;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--nv-navy);
+  line-height: 1.45;
   margin: 0;
 }
 
@@ -118,61 +136,73 @@
 .ujian-options {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 .ujian-option {
   display: flex;
-  align-items: flex-start;
-  gap: 12px;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
   background: #fff;
-  border: 1.5px solid var(--gray-200);
-  border-radius: 14px;
-  padding: 14px 16px;
+  border: 1px solid #E3E8EE;
+  border-radius: 12px;
+  padding: 16px 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
   text-align: left;
   font-family: var(--font);
 }
-.ujian-option:hover {
-  border-color: var(--green-300);
-  background: var(--green-50);
-}
-.ujian-option:active { transform: scale(0.98); }
+.ujian-option:hover { border-color: #B9C3D1; }
+.ujian-option:active { transform: scale(0.985); }
+.ujian-option:focus-visible { outline: 2px solid var(--nv-navy); outline-offset: 2px; }
 .ujian-option.selected {
-  border-color: var(--green-500);
-  background: var(--green-50);
-  box-shadow: 0 0 0 3px rgba(16,185,129,0.12);
+  background: #E6F4EF;
+  border: 1.5px solid var(--nv-navy);
+  padding: 15.5px 13.5px; /* kompensasi border lebih tebal agar tidak bergeser */
 }
 
 .ujian-option-label {
-  width: 30px;
-  height: 30px;
-  border-radius: 10px;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 13px;
-  font-weight: 800;
+  font-size: 12px;
+  font-weight: 700;
   flex-shrink: 0;
-  background: var(--gray-100);
-  color: var(--gray-500);
-  transition: all 0.2s ease;
+  background: #F1F3F6;
+  color: #4B5563;
+  transition: all 0.15s ease;
 }
 .ujian-option.selected .ujian-option-label {
-  background: var(--green-500);
+  background: var(--nv-navy);
   color: #fff;
 }
 
 .ujian-option-text {
+  flex: 1;
+  min-width: 0;
   font-size: 14px;
   font-weight: 500;
-  color: var(--gray-700);
-  line-height: 1.5;
-  padding-top: 4px;
+  color: #1F2937;
+  line-height: 1.45;
 }
-.ujian-option.selected .ujian-option-text {
-  color: var(--green-800);
-  font-weight: 600;
+
+/* Radio bulat di kanan */
+.ujian-option-radio {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 2px solid #C5CCD6;
+  background: #fff;
+  transition: all 0.15s ease;
+}
+.ujian-option.selected .ujian-option-radio {
+  border-color: var(--nv-navy);
+  background: radial-gradient(circle, var(--nv-navy) 0 4.5px, #fff 5px);
 }
 
 /* ─── Bottom Navigation ─── */
@@ -225,10 +255,11 @@
 }
 
 .ujian-nav-btn.next {
-  background: var(--green-100);
-  color: var(--green-800);
+  background: var(--nv-navy);
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(11, 26, 79, 0.18);
 }
-.ujian-nav-btn.next:not(:disabled):hover { background: var(--green-200); }
+.ujian-nav-btn.next:not(:disabled):hover { background: var(--nv-navy-hover); }
 
 .ujian-nav-btn.submit {
   background: linear-gradient(135deg, var(--green-600), var(--green-700));
@@ -325,11 +356,36 @@
   border-color: var(--green-200);
 }
 .ujian-grid-num.flagged {
-  background: var(--amber-100);
-  color: var(--amber-800);
-  border-color: var(--amber-300);
+  background: #FEF3C7;
+  color: #92400E;
+  border-color: #FCD34D;
 }
 .ujian-grid-num.current {
   border-color: var(--green-600);
   box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.2);
 }
+
+/* ═══ Dialog selesai pretest / posttest (submit / waktu habis) ═══ */
+.ujian-done-dialog { padding: 30px 22px 22px; }
+.ujian-done-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: #A9E2EC;
+  color: var(--nv-navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ujian-done-dialog h3 {
+  font-size: 20px;
+  color: var(--nv-navy);
+}
+.ujian-done-dialog p {
+  max-width: 240px;
+  margin: 0 auto 26px;
+  font-size: 14px;
+  color: var(--gray-700);
+}
+.ujian-done-dialog .nv-btn { padding: 15px 20px; }

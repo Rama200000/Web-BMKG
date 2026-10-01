@@ -1,17 +1,24 @@
 import { useEffect, useState } from 'react';
-import { ChevronLeft, Leaf, Trophy, TrendingUp, TrendingDown, ArrowRight } from 'lucide-react';
+import { ChevronLeft, GraduationCap, ClipboardCheck, Info, CircleAlert, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './mobile-green-theme.css';
+import './siswa-navy.css';
 import './HasilSkorPage.css';
 
-function HasilSkorPage() {
+/**
+ * Hasil skor setelah pretest / posttest.
+ * Lanjut → halaman "… Selesai!" (rincian benar/salah).
+ */
+function HasilSkorPage({ mode = 'pretest' }) {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState('');
-  const skor = parseInt(localStorage.getItem('skorPretest') || '0');
+  const isPretest = mode === 'pretest';
+  const label = isPretest ? 'Pretest' : 'Posttest';
+  const skor = parseInt(localStorage.getItem(isPretest ? 'skorPretest' : 'skorPosttest') || '0');
 
   // Simulated comparison data
   const skorTertinggi = 95;
-  const skorTerendah = 30;
+  const skorTerendah = isPretest ? 30 : 60;
 
   useEffect(() => {
     const updateTime = () => {
@@ -23,25 +30,14 @@ function HasilSkorPage() {
     return () => clearInterval(t);
   }, []);
 
+  // Selalu ke Dashboard: kembali satu halaman akan membuka soal lagi
   const handleBack = () => {
-    navigate('/siswa/dashboard');
-  };
-
-  const getScoreColor = (s) => {
-    if (s >= 80) return '#059669';
-    if (s >= 60) return '#D97706';
-    return '#DC2626';
-  };
-
-  const getScoreLabel = (s) => {
-    if (s >= 80) return 'Sangat Baik! 🌟';
-    if (s >= 60) return 'Cukup Baik 👍';
-    return 'Perlu Ditingkatkan 💪';
+    navigate('/siswa/dashboard', { replace: true });
   };
 
   return (
     <div className="m-app">
-      <div className="m-screen">
+      <div className="m-screen nv-page">
         <div className="m-statusbar">
           <span>{currentTime}</span>
           <div className="m-statusbar-icons">
@@ -51,70 +47,75 @@ function HasilSkorPage() {
           </div>
         </div>
 
-        <header className="m-header">
-          <button className="m-back-btn" onClick={() => navigate(-1)}><ChevronLeft size={18} /></button>
+        {/* Header */}
+        <header className="m-header nv-header">
+          <button type="button" className="nv-back-btn" onClick={handleBack} aria-label="Kembali ke Dashboard">
+            <ChevronLeft size={18} />
+          </button>
           <div className="m-app-title">
-            <div className="m-app-logo"><Leaf size={16} color="#059669" /></div>
+            <div className="nv-logo"><GraduationCap size={16} strokeWidth={2} /></div>
             <span>Si Iklim Muda</span>
           </div>
-          <div className="m-badge"><div className="m-badge-dot"></div> Pretest</div>
+          <div className="nv-badge"><div className="nv-badge-dot"></div> Siswa</div>
         </header>
 
-        <div className="m-body hasil-body">
-          {/* Score Circle */}
-          <div className="hasil-score-section">
-            <h2 style={{ fontSize: 16, fontWeight: 700, color: '#374151', margin: '0 0 20px 0', textAlign: 'center' }}>
-              Hasil Pretest Kamu
-            </h2>
-            <div className="hasil-score-circle" style={{ '--score-color': getScoreColor(skor) }}>
-              <div className="hasil-score-ring">
-                <svg viewBox="0 0 120 120" className="hasil-ring-svg">
-                  <circle cx="60" cy="60" r="52" fill="none" stroke="#E5E7EB" strokeWidth="8" />
-                  <circle
-                    cx="60" cy="60" r="52" fill="none"
-                    stroke={getScoreColor(skor)} strokeWidth="8"
-                    strokeLinecap="round"
-                    strokeDasharray={`${(skor / 100) * 327} 327`}
-                    transform="rotate(-90 60 60)"
-                    style={{ transition: 'stroke-dasharray 1s ease' }}
-                  />
-                </svg>
-                <div className="hasil-score-value">
-                  <span className="hasil-score-number" style={{ color: getScoreColor(skor) }}>{skor}</span>
-                  <span className="hasil-score-max">/100</span>
+        <div className="m-body nv-body hasil-body">
+          <h1 className="hasil-title">Hasil {label}</h1>
+          <p className="hasil-subtitle">
+            {isPretest
+              ? 'Berikut adalah hasil pretest yang telah kamu kerjakan.'
+              : 'Berikut hasil posttest yang telah kamu kerjakan.'}
+          </p>
+
+          <section className="hasil-card">
+            {/* Skor */}
+            <div className="hasil-score">
+              <div className="hasil-score-icon"><ClipboardCheck size={24} strokeWidth={2} /></div>
+              <p className="hasil-score-eyebrow">Skor {label}</p>
+              <p className="hasil-score-number">{skor}</p>
+              <p className="hasil-score-caption">Skor kamu</p>
+            </div>
+
+            {/* Perbandingan */}
+            <ul className="hasil-stats">
+              <li className="hasil-stat">
+                <div>
+                  <p className="hasil-stat-title">Skor Tertinggi</p>
+                  <p className="hasil-stat-desc">Skor tertinggi yang tercatat</p>
                 </div>
-              </div>
-            </div>
-            <p className="hasil-score-label" style={{ color: getScoreColor(skor) }}>{getScoreLabel(skor)}</p>
-          </div>
+                <p className="hasil-stat-value">{skorTertinggi}</p>
+              </li>
+              <li className="hasil-stat">
+                <div>
+                  <p className="hasil-stat-title">Skor Terendah</p>
+                  <p className="hasil-stat-desc">Skor terendah yang tercatat</p>
+                </div>
+                <p className="hasil-stat-value">{skorTerendah}</p>
+              </li>
+            </ul>
 
-          {/* Comparison Cards */}
-          <div className="hasil-comparison">
-            <div className="hasil-comp-card">
-              <div className="m-icon-circle green"><TrendingUp size={18} /></div>
-              <div>
-                <p className="hasil-comp-label">Skor Tertinggi</p>
-                <p className="hasil-comp-value" style={{ color: '#059669' }}>{skorTertinggi}</p>
+            {isPretest && (
+              <div className="hasil-info">
+                <Info size={17} className="hasil-info-icon" />
+                <p>Pretest selesai. Sekarang kamu dapat melanjutkan ke modul pembelajaran.</p>
               </div>
-            </div>
-            <div className="hasil-comp-card">
-              <div className="m-icon-circle red"><TrendingDown size={18} /></div>
-              <div>
-                <p className="hasil-comp-label">Skor Terendah</p>
-                <p className="hasil-comp-value" style={{ color: '#DC2626' }}>{skorTerendah}</p>
+            )}
+          </section>
+
+          {!isPretest && (
+            <section className="hasil-note">
+              <div className="hasil-note-head">
+                <div className="hasil-note-icon"><CircleAlert size={16} strokeWidth={2.25} /></div>
+                <h2>Hasil Posttest</h2>
               </div>
-            </div>
-          </div>
+              <p className="hasil-note-lead">Posttest telah selesai dikerjakan.</p>
+              <p className="hasil-note-desc">Gunakan hasil ini sebagai gambaran pemahaman kamu setelah mempelajari materi.</p>
+            </section>
+          )}
 
-          <div className="m-info-box" style={{ marginTop: 20 }}>
-            <Trophy size={16} className="m-info-icon" />
-            <p>Pretest selesai! Selanjutnya, pelajari <strong>Modul Pembelajaran</strong> yang sudah terbuka di Dashboard.</p>
-          </div>
-
-          <div style={{ marginTop: 'auto', paddingTop: 24 }}>
-            <button className="m-btn-primary" onClick={handleBack}>
-              Kembali ke Dashboard
-              <ArrowRight size={17} />
+          <div className="nv-footer">
+            <button type="button" className="nv-btn" onClick={() => navigate(isPretest ? '/siswa/pretest-selesai' : '/siswa/posttest-selesai')}>
+              Lanjut <ArrowRight size={18} />
             </button>
           </div>
         </div>

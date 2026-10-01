@@ -201,6 +201,15 @@
   color: #9CA3AF;
   margin: 0;
 }
+.qr-info-warn {
+  margin-top: 8px;
+  padding: 8px 10px;
+  color: #B45309;
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  border-radius: 8px;
+  line-height: 1.5;
+}
 
 /* Steps */
 .qr-steps {
