@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ChevronLeft, GraduationCap, Clock } from 'lucide-react';
+import { ChevronLeft, GraduationCap, Clock, ShieldAlert, AlertTriangle, Ban, ListChecks } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { UJIAN_DURASI_MENIT } from './ujianConfig';
 import './mobile-green-theme.css';
@@ -80,10 +80,42 @@ function PretestIntroPage({ mode = 'pretest' }) {
             <div className="pi-duration-unit">Menit</div>
           </section>
 
-          {/* Info */}
-          <div className="pi-info">
-            <Clock size={20} className="pi-info-icon" />
-            <p>Setelah waktu habis, soal akan secara otomatis terkirim.</p>
+          {/* Aturan Pengerjaan */}
+          <div className="pi-rules">
+            <h2 className="pi-rules-title">
+              <ListChecks size={16} />
+              Aturan Pengerjaan
+            </h2>
+            <ul className="pi-rules-list">
+              <li className="pi-rule-item pi-rule-danger">
+                <div className="pi-rule-icon danger"><Ban size={14} /></div>
+                <div>
+                  <strong>Dilarang keluar halaman / pindah tab</strong>
+                  <p>Jika kamu meninggalkan halaman ujian atau berpindah ke aplikasi lain, jawaban akan <strong>langsung otomatis terkirim</strong> tanpa peringatan.</p>
+                </div>
+              </li>
+              <li className="pi-rule-item">
+                <div className="pi-rule-icon warning"><Clock size={14} /></div>
+                <div>
+                  <strong>Waktu terbatas {UJIAN_DURASI_MENIT} menit</strong>
+                  <p>Setelah waktu habis, seluruh jawaban akan dikirim secara otomatis meskipun belum selesai.</p>
+                </div>
+              </li>
+              <li className="pi-rule-item">
+                <div className="pi-rule-icon warning"><AlertTriangle size={14} /></div>
+                <div>
+                  <strong>Tidak bisa mengulang</strong>
+                  <p>Setelah jawaban terkirim, kamu tidak dapat mengerjakan ulang {mode === 'pretest' ? 'pretest' : 'posttest'} ini.</p>
+                </div>
+              </li>
+              <li className="pi-rule-item">
+                <div className="pi-rule-icon info"><ShieldAlert size={14} /></div>
+                <div>
+                  <strong>Pastikan jawaban sudah benar</strong>
+                  <p>Gunakan tombol "Ragu" untuk menandai soal yang ingin diperiksa ulang sebelum submit.</p>
+                </div>
+              </li>
+            </ul>
           </div>
 
           <div className="nv-footer">

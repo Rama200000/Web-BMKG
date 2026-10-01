@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Clock, ChevronLeft, ChevronRight, Flag, Send, ShieldAlert, Grid3X3, X, GraduationCap, LogOut, CheckCircle2 } from 'lucide-react';
+import { Clock, ChevronLeft, ChevronRight, Flag, Send, Grid3X3, X, GraduationCap, LogOut, CheckCircle2 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { UJIAN_DURASI_MENIT } from './ujianConfig';
 import { bankSoal } from './bankSoal';
@@ -21,8 +21,7 @@ function UjianPage() {
   const [timeLeft, setTimeLeft] = useState(TIMER_SECONDS);
   const [startTime] = useState(Date.now());
   const [currentTime, setCurrentTime] = useState('');
-  const [showWarning, setShowWarning] = useState(false);
-  const [warningCount, setWarningCount] = useState(0);
+  // Warning states removed — auto-submit langsung saat keluar tab
   const [submitted, setSubmitted] = useState(false);
   const [showGrid, setShowGrid] = useState(false);
   const [confirmExit, setConfirmExit] = useState(false);
@@ -62,7 +61,6 @@ function UjianPage() {
     if (submitted || soalList.length === 0) return;
     setSubmitted(true);
     setShowGrid(false);
-    setShowWarning(false);
 
     const elapsed = Math.round((Date.now() - startTime) / 1000);
     let benar = 0;
@@ -119,19 +117,11 @@ function UjianPage() {
     return () => clearInterval(timer);
   }, [timeLeft, submitted, doSubmit]);
 
-  // Anti-cheat
+  // Anti-cheat — langsung auto-submit saat keluar tab / ganti aplikasi
   useEffect(() => {
     const handleVisibility = () => {
       if (document.hidden && !submitted) {
-        setWarningCount(prev => {
-          const newCount = prev + 1;
-          if (newCount >= 2) {
-            doSubmit();
-          } else {
-            setShowWarning(true);
-          }
-          return newCount;
-        });
+        doSubmit('curang');
       }
     };
     document.addEventListener('visibilitychange', handleVisibility);
@@ -370,26 +360,7 @@ function UjianPage() {
           </div>
         )}
 
-        {/* Anti-cheat Warning */}
-        {showWarning && (
-          <div className="m-overlay">
-            <div className="m-modal">
-              <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#FEF2F2', display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '0 auto 16px' }}>
-                <ShieldAlert size={28} color="#DC2626" />
-              </div>
-              <h3 style={{ fontSize: 18, fontWeight: 800, color: '#1F2937', margin: '0 0 8px 0' }}>⚠️ Peringatan!</h3>
-              <p style={{ fontSize: 13, color: '#6B7280', margin: '0 0 6px 0', lineHeight: 1.6 }}>
-                Sistem mendeteksi Anda <strong>meninggalkan halaman ujian</strong>.
-              </p>
-              <p style={{ fontSize: 12, color: '#EF4444', fontWeight: 600, margin: '0 0 20px 0' }}>
-                Peringatan {warningCount}/2 — Pelanggaran berikutnya akan menyebabkan auto-submit.
-              </p>
-              <button className="m-btn-primary" onClick={() => setShowWarning(false)} style={{ background: '#DC2626', boxShadow: '0 4px 12px rgba(220,38,38,0.3)' }}>
-                Saya Mengerti, Lanjutkan
-              </button>
-            </div>
-          </div>
-        )}
+        {/* Anti-cheat: Warning dihapus — langsung auto-submit */}
       </div>
     </div>
   );
