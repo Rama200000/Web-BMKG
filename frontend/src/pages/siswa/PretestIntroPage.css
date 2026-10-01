@@ -1,52 +1,27 @@
-/* PretestIntroPage.css — Modern gradient intro page */
+/* PretestIntroPage.css — style umum ada di siswa-navy.css */
 
-/* Kartu durasi — gradient + glow */
-.pi-body {
-  animation: pi-page-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-@keyframes pi-page-enter {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
+/* Kartu durasi */
 .pi-duration {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 24px 20px 22px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.9) 100%);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(224, 230, 237, 0.5);
-  border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(11, 26, 79, 0.06), 0 2px 8px rgba(11, 26, 79, 0.03);
+  padding: 20px 20px 18px;
+  background: #fff;
+  border: 1px solid #E3E8EE;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
   text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-.pi-duration::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--nv-navy), #2E5DAA, var(--green-500));
 }
 .pi-duration-icon {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #B5E8F0 0%, #8DD8E8 100%);
+  background: #A9E2EC;
   color: var(--nv-navy);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 14px;
-  box-shadow: 0 4px 16px rgba(141, 216, 232, 0.35);
-  animation: pi-icon-pulse 3s ease-in-out infinite;
-}
-@keyframes pi-icon-pulse {
-  0%, 100% { transform: scale(1); box-shadow: 0 4px 16px rgba(141, 216, 232, 0.35); }
-  50% { transform: scale(1.06); box-shadow: 0 6px 24px rgba(141, 216, 232, 0.5); }
+  margin-bottom: 12px;
 }
 .pi-duration-label {
   margin: 0;
@@ -55,30 +30,23 @@
   color: var(--nv-navy);
 }
 .pi-duration-value {
-  font-size: 72px;
+  font-size: 64px;
   font-weight: 800;
   line-height: 1.05;
-  letter-spacing: -3px;
+  letter-spacing: -2px;
   color: var(--nv-navy);
-  margin: 6px 0 8px;
+  margin: 4px 0 6px;
   font-variant-numeric: tabular-nums;
 }
 .pi-duration-unit {
   font-size: 16px;
   font-weight: 700;
-  color: var(--nv-muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  color: var(--nv-navy);
 }
 
-/* Aturan Pengerjaan — card list */
+/* Aturan Pengerjaan */
 .pi-rules {
   margin-top: 22px;
-  animation: pi-rules-enter 0.5s ease 0.2s both;
-}
-@keyframes pi-rules-enter {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 .pi-rules-title {
   display: flex;
@@ -102,55 +70,35 @@
   align-items: flex-start;
   gap: 10px;
   padding: 12px;
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(6px);
-  border: 1px solid rgba(227, 232, 238, 0.5);
-  border-radius: 14px;
-  transition: all 0.25s ease;
-  animation: pi-rule-slide 0.4s ease both;
-  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.03);
-}
-.pi-rule-item:nth-child(1) { animation-delay: 0.25s; }
-.pi-rule-item:nth-child(2) { animation-delay: 0.3s; }
-.pi-rule-item:nth-child(3) { animation-delay: 0.35s; }
-.pi-rule-item:nth-child(4) { animation-delay: 0.4s; }
-@keyframes pi-rule-slide {
-  from { opacity: 0; transform: translateX(-10px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-.pi-rule-item:hover {
-  transform: translateX(4px);
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+  background: #F8FAFC;
+  border: 1px solid #E3E8EE;
+  border-radius: 10px;
 }
 .pi-rule-item.pi-rule-danger {
-  background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
-  border-color: rgba(254, 202, 202, 0.6);
-  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.06);
+  background: #FEF2F2;
+  border-color: #FECACA;
 }
 .pi-rule-icon {
   flex-shrink: 0;
-  width: 30px;
-  height: 30px;
-  border-radius: 10px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 1px;
 }
 .pi-rule-icon.danger {
-  background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+  background: #FEE2E2;
   color: #DC2626;
-  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.15);
 }
 .pi-rule-icon.warning {
-  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  background: #FEF3C7;
   color: #D97706;
-  box-shadow: 0 2px 6px rgba(217, 119, 6, 0.12);
 }
 .pi-rule-icon.info {
-  background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+  background: #DBEAFE;
   color: #2563EB;
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.12);
 }
 .pi-rule-item strong {
   display: block;

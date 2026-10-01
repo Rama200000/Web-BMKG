@@ -339,22 +339,12 @@ function UjianPage() {
               aria-describedby="ujian-done-desc"
             >
               <div className="ujian-done-icon">
-                {selesai === 'waktu' ? (
-                  <Clock size={26} strokeWidth={1.75} />
-                ) : selesai === 'curang' ? (
-                  <CheckCircle2 size={26} strokeWidth={1.75} color="#DC2626" />
-                ) : (
-                  <CheckCircle2 size={26} strokeWidth={1.75} />
-                )}
+                {selesai === 'waktu' ? <Clock size={26} strokeWidth={1.75} /> : <CheckCircle2 size={26} strokeWidth={1.75} />}
               </div>
-              <h3 id="ujian-done-title">
-                {selesai === 'waktu' ? 'Waktu Habis' : selesai === 'curang' ? 'Terdeteksi Keluar Tab' : 'Jawaban Terkirim'}
-              </h3>
+              <h3 id="ujian-done-title">{selesai === 'waktu' ? 'Waktu Habis' : 'Jawaban Terkirim'}</h3>
               <p id="ujian-done-desc">
                 {selesai === 'waktu'
                   ? `Durasi pengerjaan ${mode} sudah selesai. Jawaban Anda akan segera dikirim.`
-                  : selesai === 'curang'
-                  ? `Anda terdeteksi keluar dari ujian atau berpindah tab. Ujian ${mode} Anda otomatis disubmit.`
                   : `Semua jawaban ${mode} Anda sudah terkirim. Lihat skor yang Anda peroleh.`}
               </p>
               {/* replace: tombol back dari halaman hasil tidak membuka soal lagi */}

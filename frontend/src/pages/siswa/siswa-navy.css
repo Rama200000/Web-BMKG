@@ -1,30 +1,25 @@
 /* ══════════════════════════════════════════════════════════════
-   siswa-navy.css — Tema modern gradient + navy untuk halaman siswa
+   siswa-navy.css — Tema terang + aksen navy untuk halaman siswa
    Dipakai bersama mobile-green-theme.css (frame, statusbar, m-body)
    ══════════════════════════════════════════════════════════════ */
 
 .nv-page {
   --nv-navy: #0B1A4F;
   --nv-navy-hover: #13266A;
-  --nv-bg: #F0F4F8;
+  --nv-bg: #F5F7F7;
   --nv-muted: #6B7A90;
-  --nv-line: #E0E6ED;
-  --nv-gradient-start: #E8EFF8;
-  --nv-gradient-end: #F0F4F8;
-  background: linear-gradient(180deg, var(--nv-gradient-start) 0%, var(--nv-gradient-end) 100%);
+  --nv-line: #E6EBEE;
+  background-color: var(--nv-bg);
 }
 .nv-page .m-statusbar,
-.nv-page .m-home-indicator { background: transparent; }
+.nv-page .m-home-indicator { background: var(--nv-bg); }
 .nv-page .m-home-indicator-line { background: #CBD5E1; }
 
-/* Header — glassmorphism */
+/* Header */
 .nv-header {
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(224, 230, 237, 0.6);
+  background: transparent;
+  border-bottom: none;
   padding: 14px 24px 10px;
-  transition: background 0.3s ease;
 }
 .nv-header .m-app-title {
   font-size: 17px;
@@ -36,49 +31,38 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border: 1px solid rgba(224, 230, 237, 0.8);
-  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--nv-line);
+  background: #fff;
   color: var(--nv-navy);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(11, 26, 79, 0.06);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  transition: all 0.15s ease;
 }
-.nv-back-btn:hover { 
-  background: #fff; 
-  box-shadow: 0 4px 12px rgba(11, 26, 79, 0.1);
-  transform: translateY(-1px);
-}
-.nv-back-btn:active { transform: scale(0.9); }
+.nv-back-btn:hover { background: #F8FAFC; }
+.nv-back-btn:active { transform: scale(0.92); }
 
 .nv-badge {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 12px;
+  padding: 5px 11px;
   border-radius: 999px;
-  background: linear-gradient(135deg, #E0F7EE 0%, #C6F0DC 100%);
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  background: #E8F7F1;
+  border: 1px solid #CDEFE2;
   color: var(--nv-navy);
   font-size: 11px;
   font-weight: 600;
   white-space: nowrap;
-  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.12);
 }
 .nv-badge-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #10B981, #059669);
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
-  animation: nv-pulse-dot 2s ease-in-out infinite;
-}
-@keyframes nv-pulse-dot {
-  0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(16, 185, 129, 0.5); transform: scale(1); }
-  50% { opacity: 0.6; box-shadow: 0 0 3px rgba(16, 185, 129, 0.3); transform: scale(0.85); }
+  background: var(--nv-navy);
 }
 
 /* Body & judul */
@@ -86,7 +70,7 @@
   display: flex;
   flex-direction: column;
   padding: 20px 24px 20px !important;
-  background: transparent;
+  background: var(--nv-bg);
 }
 .nv-title {
   font-size: 22px;
@@ -102,29 +86,22 @@
   margin: -24px 0 28px;
 }
 
-/* Kartu — glassmorphism subtle */
+/* Kartu abu-abu terang */
 .nv-card {
-  background: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(241,244,245,0.75) 100%);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(224, 230, 237, 0.6);
+  background: linear-gradient(180deg, #F1F4F5 0%, #EEF2F3 100%);
+  border: 1px solid var(--nv-line);
   border-radius: 28px;
-  box-shadow: 0 4px 16px rgba(11, 26, 79, 0.04), 0 1px 3px rgba(11, 26, 79, 0.03);
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
-}
-.nv-card:hover {
-  box-shadow: 0 8px 24px rgba(11, 26, 79, 0.08);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.03);
 }
 
-/* Tombol utama — gradient navy */
+/* Tombol utama */
 .nv-footer {
   margin-top: auto;
   padding-top: 16px;
 }
 .nv-btn {
   width: 100%;
-  background: linear-gradient(135deg, var(--nv-navy) 0%, #1A3078 50%, var(--nv-navy) 100%);
-  background-size: 200% 100%;
+  background: var(--nv-navy);
   color: #fff;
   border: none;
   border-radius: 16px;
@@ -137,52 +114,24 @@
   justify-content: center;
   gap: 10px;
   cursor: pointer;
-  box-shadow: 
-    0 8px 24px -6px rgba(11, 26, 79, 0.35),
-    0 4px 10px rgba(11, 26, 79, 0.12),
-    inset 0 1px 0 rgba(255,255,255,0.08);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
+  box-shadow: 0 8px 20px -6px rgba(16, 185, 129, 0.45), 0 4px 10px rgba(11, 26, 79, 0.18);
+  transition: all 0.2s ease;
 }
-.nv-btn::before {
-  content: '';
-  position: absolute;
-  top: 0; left: -100%; right: 0; bottom: 0;
-  width: 200%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
-  transition: left 0.5s ease;
-}
-.nv-btn:hover { 
-  background-position: 100% 0;
-  transform: translateY(-2px); 
-  box-shadow: 
-    0 12px 32px -6px rgba(11, 26, 79, 0.4),
-    0 6px 14px rgba(11, 26, 79, 0.15),
-    inset 0 1px 0 rgba(255,255,255,0.1);
-}
-.nv-btn:hover::before { left: 100%; }
-.nv-btn:active { transform: scale(0.97) translateY(0); }
+.nv-btn:hover { background: var(--nv-navy-hover); transform: translateY(-1px); }
+.nv-btn:active { transform: scale(0.98); }
 .nv-btn:disabled {
-  background: linear-gradient(135deg, #B8C0CE, #A0AABC);
+  background: #B8C0CE;
   box-shadow: none;
   cursor: not-allowed;
   transform: none;
 }
-.nv-btn:disabled::before { display: none; }
 .nv-btn.secondary {
-  background: rgba(255, 255, 255, 0.9);
+  background: #fff;
   color: var(--nv-navy);
-  border: 1.5px solid rgba(214, 220, 229, 0.8);
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
-  backdrop-filter: blur(8px);
+  border: 1.5px solid #D6DCE5;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
-.nv-btn.secondary::before { display: none; }
-.nv-btn.secondary:hover { 
-  background: #fff; 
-  border-color: #B8C5D6;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
-}
+.nv-btn.secondary:hover { background: #F8FAFC; }
 
 /* Catatan kecil di bawah tombol */
 .nv-note {
@@ -198,7 +147,7 @@
 .nv-note span { flex: 1; text-align: center; }
 .nv-note-icon { flex-shrink: 0; margin-top: 2px; }
 
-/* Alert — gradient backgrounds */
+/* Alert */
 .nv-alert {
   display: flex;
   align-items: flex-start;
@@ -211,12 +160,12 @@
   animation: m-slideUp 0.3s ease;
 }
 .nv-alert.fail {
-  background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+  background: #FEF2F2;
   border: 1px solid #FECACA;
   color: #DC2626;
 }
 .nv-alert.success {
-  background: linear-gradient(135deg, var(--green-50) 0%, var(--green-100) 100%);
+  background: var(--green-50);
   border: 1px solid var(--green-200);
   color: var(--green-700);
 }
@@ -234,48 +183,39 @@
 }
 @keyframes nv-spin { to { transform: rotate(360deg); } }
 
-/* Tombol saat proses (spinner) */
+/* Tombol saat proses (spinner) — tetap navy, bukan abu-abu */
 .nv-btn.loading:disabled {
-  background: linear-gradient(135deg, var(--nv-navy), #1A3078);
-  opacity: 0.85;
+  background: var(--nv-navy);
+  opacity: 0.8;
   box-shadow: 0 4px 10px rgba(11, 26, 79, 0.18);
 }
 
-/* Logo kecil di header — gradient */
+/* Logo kecil di header */
 .nv-logo {
   width: 30px;
   height: 30px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #D5F5E8 0%, #A7ECCC 100%);
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  background: #E8F7F1;
+  border: 1px solid #CDEFE2;
   color: var(--nv-navy);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15);
-  transition: transform 0.3s ease;
 }
-.nv-logo:hover { transform: rotate(-6deg) scale(1.05); }
 
-/* Dialog konfirmasi — frosted glass */
-.nv-dialog { 
-  padding: 28px 22px 22px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
+/* Dialog konfirmasi (dipakai bersama .m-overlay + .m-modal) */
+.nv-dialog { padding: 28px 22px 22px; }
 .nv-dialog-icon {
   width: 52px;
   height: 52px;
   margin: 0 auto 14px;
   border-radius: 16px;
-  background: linear-gradient(135deg, #E8EFF8 0%, #D6E0F0 100%);
+  background: #EEF2F7;
   color: var(--nv-navy);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(11, 26, 79, 0.08);
 }
 .nv-dialog h3 {
   margin: 0 0 8px;

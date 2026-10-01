@@ -1,25 +1,20 @@
-/* SiswaDashboardPage.css — Modern gradient + interactive dashboard */
+/* SiswaDashboardPage.css — style umum ada di siswa-navy.css */
 
 .dash-body {
-  --dash-cyan: #8DD8E8;
+  --dash-cyan: #A9E2EC;
   --dash-cyan-soft: #E1F2F6;
   --dash-cyan-line: #CDE8EF;
   padding-top: 12px !important;
   overflow-x: hidden;
 }
 
-/* ─── Hero — gradient card ─── */
+/* ─── Hero ─── */
 .dash-hero {
   position: relative;
   display: flex;
   align-items: flex-start;
-  margin: 0 0 22px 0;
+  margin: 0 -24px 22px 0; /* ilustrasi menempel ke tepi kanan layar */
   min-height: 150px;
-  animation: dash-hero-enter 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-@keyframes dash-hero-enter {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 .dash-hero-text {
   position: relative;
@@ -51,18 +46,11 @@
   width: 128px;
   height: 150px;
   border-radius: 64% 0 0 58% / 52% 0 0 48%;
-  background: linear-gradient(160deg, #B1DFFF 0%, #7EC4F7 40%, #A0CFFA 100%);
-  box-shadow: 0 8px 32px -8px rgba(126, 196, 247, 0.4);
-  animation: dash-art-float 4s ease-in-out infinite;
+  background: linear-gradient(160deg, #B8E3FB 0%, #8CC8F5 100%);
 }
-@keyframes dash-art-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-}
-.dash-hero-art img { position: absolute; pointer-events: none; user-select: none; transition: transform 0.3s ease; }
-.dash-hero-art:hover img { transform: scale(1.06); }
+.dash-hero-art img { position: absolute; pointer-events: none; user-select: none; }
 .dash-hero-books  { width: 92px; left: 20px; bottom: 26px; }
-.dash-hero-cap    { width: 80px; left: 34px; bottom: 62px; filter: drop-shadow(0 6px 10px rgba(11, 26, 79, 0.2)); }
+.dash-hero-cap    { width: 80px; left: 34px; bottom: 62px; filter: drop-shadow(0 4px 6px rgba(11, 26, 79, 0.18)); }
 .dash-hero-scroll { width: 58px; left: 0; bottom: 30px; transform: rotate(-18deg); }
 
 /* ─── Judul seksi ─── */
@@ -72,24 +60,18 @@
   color: var(--gray-900);
   letter-spacing: -0.3px;
   margin: 0 0 4px;
-  animation: dash-fade-in 0.5s ease 0.2s both;
 }
 .dash-section-sub {
   font-size: 13px;
   color: var(--nv-muted);
   margin: 0 0 16px;
-  animation: dash-fade-in 0.5s ease 0.3s both;
-}
-@keyframes dash-fade-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
-/* ─── Kartu menu — gradient + interaktif ─── */
+/* ─── Kartu menu ─── */
 .dash-menu {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 .dash-menu-card {
   display: flex;
@@ -98,61 +80,26 @@
   width: 100%;
   padding: 16px 14px;
   border: none;
-  border-radius: 18px;
+  border-radius: 16px;
   text-align: left;
   font-family: var(--font);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  animation: dash-card-enter 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
-.dash-menu-card:nth-child(1) { animation-delay: 0.15s; }
-.dash-menu-card:nth-child(2) { animation-delay: 0.25s; }
-.dash-menu-card:nth-child(3) { animation-delay: 0.35s; }
-@keyframes dash-card-enter {
-  from { opacity: 0; transform: translateX(-12px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-/* Shimmer sweep on active cards */
-.dash-menu-card.active::after {
-  content: '';
-  position: absolute;
-  top: 0; left: -60%; bottom: 0;
-  width: 30%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-  transform: skewX(-15deg);
-  animation: dash-shimmer 3s ease-in-out infinite 1s;
-}
-@keyframes dash-shimmer {
-  0% { left: -60%; }
-  40%, 100% { left: 130%; }
-}
-
 .dash-menu-card.active {
-  background: linear-gradient(135deg, #8DD8E8 0%, #6DCAE0 50%, #A1E1EF 100%);
-  box-shadow: 
-    0 8px 24px -8px rgba(34, 140, 170, 0.4),
-    0 2px 6px rgba(34, 140, 170, 0.1);
+  background: var(--dash-cyan);
+  box-shadow: 0 6px 16px -8px rgba(34, 140, 170, 0.45);
 }
 .dash-menu-card.done {
-  background: linear-gradient(135deg, #E8F5F2 0%, #D5EEE9 100%);
-  border: 1.5px solid rgba(169, 226, 236, 0.5);
-  box-shadow: 0 2px 8px rgba(34, 140, 170, 0.08);
+  background: var(--dash-cyan-soft);
+  border: 1.5px solid var(--dash-cyan-line);
 }
 .dash-menu-card.locked {
-  background: linear-gradient(135deg, #EEF2F5 0%, #E5EAEF 100%);
+  background: var(--dash-cyan-soft);
   cursor: not-allowed;
-  opacity: 0.85;
 }
-.dash-menu-card:not(:disabled):hover { 
-  transform: translateY(-3px); 
-  box-shadow: 
-    0 12px 28px -8px rgba(34, 140, 170, 0.35),
-    0 4px 8px rgba(34, 140, 170, 0.08);
-}
-.dash-menu-card:not(:disabled):active { transform: scale(0.975) translateY(0); }
+.dash-menu-card:not(:disabled):hover { transform: translateY(-1px); }
+.dash-menu-card:not(:disabled):active { transform: scale(0.985); }
 .dash-menu-card:focus-visible {
   outline: 2px solid var(--nv-navy);
   outline-offset: 2px;
@@ -162,23 +109,16 @@
   width: 66px;
   height: 64px;
   flex-shrink: 0;
-  border-radius: 16px;
+  border-radius: 14px;
   background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(6px);
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.dash-menu-card:not(:disabled):hover .dash-menu-icon {
-  transform: scale(1.05) rotate(-2deg);
-  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.1);
-}
-.dash-menu-icon img { width: 48px; height: 48px; transition: transform 0.3s ease; }
-.dash-menu-card:not(:disabled):hover .dash-menu-icon img { transform: scale(1.08); }
-.dash-menu-card.locked .dash-menu-icon { background: rgba(255, 255, 255, 0.5); box-shadow: none; }
-.dash-menu-card.locked .dash-menu-icon img { opacity: 0.45; filter: saturate(0.4) grayscale(0.3); }
+.dash-menu-icon img { width: 48px; height: 48px; }
+.dash-menu-card.locked .dash-menu-icon { background: rgba(255, 255, 255, 0.6); box-shadow: none; }
+.dash-menu-card.locked .dash-menu-icon img { opacity: 0.55; filter: saturate(0.6); }
 
 .dash-menu-text {
   flex: 1;
@@ -208,43 +148,27 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.dash-menu-card:not(:disabled):hover .dash-menu-status { transform: scale(1.1); }
-.dash-menu-status.lock { 
-  background: linear-gradient(135deg, #D3E8DE, #C5DDD2); 
-  color: #7F9A8D; 
-}
-.dash-menu-status.done { 
-  background: linear-gradient(135deg, #C6F7DC, #A7F3D0); 
-  color: var(--green-700); 
-  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
-}
-.dash-menu-status.go { 
-  background: rgba(255, 255, 255, 0.8); 
-  color: var(--nv-navy);
-  box-shadow: 0 2px 6px rgba(11, 26, 79, 0.08);
-}
+.dash-menu-status.lock { background: #D3E8DE; color: #7F9A8D; }
+.dash-menu-status.done { background: #D1FAE5; color: var(--green-700); }
+.dash-menu-status.go   { background: rgba(255, 255, 255, 0.7); color: var(--nv-navy); }
 
-/* ─── Info — gradient card ─── */
+/* ─── Info ─── */
 .dash-info {
   display: flex;
   align-items: center;
   gap: 14px;
   margin-top: 24px;
   padding: 16px 18px;
-  background: linear-gradient(135deg, #E6F4F8 0%, #D8ECF1 100%);
-  border-radius: 16px;
-  border: 1px solid rgba(169, 226, 236, 0.35);
-  box-shadow: 0 2px 8px rgba(34, 140, 170, 0.06);
-  animation: dash-fade-in 0.5s ease 0.45s both;
+  background: var(--dash-cyan-soft);
+  border-radius: 14px;
 }
 .dash-info-icon { color: var(--nv-navy); flex-shrink: 0; }
 .dash-info-divider {
   align-self: stretch;
   width: 2px;
   border-radius: 2px;
-  background: linear-gradient(180deg, transparent, #5B6B85, transparent);
+  background: #5B6B85;
   flex-shrink: 0;
 }
 .dash-info p {
