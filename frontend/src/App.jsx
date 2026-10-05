@@ -7,7 +7,10 @@ import TambahModulPage from './pages/admin/TambahModulPage';
 import SoalPage from './pages/admin/SoalPage';
 import TambahSoalPage from './pages/admin/TambahSoalPage';
 import HasilSkorPageAdmin from './pages/admin/HasilSkorPage';
+import DetailSkorPage from './pages/admin/DetailSkorPage';
+import LeaderboardPage from './pages/admin/LeaderboardPage';
 import PengaturanPage from './pages/admin/PengaturanPage';
+import PengaturanSekolahPage from './pages/admin/PengaturanSekolahPage';
 import KelolaAdminPage from './pages/admin/KelolaAdminPage';
 import QRCodePage from './pages/admin/QRCodePage';
 
@@ -57,6 +60,9 @@ function App() {
         <Route path="/data-siswa" element={
           <ProtectedRoute allowedRoles={['admin', 'super_admin']}><DataSiswaPage /></ProtectedRoute>
         } />
+        <Route path="/pengaturan-sekolah" element={
+          <ProtectedRoute allowedRoles={['admin', 'super_admin']}><PengaturanSekolahPage /></ProtectedRoute>
+        } />
         <Route path="/modul" element={
           <ProtectedRoute allowedRoles={['admin', 'super_admin']}><ModulPage /></ProtectedRoute>
         } />
@@ -71,6 +77,12 @@ function App() {
         } />
         <Route path="/hasil-skor" element={
           <ProtectedRoute allowedRoles={['admin', 'super_admin']}><HasilSkorPageAdmin /></ProtectedRoute>
+        } />
+        <Route path="/hasil-skor/detail" element={
+          <ProtectedRoute allowedRoles={['admin', 'super_admin']}><DetailSkorPage /></ProtectedRoute>
+        } />
+        <Route path="/hasil-skor/leaderboard" element={
+          <ProtectedRoute allowedRoles={['admin', 'super_admin']}><LeaderboardPage /></ProtectedRoute>
         } />
         <Route path="/pengaturan" element={
           <ProtectedRoute allowedRoles={['admin', 'super_admin']}><PengaturanPage /></ProtectedRoute>

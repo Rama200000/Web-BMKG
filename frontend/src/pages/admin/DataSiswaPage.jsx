@@ -5,192 +5,236 @@ import {
   Bell,
   ChevronRight,
   GraduationCap,
-  CheckCircle2,
-  MoreHorizontal,
-  XCircle,
   Search,
   ChevronDown,
   RefreshCw,
   Eye,
   Trash2,
-  ChevronLeft
+  ChevronLeft,
+  Plus,
+  TrendingUp,
+  LayoutDashboard,
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import './DataSiswaPage.css';
 
-const dummySiswaData = [];
+// Data dummy siswa (7 per halaman sesuai desain)
+const allSiswaData = [
+  { no: 1,  nama: 'Eka Wijaya',       sekolah: 'SMAN 2',  jurusan: 'IPA',  kelas: 'XII A' },
+  { no: 2,  nama: 'Gita Permata',     sekolah: 'SMAN 2',  jurusan: 'IPS',  kelas: 'XI A'  },
+  { no: 3,  nama: 'Alya Putri',       sekolah: 'SMKN 1',  jurusan: 'RPL',  kelas: 'XII C' },
+  { no: 4,  nama: 'Bima Pratama',     sekolah: 'SMAN 1',  jurusan: 'IPA',  kelas: 'XII A' },
+  { no: 5,  nama: 'Fajar Ramadhan',   sekolah: 'SMKN 1',  jurusan: 'RPL',  kelas: 'XII C' },
+  { no: 6,  nama: 'Citra Lestari',    sekolah: 'SMKN 2',  jurusan: 'TKJ',  kelas: 'XI B'  },
+  { no: 7,  nama: 'Danu Saputra',     sekolah: 'SMA 3',   jurusan: 'IPS',  kelas: 'XI A'  },
+  { no: 8,  nama: 'Hani Rahayu',      sekolah: 'SMAN 1',  jurusan: 'IPA',  kelas: 'XII B' },
+  { no: 9,  nama: 'Ilham Saputra',    sekolah: 'SMKN 2',  jurusan: 'TKJ',  kelas: 'XI C'  },
+  { no: 10, nama: 'Jeni Kurniawati',  sekolah: 'SMAN 2',  jurusan: 'IPS',  kelas: 'XI A'  },
+  { no: 11, nama: 'Kevin Pratama',    sekolah: 'SMKN 1',  jurusan: 'RPL',  kelas: 'XII A' },
+  { no: 12, nama: 'Laras Setiawati',  sekolah: 'SMAN 3',  jurusan: 'IPA',  kelas: 'XII C' },
+  { no: 13, nama: 'Muhammad Rizki',   sekolah: 'SMAN 1',  jurusan: 'IPA',  kelas: 'XI A'  },
+  { no: 14, nama: 'Nadia Putri',      sekolah: 'SMKN 2',  jurusan: 'RPL',  kelas: 'XII B' },
+  { no: 15, nama: 'Oscar Firmansyah', sekolah: 'SMA 3',   jurusan: 'IPS',  kelas: 'XII A' },
+];
+
+const ITEMS_PER_PAGE = 7;
+
+const jurusanColorMap = {
+  'IPA': 'jurusan-ipa',
+  'IPS': 'jurusan-ips',
+  'RPL': 'jurusan-rpl',
+  'TKJ': 'jurusan-tkj',
+};
 
 function DataSiswaPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [siswaData, setSiswaData] = useState(dummySiswaData);
+  const [currentPage, setCurrentPage]     = useState(1);
+  const [siswaData, setSiswaData]         = useState(allSiswaData);
+  const [searchQuery, setSearchQuery]     = useState('');
+  const [filterSekolah, setFilterSekolah] = useState('Semua Sekolah');
+  const [filterJurusan, setFilterJurusan] = useState('Semua Jurusan');
+  const [filterKelas, setFilterKelas]     = useState('Semua Kelas');
 
-  const loadData = () => {
+  // Gabungkan dari localStorage juga
+  useEffect(() => {
     const records = JSON.parse(localStorage.getItem('studentRecords') || '[]');
     const currentStudent = JSON.parse(localStorage.getItem('currentStudent') || '{}');
-    
-    // Format records from localStorage
-    const formattedRecords = records.map((rec, index) => ({
-      no: dummySiswaData.length + index + 1,
-      initials: rec.nama.substring(0, 2).toUpperCase(),
-      avatarColor: 'blue',
+
+    const fromStorage = records.map((rec, i) => ({
+      no: allSiswaData.length + i + 1,
       nama: rec.nama,
-      nisn: 'Baru Scan',
       sekolah: rec.sekolah,
       jurusan: rec.jurusan,
       kelas: rec.kelas,
-      nilai: rec.nilaiPretest || '-',
-      nilaiClass: rec.nilaiPretest >= 80 ? 'high' : rec.nilaiPretest >= 60 ? 'medium' : 'low',
-      status: rec.status || 'Selesai'
     }));
 
-    // If there is a student currently doing it
-    if (currentStudent && currentStudent.nama) {
-      formattedRecords.push({
-        no: dummySiswaData.length + records.length + 1,
-        initials: currentStudent.nama.substring(0, 2).toUpperCase(),
-        avatarColor: 'gray',
+    if (currentStudent?.nama) {
+      fromStorage.push({
+        no: allSiswaData.length + records.length + 1,
         nama: currentStudent.nama,
-        nisn: 'Sedang Aktif',
         sekolah: currentStudent.sekolah,
         jurusan: currentStudent.jurusan,
         kelas: currentStudent.kelas,
-        nilai: currentStudent.nilaiPretest || '-',
-        nilaiClass: 'medium',
-        status: currentStudent.status || 'Dalam Proses'
       });
     }
 
-    setSiswaData([...dummySiswaData, ...formattedRecords]);
-  };
-
-  useEffect(() => {
-    loadData();
-    // Refresh data every 5 seconds to monitor in real-time
-    const interval = setInterval(loadData, 5000);
-    return () => clearInterval(interval);
+    setSiswaData([...allSiswaData, ...fromStorage]);
   }, []);
 
-  const getStatusClass = (status) => {
-    switch (status) {
-      case 'Selesai': return 'selesai';
-      case 'Dalam Proses': return 'proses';
-      case 'Tidak Selesai': return 'tidak-selesai';
-      default: return '';
+  // Filter data
+  const filtered = siswaData.filter(s => {
+    const q = searchQuery.toLowerCase();
+    const matchSearch = !q || s.nama.toLowerCase().includes(q)
+      || s.sekolah.toLowerCase().includes(q)
+      || s.kelas.toLowerCase().includes(q);
+    const matchSekolah  = filterSekolah  === 'Semua Sekolah'  || s.sekolah  === filterSekolah;
+    const matchJurusan  = filterJurusan  === 'Semua Jurusan'  || s.jurusan  === filterJurusan;
+    const matchKelas    = filterKelas    === 'Semua Kelas'    || s.kelas    === filterKelas;
+    return matchSearch && matchSekolah && matchJurusan && matchKelas;
+  });
+
+  const totalPages  = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+  const paginated   = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const startItem   = filtered.length > 0 ? (currentPage - 1) * ITEMS_PER_PAGE + 1 : 0;
+  const endItem     = Math.min(currentPage * ITEMS_PER_PAGE, filtered.length);
+
+  const handleReset = () => {
+    setSearchQuery('');
+    setFilterSekolah('Semua Sekolah');
+    setFilterJurusan('Semua Jurusan');
+    setFilterKelas('Semua Kelas');
+    setCurrentPage(1);
+  };
+
+  const sekolahList  = ['Semua Sekolah',  ...new Set(siswaData.map(s => s.sekolah))];
+  const jurusanList  = ['Semua Jurusan',  ...new Set(siswaData.map(s => s.jurusan))];
+  const kelasList    = ['Semua Kelas',    ...new Set(siswaData.map(s => s.kelas))];
+
+  // Pagination numbers
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (currentPage > 3) pages.push('...');
+      for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+        pages.push(i);
+      }
+      if (currentPage < totalPages - 2) pages.push('...');
+      pages.push(totalPages);
     }
+    return pages;
   };
 
   return (
-    <div className={`data-siswa-layout ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+    <div className={`ds-layout ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
       <Sidebar collapsed={sidebarCollapsed} />
 
-      <div className="data-siswa-main">
-        {/* Top Bar (Same as Dashboard) */}
-        <header className="dashboard-topbar">
+      <div className="ds-main">
+        {/* Top Bar */}
+        <header className="ds-topbar">
           <div className="topbar-left">
             <button
               className="topbar-toggle"
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+              id="sidebar-toggle"
             >
               <Menu />
             </button>
+            {/* Breadcrumb di topbar */}
+            <div className="topbar-breadcrumb">
+              <Link to="/dashboard" className="breadcrumb-root">
+                <LayoutDashboard size={13} style={{ marginRight: 4, verticalAlign: 'middle' }} />
+                Dashboard
+              </Link>
+              <ChevronRight size={13} className="breadcrumb-sep" />
+              <span className="breadcrumb-current">Data Siswa</span>
+            </div>
           </div>
           <div className="topbar-right">
-            <button className="topbar-notification">
+            <button className="topbar-notification" id="notification-btn">
               <Bell />
               <span className="notification-badge"></span>
             </button>
-            <div className="topbar-profile">
+            <div className="topbar-profile" id="profile-btn">
               <div className="profile-avatar">A</div>
               <div className="profile-info">
                 <span className="profile-name">Admin</span>
                 <span className="profile-role">Administrator</span>
               </div>
             </div>
+
           </div>
         </header>
 
         {/* Content */}
-        <div className="data-siswa-content">
-          {/* Header */}
-          <div className="page-header">
-            <div className="breadcrumb">
-              <Link to="/dashboard" className="breadcrumb-link">
-                <Menu size={14} style={{ display: 'inline', marginRight: 4 }}/> Dashboard
-              </Link>
-              <ChevronRight size={14} />
-              <span className="breadcrumb-active">Data Siswa</span>
-            </div>
-            
-            <div className="page-title-row">
-              <h1 className="page-title">Data Siswa</h1>
-              <span className="badge-count">{siswaData.length} Terdaftar</span>
+        <div className="ds-content">
+          {/* Page Title */}
+          <div className="ds-page-header">
+            <div className="ds-title-row">
+              <h1 className="ds-page-title">Data Siswa</h1>
+              <span className="ds-badge-count">{siswaData.length} Terdaftar</span>
             </div>
           </div>
 
-          {/* Stat Cards */}
-          <div className="ds-stat-cards">
-            <div className="ds-stat-card">
-              <div className="ds-stat-icon blue"><GraduationCap /></div>
-              <div className="ds-stat-info">
-                <span className="ds-stat-label">Total Siswa</span>
-                <div className="ds-stat-value-row">
-                  <span className="ds-stat-value">{siswaData.length}</span>
-                  <span className="ds-stat-change positive">↗ {siswaData.length > 0 ? '100%' : '0%'}</span>
-                </div>
-              </div>
+          {/* Stat Card — Total Siswa */}
+          <div className="ds-stat-banner">
+            <div className="ds-stat-icon-wrap">
+              <GraduationCap size={24} />
             </div>
-            <div className="ds-stat-card">
-              <div className="ds-stat-icon green"><CheckCircle2 /></div>
-              <div className="ds-stat-info">
-                <span className="ds-stat-label">Selesai Pretest</span>
-                <div className="ds-stat-value-row">
-                  <span className="ds-stat-value">{siswaData.filter(s => s.nilai !== '-').length}</span>
-                  <span className="ds-stat-change neutral">--</span>
-                </div>
-              </div>
-            </div>
-            <div className="ds-stat-card">
-              <div className="ds-stat-icon gray"><MoreHorizontal /></div>
-              <div className="ds-stat-info">
-                <span className="ds-stat-label">Dalam Proses</span>
-                <div className="ds-stat-value-row">
-                  <span className="ds-stat-value">{siswaData.filter(s => s.status === 'Dalam Proses').length}</span>
-                  <span className="ds-stat-change neutral">--</span>
-                </div>
-              </div>
-            </div>
-            <div className="ds-stat-card">
-              <div className="ds-stat-icon red"><XCircle /></div>
-              <div className="ds-stat-info">
-                <span className="ds-stat-label">Tidak Selesai</span>
-                <div className="ds-stat-value-row">
-                  <span className="ds-stat-value">{siswaData.filter(s => s.status === 'Tidak Selesai').length}</span>
-                  <span className="ds-stat-change negative">--</span>
-                </div>
+            <div className="ds-stat-body">
+              <span className="ds-stat-label">TOTAL SISWA</span>
+              <div className="ds-stat-value-row">
+                <span className="ds-stat-value">{siswaData.length}</span>
+                <span className="ds-stat-growth">
+                  <TrendingUp size={13} />
+                  +12%
+                </span>
               </div>
             </div>
           </div>
 
-          {/* Data Table Section */}
-          <div className="data-container">
+          {/* Table Card */}
+          <div className="ds-table-card">
             {/* Filters */}
-            <div className="data-filters">
-              <div className="search-box">
-                <Search />
-                <input type="text" placeholder="Cari nama siswa, sekolah, atau kelas..." />
+            <div className="ds-filters">
+              <div className="ds-search-box">
+                <Search size={15} />
+                <input
+                  type="text"
+                  placeholder="Cari nama siswa, sekolah, atau kelas..."
+                  value={searchQuery}
+                  onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                />
               </div>
-              <button className="filter-select">
-                Semua Sekolah <ChevronDown />
-              </button>
-              <button className="filter-select">
-                Semua Jurusan <ChevronDown />
-              </button>
-              <button className="filter-select">
-                Semua Kelas <ChevronDown />
-              </button>
-              <button className="refresh-btn">
-                <RefreshCw size={16} />
+
+              <select
+                className="ds-filter-select"
+                value={filterSekolah}
+                onChange={e => { setFilterSekolah(e.target.value); setCurrentPage(1); }}
+              >
+                {sekolahList.map(s => <option key={s}>{s}</option>)}
+              </select>
+
+              <select
+                className="ds-filter-select"
+                value={filterJurusan}
+                onChange={e => { setFilterJurusan(e.target.value); setCurrentPage(1); }}
+              >
+                {jurusanList.map(j => <option key={j}>{j}</option>)}
+              </select>
+
+              <select
+                className="ds-filter-select"
+                value={filterKelas}
+                onChange={e => { setFilterKelas(e.target.value); setCurrentPage(1); }}
+              >
+                {kelasList.map(k => <option key={k}>{k}</option>)}
+              </select>
+
+              <button className="ds-refresh-btn" onClick={handleReset} title="Reset filter">
+                <RefreshCw size={15} />
               </button>
             </div>
 
@@ -199,81 +243,86 @@ function DataSiswaPage() {
               <table className="ds-table">
                 <thead>
                   <tr>
-                    <th>No</th>
-                    <th>Nama Siswa</th>
-                    <th>Sekolah</th>
-                    <th>Jurusan</th>
-                    <th>Kelas</th>
-                    <th>Nilai Pretest</th>
-                    <th>Status Pengerjaan</th>
-                    <th>Aksi</th>
+                    <th>NO</th>
+                    <th>NAMA SISWA</th>
+                    <th>SEKOLAH</th>
+                    <th>JURUSAN</th>
+                    <th>KELAS</th>
+                    <th>AKSI</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {siswaData.length === 0 ? (
+                  {paginated.length === 0 ? (
                     <tr>
-                      <td colSpan="8" style={{ textAlign: 'center', padding: '32px', color: '#64748b' }}>
-                        Belum ada data siswa. Silakan coba tambahkan melalui simulasi scan barcode.
+                      <td colSpan="6" className="ds-empty">
+                        Tidak ada data siswa yang ditemukan.
                       </td>
                     </tr>
-                  ) : siswaData.map((siswa) => (
-                    <tr key={siswa.no}>
-                      <td className="cell-no">{siswa.no}</td>
-                      <td>
-                        <div className="cell-siswa">
-                          <div className={`siswa-avatar ${siswa.avatarColor}`}>
-                            {siswa.initials}
+                  ) : (
+                    paginated.map((siswa) => (
+                      <tr key={siswa.no}>
+                        <td className="td-no">{siswa.no}</td>
+                        <td className="td-nama">{siswa.nama}</td>
+                        <td className="td-sekolah">{siswa.sekolah}</td>
+                        <td>
+                          <span className={`jurusan-badge ${jurusanColorMap[siswa.jurusan] || 'jurusan-default'}`}>
+                            {siswa.jurusan}
+                          </span>
+                        </td>
+                        <td className="td-kelas">{siswa.kelas}</td>
+                        <td>
+                          <div className="ds-action-group">
+                            <button className="ds-action-btn view" title="Lihat Detail">
+                              <Eye size={16} />
+                            </button>
+                            <button className="ds-action-btn delete" title="Hapus">
+                              <Trash2 size={16} />
+                            </button>
                           </div>
-                          <div className="siswa-info">
-                            <span className="siswa-name">{siswa.nama}</span>
-                            <span className="siswa-nisn">NISN: {siswa.nisn}</span>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="cell-sekolah">{siswa.sekolah}</td>
-                      <td>
-                        <span className="cell-jurusan">{siswa.jurusan}</span>
-                      </td>
-                      <td className="cell-kelas">{siswa.kelas}</td>
-                      <td>
-                        <span className={`cell-nilai ${siswa.nilaiClass}`}>{siswa.nilai}</span>
-                      </td>
-                      <td>
-                        <span className={`status-dot-badge ${getStatusClass(siswa.status)}`}>
-                          {siswa.status}
-                        </span>
-                      </td>
-                      <td>
-                        <div className="ds-actions">
-                          <button className="ds-action-btn" title="Lihat">
-                            <Eye />
-                          </button>
-                          <button className="ds-action-btn" title="Hapus">
-                            <Trash2 />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
 
             {/* Pagination */}
             <div className="ds-table-footer">
-              <span className="ds-table-info">Menampilkan {siswaData.length > 0 ? 1 : 0} - {siswaData.length} dari {siswaData.length} data</span>
+              <span className="ds-table-info">
+                Menampilkan {startItem} – {endItem} dari {filtered.length} data
+              </span>
               <div className="ds-pagination">
-                <button className="page-btn" disabled><ChevronLeft size={14} /></button>
-                <button className="page-btn active" onClick={() => setCurrentPage(1)}>1</button>
-                <button className="page-btn" onClick={() => setCurrentPage(2)}>2</button>
-                <button className="page-btn" onClick={() => setCurrentPage(3)}>3</button>
-                <span className="page-dots">...</span>
-                <button className="page-btn" onClick={() => setCurrentPage(24)}>24</button>
-                <button className="page-btn"><ChevronRight size={14} /></button>
+                <button
+                  className="pg-btn"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(p => p - 1)}
+                >
+                  <ChevronLeft size={14} />
+                </button>
+
+                {getPageNumbers().map((pg, i) =>
+                  pg === '...'
+                    ? <span key={`dots-${i}`} className="pg-dots">...</span>
+                    : <button
+                        key={pg}
+                        className={`pg-btn ${pg === currentPage ? 'active' : ''}`}
+                        onClick={() => setCurrentPage(pg)}
+                      >
+                        {pg}
+                      </button>
+                )}
+
+                <button
+                  className="pg-btn"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(p => p + 1)}
+                >
+                  <ChevronRight size={14} />
+                </button>
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>

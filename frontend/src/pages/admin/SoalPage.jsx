@@ -4,24 +4,20 @@ import {
   Menu,
   Bell,
   ChevronRight,
-  KeyRound,
-  Plus,
-  BookOpen,
   Filter,
   ArrowDownUp,
   Eye,
-  Pencil,
   Trash2,
   CheckCircle2,
   Save,
-  MessageSquare
+  MessageSquare,
+  Lock
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import './SoalPage.css';
 
 function SoalPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [tipeSoal, setTipeSoal] = useState('pilihan_ganda');
 
   return (
     <div className={`soal-layout ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
@@ -59,54 +55,25 @@ function SoalPage() {
           {/* Header */}
           <div className="soal-header-wrapper">
             <div className="soal-breadcrumb">
-              <Link to="/dashboard" className="soal-breadcrumb-link">Dashboard</Link>
-              <ChevronRight size={14} />
-              <span className="soal-breadcrumb-active">Soal</span>
+              <span className="breadcrumb-root">Dashboard</span>
+              <ChevronRight size={13} className="breadcrumb-sep" />
+              <span className="breadcrumb-current">Soal</span>
             </div>
             
-            <div className="soal-title-row">
-              <div className="soal-title-left">
-                <h1 className="soal-title">Manajemen Bank Soal</h1>
-                <span className="soal-badge">v2.4 Academic</span>
-              </div>
-              <div className="soal-title-actions">
-                <button className="btn-atur-kunci">
-                  <KeyRound size={16} />
-                  Atur Jawaban Kunci
-                </button>
-                <Link to="/tambah-soal" className="btn-tambah-soal" style={{ textDecoration: 'none' }}>
-                  <Plus size={16} />
-                  Tambah Soal
-                </Link>
-              </div>
-            </div>
+            <h1 className="soal-title">Manajemen Bank Soal</h1>
           </div>
 
-          {/* Filter Bar */}
-          <div className="soal-filter-bar">
-            <div className="filter-left">
-              <div className="filter-icon">
-                <BookOpen size={18} />
-              </div>
-              <span className="filter-label">MODUL AKTIF:</span>
-              <select className="filter-select">
-                <option>Dasar Pemrograman (TK-101)</option>
-                <option>Web Development (WD-201)</option>
-              </select>
+          {/* Stats Bar */}
+          <div className="soal-stats-bar">
+            <div className="stat-pill">
+              <div className="stat-dot blue"></div>
+              <span>Total Soal:</span>
+              <strong>25</strong>
             </div>
-            <div className="filter-right">
-              <div className="stat-pill">
-                <div className="stat-dot blue"></div>
-                Total Soal: <strong>25</strong>
-              </div>
-              <div className="stat-pill">
-                <div className="stat-dot green"></div>
-                Pilihan Ganda: <strong>20</strong>
-              </div>
-              <div className="stat-pill">
-                <div className="stat-dot gray"></div>
-                Essay: <strong>5</strong>
-              </div>
+            <div className="stat-pill">
+              <div className="stat-dot green"></div>
+              <span>Pilihan Ganda:</span>
+              <strong>20</strong>
             </div>
           </div>
 
@@ -116,13 +83,13 @@ function SoalPage() {
             {/* Left Column (List) */}
             <div className="soal-list-column">
               <div className="question-list-header">
-                <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <h3 className="question-list-title">Daftar Pertanyaan</h3>
                   <span className="question-list-subtitle">(3 Ditampilkan)</span>
                 </div>
                 <div className="question-list-actions">
-                  <button className="question-action-btn"><Filter size={16} /></button>
-                  <button className="question-action-btn"><ArrowDownUp size={16} /></button>
+                  <button className="question-action-btn"><Filter size={14} /></button>
+                  <button className="question-action-btn"><ArrowDownUp size={14} /></button>
                 </div>
               </div>
 
@@ -130,13 +97,12 @@ function SoalPage() {
               <div className="question-card">
                 <div className="qc-header">
                   <div className="qc-header-left">
-                    <div className="qc-number">1</div>
+                    <div className="qc-number active">1</div>
                     <span className="qc-type-badge">Pilihan Ganda</span>
                     <span className="qc-status"><CheckCircle2 size={12} /> Kunci Terkonfirmasi</span>
                   </div>
                   <div className="qc-actions">
                     <button className="qc-btn lihat"><Eye size={14} /> Lihat</button>
-                    <button className="qc-btn edit"><Pencil size={14} /> Edit</button>
                     <button className="qc-btn hapus"><Trash2 size={14} /> Hapus</button>
                   </div>
                 </div>
@@ -145,21 +111,29 @@ function SoalPage() {
                 
                 <div className="qc-options-grid">
                   <div className="qc-option correct">
-                    <div className="qc-option-label">A</div>
-                    <span>console.log()</span>
+                    <div className="qc-option-left">
+                      <div className="qc-option-label correct">A</div>
+                      <span>console.log()</span>
+                    </div>
                     <CheckCircle2 size={16} className="qc-option-icon" />
                   </div>
                   <div className="qc-option">
-                    <div className="qc-option-label">B</div>
-                    <span>alert()</span>
+                    <div className="qc-option-left">
+                      <div className="qc-option-label">B</div>
+                      <span>alert()</span>
+                    </div>
                   </div>
                   <div className="qc-option">
-                    <div className="qc-option-label">C</div>
-                    <span>document.write()</span>
+                    <div className="qc-option-left">
+                      <div className="qc-option-label">C</div>
+                      <span>document.write()</span>
+                    </div>
                   </div>
                   <div className="qc-option">
-                    <div className="qc-option-label">D</div>
-                    <span>print()</span>
+                    <div className="qc-option-left">
+                      <div className="qc-option-label">D</div>
+                      <span>print()</span>
+                    </div>
                   </div>
                 </div>
                 
@@ -173,13 +147,12 @@ function SoalPage() {
               <div className="question-card">
                 <div className="qc-header">
                   <div className="qc-header-left">
-                    <div className="qc-number" style={{ background: '#f1f5f9', color: '#475569' }}>2</div>
+                    <div className="qc-number">2</div>
                     <span className="qc-type-badge">Pilihan Ganda</span>
                     <span className="qc-status"><CheckCircle2 size={12} /> Kunci Terkonfirmasi</span>
                   </div>
                   <div className="qc-actions">
                     <button className="qc-btn lihat"><Eye size={14} /> Lihat</button>
-                    <button className="qc-btn edit"><Pencil size={14} /> Edit</button>
                     <button className="qc-btn hapus"><Trash2 size={14} /> Hapus</button>
                   </div>
                 </div>
@@ -196,13 +169,12 @@ function SoalPage() {
               <div className="question-card">
                 <div className="qc-header">
                   <div className="qc-header-left">
-                    <div className="qc-number" style={{ background: '#f1f5f9', color: '#475569' }}>3</div>
+                    <div className="qc-number">3</div>
                     <span className="qc-type-badge">Pilihan Ganda</span>
                     <span className="qc-status"><CheckCircle2 size={12} /> Kunci Terkonfirmasi</span>
                   </div>
                   <div className="qc-actions">
                     <button className="qc-btn lihat"><Eye size={14} /> Lihat</button>
-                    <button className="qc-btn edit"><Pencil size={14} /> Edit</button>
                     <button className="qc-btn hapus"><Trash2 size={14} /> Hapus</button>
                   </div>
                 </div>
@@ -234,45 +206,27 @@ function SoalPage() {
               <div className="editor-card">
                 
                 <div className="editor-header">
-                  <div className="editor-header-left">
-                    <div className="editor-icon">
-                      <MessageSquare size={20} />
-                    </div>
-                    <div className="editor-title">
-                      <h3>Ubah Soal #1</h3>
-                      <p>Editor parameter & format jawaban</p>
-                    </div>
+                  <div className="editor-icon-box">
+                    <MessageSquare size={18} />
                   </div>
-                  <span className="editor-id-badge">ID: Q-0081</span>
-                </div>
-
-                <div className="editor-form-group">
-                  <label className="editor-label">Pilih Modul <span>*</span></label>
-                  <select className="editor-input">
-                    <option>Dasar Pemrograman</option>
-                  </select>
-                </div>
-
-                <div className="editor-form-group">
-                  <label className="editor-label">Tipe Soal</label>
-                  <div className="type-toggle">
-                    <label className={`type-radio ${tipeSoal === 'pilihan_ganda' ? 'active' : ''}`}>
-                      <input type="radio" name="tipe" checked={tipeSoal === 'pilihan_ganda'} onChange={() => setTipeSoal('pilihan_ganda')} />
-                      <span className="type-radio-text">Pilihan Ganda</span>
-                    </label>
-                    <label className={`type-radio ${tipeSoal === 'essay' ? 'active' : ''}`}>
-                      <input type="radio" name="tipe" checked={tipeSoal === 'essay'} onChange={() => setTipeSoal('essay')} />
-                      <span className="type-radio-text">Essay</span>
-                    </label>
+                  <div className="editor-title">
+                    <h3>Tambah Soal</h3>
+                    <p>Editor parameter & format jawaban</p>
                   </div>
                 </div>
 
                 <div className="editor-form-group">
-                  <label className="editor-label">
-                    <span>Pertanyaan *</span>
-                    <span className="editor-label-hint">Markdown didukung</span>
-                  </label>
-                  <textarea className="editor-input" defaultValue="Apa perintah untuk menampilkan output di JavaScript?"></textarea>
+                  <label className="editor-label">Pilih Modul <span className="req">*</span></label>
+                  <div className="editor-select-wrapper light-blue">
+                    <select>
+                      <option>Dasar Pemrograman</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="editor-form-group">
+                  <label className="editor-label">Pertanyaan <span className="req">*</span></label>
+                  <textarea className="editor-textarea light-blue" defaultValue="Apa perintah untuk menampilkan output di JavaScript?"></textarea>
                 </div>
 
                 <div className="editor-form-group">
@@ -280,51 +234,45 @@ function SoalPage() {
                   <div className="option-inputs">
                     <div className="option-input-row">
                       <div className="option-input-label">A</div>
-                      <input type="text" className="editor-input" defaultValue="console.log()" />
+                      <input type="text" className="editor-input light-blue" defaultValue="console.log()" />
                     </div>
                     <div className="option-input-row">
                       <div className="option-input-label">B</div>
-                      <input type="text" className="editor-input" defaultValue="alert()" />
+                      <input type="text" className="editor-input light-blue" defaultValue="alert()" />
                     </div>
                     <div className="option-input-row">
                       <div className="option-input-label">C</div>
-                      <input type="text" className="editor-input" defaultValue="document.write()" />
+                      <input type="text" className="editor-input light-blue" defaultValue="document.write()" />
                     </div>
                     <div className="option-input-row">
                       <div className="option-input-label">D</div>
-                      <input type="text" className="editor-input" defaultValue="print()" />
+                      <input type="text" className="editor-input light-blue" defaultValue="print()" />
                     </div>
                   </div>
                 </div>
 
                 <div className="editor-form-group">
-                  <label className="editor-label">Jawaban Benar / Kunci <CheckCircle2 size={12} style={{ color: '#16a34a', marginLeft: 4, display: 'inline' }} /></label>
-                  <select className="editor-input success">
-                    <option>A. console.log()</option>
-                  </select>
+                  <label className="editor-label">
+                    Jawaban Benar / Kunci 
+                    <Lock size={12} style={{ color: '#16a34a', marginLeft: 4 }} />
+                  </label>
+                  <div className="editor-select-wrapper light-green">
+                    <select>
+                      <option>A. console.log()</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div className="editor-footer">
                   <button className="btn-batal">Batal</button>
-                  <button className="btn-simpan"><Save size={14} /> Simpan</button>
+                  <button className="btn-simpan">
+                    <Save size={14} /> Simpan
+                  </button>
                 </div>
 
               </div>
             </div>
 
-          </div>
-
-          {/* Bottom Alert */}
-          <div className="soal-alert-bottom">
-            <div className="soal-alert-left">
-              <CheckCircle2 size={20} className="alert-icon-blue" />
-              <div className="soal-alert-text">
-                <span className="alert-badge">Standar Kurikulum Nasional EduQuiz v2.4</span>
-                <h4>Validasi Otomatis Format & Kunci Soal</h4>
-                <p>Setiap butir soal tersimpan diverifikasi secara langsung terhadap bobot modul, distribusi opsi jawaban, dan kesesuaian kunci untuk mencegah ambiguitas saat ujian berlangsung.</p>
-              </div>
-            </div>
-            <button className="btn-dokumentasi">Dokumentasi Format</button>
           </div>
 
         </div>

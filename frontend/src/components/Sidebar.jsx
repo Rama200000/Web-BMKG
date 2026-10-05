@@ -10,7 +10,8 @@ import {
   Shield,
   GraduationCap,
   History,
-  QrCode
+  QrCode,
+  School
 } from 'lucide-react';
 import bmkgLogo from '../assets/bmkg-logo.png';
 import './Sidebar.css';
@@ -18,6 +19,7 @@ import './Sidebar.css';
 const adminMenus = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/data-siswa', label: 'Data Siswa', icon: Users },
+  { path: '/pengaturan-sekolah', label: 'Pengaturan Sekolah', icon: School },
   { path: '/modul', label: 'Modul', icon: BookOpen },
   { path: '/soal', label: 'Soal', icon: FileQuestion },
   { path: '/hasil-skor', label: 'Hasil Skor', icon: ClipboardCheck },
