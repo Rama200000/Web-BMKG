@@ -15,6 +15,22 @@
 .nv-page .m-home-indicator { background: var(--nv-bg); }
 .nv-page .m-home-indicator-line { background: #CBD5E1; }
 
+/* Latar biru + lingkaran dekoratif di atas, memudar ke abu terang.
+   Semua halaman siswa kecuali Peringkat (punya latar sendiri). */
+.nv-page:not(.peringkat-page) {
+  background:
+    radial-gradient(circle at 50px -10px, transparent 0 140px, rgba(255, 255, 255, 0.13) 141px 215px, transparent 216px),
+    radial-gradient(circle at calc(100% + 4px) 245px, transparent 0 76px, rgba(255, 255, 255, 0.16) 77px 107px, transparent 108px),
+    linear-gradient(180deg, #9CBDF5 0, #A4C3F6 200px, #D2E0F8 330px, var(--nv-bg) 400px);
+  background-repeat: no-repeat;
+  background-color: var(--nv-bg);
+}
+.nv-page:not(.peringkat-page) .m-statusbar,
+.nv-page:not(.peringkat-page) .m-home-indicator,
+.nv-page:not(.peringkat-page) .nv-body,
+.nv-page:not(.peringkat-page) .ujian-header,
+.nv-page:not(.peringkat-page) .ujian-body { background: transparent; }
+
 /* Header */
 .nv-header {
   background: transparent;

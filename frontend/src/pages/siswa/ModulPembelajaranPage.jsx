@@ -6,7 +6,7 @@ import './mobile-green-theme.css';
 import './siswa-navy.css';
 import './ModulPembelajaranPage.css';
 
-const FOKUS_PEMBAHASAN = ['Iklim & Cuaca', 'Efek Rumah Kaca', 'Dampak & Mitigasi'];
+const FOKUS_PEMBAHASAN = ['Konsep Dasar', 'Struktur Topik', 'Persiapan Uji Kompetensi'];
 
 function ModulPembelajaranPage() {
   const navigate = useNavigate();
@@ -63,7 +63,7 @@ function ModulPembelajaranPage() {
             <div className="nv-logo"><GraduationCap size={16} strokeWidth={2} /></div>
             <span>Si Iklim Muda</span>
           </div>
-          <div className="nv-badge"><div className="nv-badge-dot"></div> Modul</div>
+          <div className="nv-badge"><div className="nv-badge-dot"></div> Portal Siswa</div>
         </header>
 
         <div className="m-body nv-body modul-body">
@@ -73,47 +73,30 @@ function ModulPembelajaranPage() {
               <span className="modul-badge"><BookOpenText size={15} /> Modul 1</span>
               <span className="modul-offline"><CircleCheck size={13} /> Tersedia Luring</span>
             </div>
-            <h1 className="modul-judul">Pengenalan Iklim &amp; Cuaca</h1>
-            <p className="modul-subtitle">Pelajari konsep dasar iklim dan cuaca beserta fenomena perubahannya.</p>
+            <h1 className="modul-judul">Pengenalan Materi</h1>
+            <p className="modul-subtitle">Pelajari konsep dasar dan pengenalan materi sebelum melanjutkan ke pembahasan berikutnya.</p>
             <div className="modul-cover">
               <img src={imgCover} alt="Buku catatan terbuka di atas meja belajar" />
               <span className="modul-cover-caption"><BookOpen size={15} /> Bahan Bacaan Pokok Siswa</span>
             </div>
           </section>
 
-          {/* Salinan digital */}
-          <section className="modul-download">
-            <div className="modul-icon-tile"><Download size={18} /></div>
-            <div className="modul-download-text">
-              <p className="modul-download-title">Salinan Digital Tersedia</p>
-              <p className="modul-download-desc">Akses kapan saja tanpa koneksi internet</p>
-            </div>
-            <button type="button" className="modul-download-btn">
-              <Download size={15} /> Unduh
-            </button>
-          </section>
-
           {/* Isi materi */}
           <article className="modul-card modul-materi">
             <h2 className="modul-section-heading">Pengantar</h2>
             <p>
-              Iklim dan cuaca merupakan dua konsep yang saling berhubungan tetapi memiliki perbedaan fundamental.
-              <strong> Cuaca</strong> merujuk pada kondisi atmosfer dalam jangka pendek, sedangkan <strong>iklim</strong> mencakup
-              rata-rata pola cuaca selama periode waktu yang panjang (biasanya 30 tahun atau lebih).
+              Materi ini membahas konsep dasar yang perlu dipahami sebelum mempelajari pembahasan lebih lanjut.
+            </p>
+            <p>
+              Pelajari setiap bagian secara berurutan agar kamu dapat memahami materi dengan lebih mudah.
             </p>
 
             <hr className="modul-divider" />
 
             <h2 className="modul-section-heading">Materi</h2>
             <p>
-              Perubahan iklim global disebabkan oleh peningkatan konsentrasi gas rumah kaca di atmosfer,
-              terutama karbon dioksida (CO₂) dan metana (CH₄). Aktivitas manusia seperti pembakaran bahan
-              bakar fosil dan deforestasi mempercepat proses ini secara signifikan.
-            </p>
-            <p>
-              Dampak perubahan iklim meliputi kenaikan permukaan laut, peningkatan frekuensi bencana alam,
-              dan perubahan pola curah hujan. BMKG berperan penting dalam monitoring dan prediksi perubahan
-              iklim di Indonesia melalui stasiun-stasiun observasi yang tersebar di seluruh nusantara.
+              Pemahaman awal terhadap materi ini akan membimbing untuk menguasai konsep-konsep kunci secara
+              terstruktur. Setiap topik dirancang saling berkaitan sehingga mempermudah proses belajar.
             </p>
 
             <div className="modul-note">
@@ -121,8 +104,8 @@ function ModulPembelajaranPage() {
               <div>
                 <p className="modul-note-title">Catatan Penting</p>
                 <p className="modul-note-text">
-                  Perhatikan konsep efek rumah kaca, perbedaan iklim dan cuaca, serta dampak pemanasan global
-                  agar kamu dapat mempersiapkan diri secara optimal saat evaluasi posttest nanti.
+                  Perhatikan ilustrasi konsep, definisi istilah penting, serta catatan rangkuman yang disajikan
+                  agar kamu dapat mempersiapkan diri secara optimal saat evaluasi post-test nanti.
                 </p>
               </div>
             </div>

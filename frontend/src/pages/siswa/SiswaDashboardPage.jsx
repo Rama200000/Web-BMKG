@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
 import { ChevronLeft, GraduationCap, Lock, CheckCircle2, ChevronRight, Info, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import imgGraduationCap from '../../assets/fluent-emoji/graduation-cap.png';
-import imgBooks from '../../assets/fluent-emoji/books.png';
-import imgScroll from '../../assets/fluent-emoji/scroll.png';
+import imgMascot from '../../assets/mascot.png';
 import imgMemo from '../../assets/fluent-emoji/memo.png';
+import imgBooks from '../../assets/fluent-emoji/books.png';
 import imgClipboard from '../../assets/fluent-emoji/clipboard.png';
 import './mobile-green-theme.css';
 import './siswa-navy.css';
@@ -94,7 +93,7 @@ function SiswaDashboardPage() {
 
   return (
     <div className="m-app">
-      <div className="m-screen nv-page">
+      <div className="m-screen nv-page dash-page">
         <div className="m-statusbar">
           <span>{currentTime}</span>
           <div className="m-statusbar-icons">
@@ -113,29 +112,19 @@ function SiswaDashboardPage() {
             <div className="nv-logo"><GraduationCap size={16} strokeWidth={2} /></div>
             <span>Si Iklim Muda</span>
           </div>
-          <div className="nv-badge"><div className="nv-badge-dot"></div> Siswa</div>
+          <div className="nv-badge"><div className="nv-badge-dot"></div> Portal Siswa</div>
         </header>
 
         {/* Body */}
         <div className="m-body nv-body dash-body">
-          {/* Hero */}
-          <section className="dash-hero">
-            <div className="dash-hero-text">
-              <h1 className="dash-hero-title">Halo, Selamat Datang! <span aria-hidden="true">👋</span></h1>
-              <p className="dash-hero-sub">
-                Tingkatkan pengetahuanmu tentang keselamatan kerja dan lingkungan bersama Si Iklim Muda.
-              </p>
-            </div>
-            <div className="dash-hero-art" aria-hidden="true">
-              <img src={imgScroll} alt="" className="dash-hero-scroll" />
-              <img src={imgBooks} alt="" className="dash-hero-books" />
-              <img src={imgGraduationCap} alt="" className="dash-hero-cap" />
-            </div>
-          </section>
+          {/* Maskot */}
+          <div className="dash-mascot" aria-hidden="true">
+            <img src={imgMascot} alt="" />
+          </div>
 
           {/* Menu */}
-          <h2 className="dash-section-title">Menu Utama</h2>
-          <p className="dash-section-sub">Pilih menu yang ingin kamu akses.</p>
+          <h1 className="dash-section-title">Menu Utama</h1>
+          <p className="dash-section-sub">Selamat datang! Pilih menu yang ingin kamu akses.</p>
 
           <div className="dash-menu">
             {menus.map((m) => {
@@ -163,7 +152,7 @@ function SiswaDashboardPage() {
                   {state === 'done' && (
                     <span className="dash-menu-status done"><CheckCircle2 size={18} strokeWidth={2.25} /></span>
                   )}
-                  {state === 'active' && m.key !== 'pretest' && (
+                  {state === 'active' && (
                     <span className="dash-menu-status go"><ChevronRight size={18} /></span>
                   )}
                 </button>

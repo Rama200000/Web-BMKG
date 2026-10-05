@@ -1,103 +1,103 @@
 /* SiswaDashboardPage.css — style umum ada di siswa-navy.css */
 
+/* Latar biru halaman ada di siswa-navy.css (.nv-page) */
+.dash-page {
+  --dash-blue: #3B82F6;
+  --dash-blue-soft: #DCE7FA;
+  --dash-ink: #0F1B3D;
+  --dash-text: #3E4A5E;
+}
+
+.dash-page .nv-back-btn {
+  width: 46px;
+  height: 46px;
+  border: none;
+  box-shadow: 0 4px 12px -4px rgba(15, 27, 61, 0.25);
+}
+.dash-page .nv-logo {
+  background: rgba(255, 255, 255, 0.55);
+  border: none;
+}
+.dash-page .nv-badge {
+  background: rgba(255, 255, 255, 0.6);
+  border: none;
+  padding: 6px 12px;
+}
+
 .dash-body {
-  --dash-cyan: #A9E2EC;
-  --dash-cyan-soft: #E1F2F6;
-  --dash-cyan-line: #CDE8EF;
-  padding-top: 12px !important;
+  padding-top: 8px !important;
   overflow-x: hidden;
 }
 
-/* ─── Hero ─── */
-.dash-hero {
+/* ─── Maskot ─── */
+.dash-mascot {
   position: relative;
   display: flex;
-  align-items: flex-start;
-  margin: 0 -24px 22px 0; /* ilustrasi menempel ke tepi kanan layar */
-  min-height: 150px;
+  justify-content: center;
+  margin: 4px 0 18px;
 }
-.dash-hero-text {
+.dash-mascot::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  width: 110px;
+  height: 12px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: rgba(15, 27, 61, 0.12);
+  filter: blur(4px);
+}
+.dash-mascot img {
   position: relative;
   z-index: 1;
-  flex: 1;
-  padding-right: 8px;
+  width: 150px;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
 }
-.dash-hero-title {
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--gray-900);
-  letter-spacing: -0.4px;
-  line-height: 1.25;
-  margin: 8px 0 10px;
-  white-space: nowrap;
-}
-.dash-hero-sub {
-  max-width: 230px;
-  font-size: 13.5px;
-  line-height: 1.6;
-  color: var(--nv-muted);
-  margin: 0;
-}
-
-.dash-hero-art {
-  position: absolute;
-  right: 0;
-  top: 40px;
-  width: 128px;
-  height: 150px;
-  border-radius: 64% 0 0 58% / 52% 0 0 48%;
-  background: linear-gradient(160deg, #B8E3FB 0%, #8CC8F5 100%);
-}
-.dash-hero-art img { position: absolute; pointer-events: none; user-select: none; }
-.dash-hero-books  { width: 92px; left: 20px; bottom: 26px; }
-.dash-hero-cap    { width: 80px; left: 34px; bottom: 62px; filter: drop-shadow(0 4px 6px rgba(11, 26, 79, 0.18)); }
-.dash-hero-scroll { width: 58px; left: 0; bottom: 30px; transform: rotate(-18deg); }
 
 /* ─── Judul seksi ─── */
 .dash-section-title {
-  font-size: 19px;
+  font-size: 20px;
   font-weight: 800;
-  color: var(--gray-900);
+  color: var(--dash-ink);
   letter-spacing: -0.3px;
-  margin: 0 0 4px;
+  text-align: center;
+  margin: 0 0 6px;
 }
 .dash-section-sub {
-  font-size: 13px;
-  color: var(--nv-muted);
-  margin: 0 0 16px;
+  max-width: 270px;
+  margin: 0 auto 24px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--dash-text);
+  text-align: center;
 }
 
 /* ─── Kartu menu ─── */
 .dash-menu {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
 .dash-menu-card {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   width: 100%;
-  padding: 16px 14px;
+  min-height: 98px;
+  padding: 14px 16px 14px 20px;
   border: none;
-  border-radius: 16px;
+  border-radius: 14px;
   text-align: left;
   font-family: var(--font);
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  background: linear-gradient(90deg, #DCE7FA 0%, #BCD3F9 38%, #6A9EF6 74%, #4C8BF5 100%);
+  box-shadow: 0 10px 22px -12px rgba(37, 99, 235, 0.6);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
-.dash-menu-card.active {
-  background: var(--dash-cyan);
-  box-shadow: 0 6px 16px -8px rgba(34, 140, 170, 0.45);
-}
-.dash-menu-card.done {
-  background: var(--dash-cyan-soft);
-  border: 1.5px solid var(--dash-cyan-line);
-}
-.dash-menu-card.locked {
-  background: var(--dash-cyan-soft);
-  cursor: not-allowed;
-}
+.dash-menu-card.locked { cursor: not-allowed; }
 .dash-menu-card:not(:disabled):hover { transform: translateY(-1px); }
 .dash-menu-card:not(:disabled):active { transform: scale(0.985); }
 .dash-menu-card:focus-visible {
@@ -106,64 +106,64 @@
 }
 
 .dash-menu-icon {
-  width: 66px;
-  height: 64px;
+  width: 56px;
   flex-shrink: 0;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.92);
-  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.dash-menu-icon img { width: 48px; height: 48px; }
-.dash-menu-card.locked .dash-menu-icon { background: rgba(255, 255, 255, 0.6); box-shadow: none; }
-.dash-menu-card.locked .dash-menu-icon img { opacity: 0.55; filter: saturate(0.6); }
+/* Emoji fluent diwarnai biru agar seragam dengan kartu */
+.dash-menu-icon img {
+  width: 56px;
+  height: 56px;
+  filter: grayscale(1) sepia(1) saturate(4.5) hue-rotate(178deg) brightness(0.95)
+          drop-shadow(0 3px 4px rgba(15, 27, 61, 0.2));
+}
 
 .dash-menu-text {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 .dash-menu-title {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
-  color: var(--nv-navy);
+  color: var(--dash-ink);
 }
 .dash-menu-desc {
-  font-size: 12px;
-  line-height: 1.6;
-  color: #3E4A5E;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--dash-text);
 }
-.dash-menu-card.locked .dash-menu-title { color: #8A97AD; }
-.dash-menu-card.locked .dash-menu-desc { color: #7C889C; }
 
 .dash-menu-status {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
   border-radius: 50%;
+  background: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 6px rgba(15, 27, 61, 0.12);
 }
-.dash-menu-status.lock { background: #D3E8DE; color: #7F9A8D; }
-.dash-menu-status.done { background: #D1FAE5; color: var(--green-700); }
-.dash-menu-status.go   { background: rgba(255, 255, 255, 0.7); color: var(--nv-navy); }
+.dash-menu-status.lock { color: #9AA3AE; }
+.dash-menu-status.done { color: var(--green-700); }
+.dash-menu-status.go   { color: var(--dash-blue); }
 
 /* ─── Info ─── */
 .dash-info {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-top: 24px;
-  padding: 16px 18px;
-  background: var(--dash-cyan-soft);
+  gap: 16px;
+  margin-top: 34px;
+  padding: 16px 20px;
+  background: var(--dash-blue-soft);
   border-radius: 14px;
 }
-.dash-info-icon { color: var(--nv-navy); flex-shrink: 0; }
+.dash-info-icon { color: var(--dash-ink); flex-shrink: 0; }
 .dash-info-divider {
   align-self: stretch;
   width: 2px;
@@ -173,7 +173,7 @@
 }
 .dash-info p {
   margin: 0;
-  font-size: 11.5px;
-  line-height: 1.6;
-  color: #3E4A5E;
+  font-size: 11px;
+  line-height: 1.7;
+  color: #5B6B85;
 }
