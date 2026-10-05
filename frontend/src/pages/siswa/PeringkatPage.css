@@ -4,7 +4,6 @@
   position: relative;
   overflow-x: hidden;
   background-color: #FAFAFA;
-  min-height: 100vh;
 }
 .peringkat-body::before {
   content: '';
