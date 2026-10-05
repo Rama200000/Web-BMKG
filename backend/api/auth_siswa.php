@@ -16,14 +16,16 @@ if ($method === 'POST') {
 
     try {
         $stmt = $pdo->prepare("
-            SELECT s.id, s.nama, s.no_hp, s.sekolah_id, sch.nama as sekolah, s.jurusan, s.kelas_id, c.nama as kelas, s.is_active 
+            SELECT s.id, s.nama, s.no_hp, s.sekolah_id, sch.nama as sekolah, s.jurusan, s.kelas_id, c.nama as kelas, s.is_active,
+                   sc.pre_test_score, sc.post_test_score, sc.pre_test_time_seconds, sc.post_test_time_seconds
             FROM students s
             LEFT JOIN schools sch ON s.sekolah_id = sch.id
             LEFT JOIN classes c ON s.kelas_id = c.id
+            LEFT JOIN scores sc ON s.id = sc.student_id
             WHERE s.no_hp = ?
         ");
         $stmt->execute([$data['no_hp']]);
-        $student = $stmt->fetch();
+        $student = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($student) {
             if ($student['is_active'] == 1) {

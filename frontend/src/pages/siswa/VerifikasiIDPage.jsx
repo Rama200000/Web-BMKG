@@ -62,6 +62,21 @@ function VerifikasiIDPage() {
         localStorage.setItem('currentStudent', JSON.stringify(result.data));
         localStorage.setItem('userRole', 'siswa'); // so ProtectedRoute passes if you have one
         
+        if (result.data.pre_test_score !== null) {
+          localStorage.setItem('pretestDone', 'true');
+          localStorage.setItem('skorPretest', result.data.pre_test_score);
+          if (result.data.pre_test_time_seconds !== null) {
+            localStorage.setItem('pretestTime', result.data.pre_test_time_seconds);
+          }
+        }
+        if (result.data.post_test_score !== null) {
+          localStorage.setItem('skorPosttest', result.data.post_test_score);
+          if (result.data.post_test_time_seconds !== null) {
+            localStorage.setItem('posttestTime', result.data.post_test_time_seconds);
+          }
+          localStorage.setItem('modulDone', 'true');
+        }
+        
         navigate('/siswa/dashboard');
       } else if (response.status === 404) {
         // Number not found, redirect to register

@@ -1,9 +1,16 @@
 import { ChevronLeft, GraduationCap, Battery, Wifi, Signal, Download, Book, ArrowRight, NotebookPen, FileText } from 'lucide-react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './DataPenggunaPage.css';
 
 function ModulSiswaPage() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (localStorage.getItem('pretestDone') !== 'true') {
+      navigate('/siswa/dashboard', { replace: true });
+    }
+  }, [navigate]);
 
   return (
     <div className="mobile-app-container">

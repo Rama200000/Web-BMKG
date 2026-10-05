@@ -14,6 +14,11 @@ function ModulPembelajaranPage() {
   const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
+    if (localStorage.getItem('pretestDone') !== 'true') {
+      navigate('/siswa/dashboard', { replace: true });
+      return;
+    }
+
     const updateTime = () => {
       const now = new Date();
       setCurrentTime(now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false }));
@@ -21,7 +26,7 @@ function ModulPembelajaranPage() {
     updateTime();
     const t = setInterval(updateTime, 1000);
     return () => clearInterval(t);
-  }, []);
+  }, [navigate]);
 
   const handleSelesai = () => {
     localStorage.setItem('modulDone', 'true');

@@ -30,6 +30,16 @@ function UjianPage() {
 
   // Clock & Shuffle Options
   useEffect(() => {
+    // Prevent retaking test if already done
+    if (mode === 'pretest' && localStorage.getItem('pretestDone') === 'true') {
+      navigate('/siswa/hasil-pretest', { replace: true });
+      return;
+    }
+    if (mode === 'posttest' && localStorage.getItem('skorPosttest') !== null) {
+      navigate('/siswa/hasil-posttest', { replace: true });
+      return;
+    }
+
     const updateTime = () => {
       const now = new Date();
       setCurrentTime(now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false }));
@@ -91,7 +101,7 @@ function UjianPage() {
         users[phone].rekapPretest = rekap;
         localStorage.setItem('registeredUsers', JSON.stringify(users));
       }
-      if (student.phone) {
+      if (student.phone || student.no_hp) {
         student.pretestDone = true;
         student.skorPretest = skor.toString();
         localStorage.setItem('currentStudent', JSON.stringify(student));
@@ -107,6 +117,21 @@ function UjianPage() {
         localStorage.setItem('registeredUsers', JSON.stringify(users));
       }
     }
+
+    if (student.id) {
+        fetch('http://localhost:8000/api/skor.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                student_id: student.id,
+                modul_id: 1,
+                test_type: mode === 'pretest' ? 'pre_test' : 'post_test',
+                score: skor,
+                time: elapsed
+            })
+        }).catch(err => console.error("Gagal simpan skor ke database", err));
+    }
+
     setSelesai(alasan);
   }, [jawaban, mode, submitted, startTime, soalList]);
 
