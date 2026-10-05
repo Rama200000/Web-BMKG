@@ -12,7 +12,8 @@ import {
   BookOpen,
   GraduationCap,
   CloudUpload,
-  Check
+  Check,
+  Edit2
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import './PengaturanSekolahPage.css';
@@ -112,7 +113,6 @@ function PengaturanSekolahPage() {
     }
   };
 
-  // Hapus Data via API
   const handleDeleteSekolah = async (id) => {
     if(window.confirm('Yakin ingin menghapus sekolah ini? SEMUA data kelas & siswa di sekolah ini akan ikut terhapus!')) {
       try {
@@ -126,6 +126,44 @@ function PengaturanSekolahPage() {
       } catch (err) {
         console.error(err);
         alert('Gagal menghapus sekolah dari server.');
+      }
+    }
+  };
+
+  const handleEditSekolah = async (id, oldName) => {
+    const newName = window.prompt('Ubah Nama Sekolah:', oldName);
+    if (newName && newName.trim() !== '' && newName !== oldName) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/schools.php`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, nama: newName.trim() })
+        });
+        const result = await res.json();
+        if (result.success) fetchData();
+        else alert(result.message);
+      } catch (err) {
+        console.error(err);
+        alert('Gagal mengupdate sekolah.');
+      }
+    }
+  };
+
+  const handleEditKelas = async (id, oldName) => {
+    const newName = window.prompt('Ubah Nama Kelas:', oldName);
+    if (newName && newName.trim() !== '' && newName !== oldName) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/classes.php`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, nama: newName.trim() })
+        });
+        const result = await res.json();
+        if (result.success) fetchData();
+        else alert(result.message);
+      } catch (err) {
+        console.error(err);
+        alert('Gagal mengupdate kelas.');
       }
     }
   };
@@ -314,13 +352,23 @@ function PengaturanSekolahPage() {
                             </div>
                             <h3>{sekolah.nama}</h3>
                           </div>
-                          <button 
-                            className="btn-delete"
-                            title="Hapus Sekolah" 
-                            onClick={() => handleDeleteSekolah(sekolah.id)}
-                          >
-                            <Trash2 size={14} />
-                          </button>
+                          <div style={{display:'flex', gap:'8px'}}>
+                            <button 
+                              className="btn-delete"
+                              title="Edit Sekolah" 
+                              onClick={() => handleEditSekolah(sekolah.id, sekolah.nama)}
+                              style={{color:'#3b82f6', backgroundColor:'#eff6ff'}}
+                            >
+                              <Edit2 size={14} />
+                            </button>
+                            <button 
+                              className="btn-delete"
+                              title="Hapus Sekolah" 
+                              onClick={() => handleDeleteSekolah(sekolah.id)}
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
                         </div>
                         <div className="ps-struktur-body">
                           <div className="ps-jurusan-row">
@@ -328,7 +376,7 @@ function PengaturanSekolahPage() {
                             <div className="ps-kelas-list">
                               {schoolClasses.length > 0 ? (
                                 schoolClasses.map(kls => (
-                                  <span key={kls.id} className="ps-badge-kelas">{kls.nama}</span>
+                                  <span key={kls.id} className="ps-badge-kelas" style={{cursor: 'pointer'}} title="Klik untuk edit" onClick={() => handleEditKelas(kls.id, kls.nama)}>{kls.nama}</span>
                                 ))
                               ) : (
                                 <span style={{ fontSize: '12px', color: '#94a3b8', fontStyle: 'italic' }}>Belum ada kelas.</span>

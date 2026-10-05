@@ -47,25 +47,43 @@ function UjianPage() {
     updateTime();
     const t = setInterval(updateTime, 1000);
 
-    // Shuffle options once on mount
-    const shuffle = (array) => {
-      const newArr = [...array];
-      for (let i = newArr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
-      }
-      return newArr;
-    };
+    const fetchSoal = async () => {
+      try {
+        const res = await fetch('http://localhost:8000/api/questions.php?modul_id=1');
+        const data = await res.json();
+        if (data.success && data.data.length > 0) {
+          const shuffle = (array) => {
+            const newArr = [...array];
+            for (let i = newArr.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+          };
 
-    let preparedSoal = bankSoal.map(s => {
-      const options = s.pilihan.map((text, idx) => ({ text, isOriginalKey: idx === s.kunci }));
-      return { ...s, pilihanShuffled: shuffle(options) };
-    });
-    preparedSoal = shuffle(preparedSoal); // Acak urutan soal
-    setSoalList(preparedSoal);
+          let preparedSoal = data.data.map(s => {
+            const options = [];
+            const keyLetters = ['A', 'B', 'C', 'D', 'E'];
+            ['opsi_a', 'opsi_b', 'opsi_c', 'opsi_d', 'opsi_e'].forEach((optKey, idx) => {
+              if (s[optKey]) {
+                options.push({ text: s[optKey], isOriginalKey: keyLetters[idx] === s.kunci_jawaban });
+              }
+            });
+            return { pertanyaan: s.pertanyaan, pilihanShuffled: shuffle(options) };
+          });
+          preparedSoal = shuffle(preparedSoal);
+          setSoalList(preparedSoal);
+        } else {
+            console.error('Tidak ada soal di database');
+        }
+      } catch (err) {
+        console.error('Error fetching soal:', err);
+      }
+    };
+    fetchSoal();
 
     return () => clearInterval(t);
-  }, []);
+  }, [mode, navigate]);
 
   // Submit handler
   const doSubmit = useCallback((alasan = 'submit') => {

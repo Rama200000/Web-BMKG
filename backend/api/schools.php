@@ -34,6 +34,24 @@ switch ($method) {
         }
         break;
 
+    case 'PUT':
+        $data = json_decode(file_get_contents("php://input"), true);
+        if (!isset($data['id']) || !isset($data['nama'])) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'ID dan Nama sekolah diperlukan']);
+            exit;
+        }
+
+        try {
+            $stmt = $pdo->prepare("UPDATE schools SET nama = ? WHERE id = ?");
+            $stmt->execute([$data['nama'], $data['id']]);
+            echo json_encode(['success' => true, 'message' => 'Sekolah berhasil diupdate']);
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'message' => 'Gagal mengupdate sekolah: ' . $e->getMessage()]);
+        }
+        break;
+
     case 'DELETE':
         $id = isset($_GET['id']) ? $_GET['id'] : null;
         if (!$id) {

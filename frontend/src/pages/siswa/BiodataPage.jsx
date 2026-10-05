@@ -49,6 +49,7 @@ function BiodataPage() {
     nama: '',
     sekolah: '', // This will hold sekolah_id
     jurusan: '',
+    jurusanLainnya: '', // This will hold custom jurusan
     kelas: ''    // This will hold kelas_id
   });
   
@@ -102,7 +103,9 @@ function BiodataPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const isValid = formData.nama.trim() && formData.sekolah && formData.jurusan && formData.kelas;
+  const isValid = formData.nama.trim() && formData.sekolah && formData.jurusan && 
+                  (formData.jurusan === 'Lainnya' ? formData.jurusanLainnya.trim() : true) && 
+                  formData.kelas;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -121,7 +124,7 @@ function BiodataPage() {
           nama: formData.nama.trim(),
           no_hp: phone,
           sekolah_id: formData.sekolah,
-          jurusan: formData.jurusan,
+          jurusan: formData.jurusan === 'Lainnya' ? formData.jurusanLainnya.trim() : formData.jurusan,
           kelas_id: formData.kelas
         })
       });
@@ -139,7 +142,7 @@ function BiodataPage() {
           no_hp: phone,
           sekolah_id: formData.sekolah,
           sekolah: selectedSchool ? selectedSchool.label : '',
-          jurusan: formData.jurusan,
+          jurusan: formData.jurusan === 'Lainnya' ? formData.jurusanLainnya.trim() : formData.jurusan,
           kelas_id: formData.kelas,
           kelas: selectedClass ? selectedClass.label : '',
           is_active: 1
@@ -225,6 +228,21 @@ function BiodataPage() {
               onChange={handleChange}
               options={JURUSAN_OPTIONS}
             />
+            {formData.jurusan === 'Lainnya' && (
+              <div className="bio-field">
+                <label className="bio-label" htmlFor="bio-jurusan-lainnya">Sebutkan Jurusan <span className="req">*</span></label>
+                <input
+                  id="bio-jurusan-lainnya"
+                  className="bio-input"
+                  type="text"
+                  name="jurusanLainnya"
+                  placeholder="Ketik jurusan Anda..."
+                  value={formData.jurusanLainnya}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            )}
 
             <SelectField
               id="bio-kelas"

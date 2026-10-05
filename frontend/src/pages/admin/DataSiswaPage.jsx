@@ -48,6 +48,8 @@ function DataSiswaPage() {
     no_hp: '',
     sekolah_id: '',
     kelas_id: '',
+    jurusan: '',
+    jurusanLainnya: '',
     is_active: 1
   });
 
@@ -101,8 +103,9 @@ function DataSiswaPage() {
   // Form Handling
   const handleSaveStudent = async () => {
     try {
+      const finalJurusan = formData.jurusan === 'Lainnya' ? formData.jurusanLainnya.trim() : formData.jurusan;
       const method = modalMode === 'add' ? 'POST' : 'PUT';
-      const body = modalMode === 'add' ? formData : { ...formData, id: currentStudent.id };
+      const body = modalMode === 'add' ? { ...formData, jurusan: finalJurusan } : { ...formData, id: currentStudent.id, jurusan: finalJurusan };
       
       const response = await fetch(`${API_BASE_URL}/students.php`, {
         method,
@@ -148,6 +151,8 @@ function DataSiswaPage() {
       no_hp: '',
       sekolah_id: schools.length > 0 ? schools[0].id : '',
       kelas_id: '',
+      jurusan: '',
+      jurusanLainnya: '',
       is_active: 1
     });
     setShowModal(true);
@@ -156,11 +161,15 @@ function DataSiswaPage() {
   const openEditModal = (student) => {
     setModalMode('edit');
     setCurrentStudent(student);
+    const JURUSAN_OPTS = ['MIPA', 'IPS', 'Bahasa', 'RPL', 'TKJ', 'Multimedia / DKV', 'Akuntansi'];
+    const isKnown = !student.jurusan || JURUSAN_OPTS.includes(student.jurusan);
     setFormData({
       nama: student.nama,
       no_hp: student.no_hp,
       sekolah_id: student.sekolah_id,
       kelas_id: student.kelas_id,
+      jurusan: isKnown ? (student.jurusan || '') : 'Lainnya',
+      jurusanLainnya: isKnown ? '' : student.jurusan,
       is_active: student.is_active
     });
     setShowModal(true);
@@ -318,6 +327,7 @@ function DataSiswaPage() {
                     <th>NAMA SISWA</th>
                     <th>NO HP (LOGIN)</th>
                     <th>SEKOLAH</th>
+                    <th>JURUSAN</th>
                     <th>KELAS</th>
                     <th>STATUS</th>
                     <th style={{ textAlign: 'right' }}>AKSI</th>
@@ -326,7 +336,7 @@ function DataSiswaPage() {
                 <tbody>
                   {isLoading ? (
                     <tr>
-                      <td colSpan="7" style={{ textAlign: 'center', padding: '32px', color: '#64748b' }}>
+                      <td colSpan="8" style={{ textAlign: 'center', padding: '32px', color: '#64748b' }}>
                         Mengambil data dari database...
                       </td>
                     </tr>
@@ -337,6 +347,7 @@ function DataSiswaPage() {
                         <td className="td-nama-siswa">{siswa.nama}</td>
                         <td className="td-no-hp" style={{ color: '#64748b', fontSize: '13px' }}>{siswa.no_hp}</td>
                         <td className="td-sekolah">{siswa.sekolah || `(ID: ${siswa.sekolah_id})`}</td>
+                        <td>{siswa.jurusan || '-'}</td>
                         <td>
                           <span className="badge-kelas">{siswa.kelas || `(ID: ${siswa.kelas_id})`}</span>
                         </td>
@@ -359,7 +370,7 @@ function DataSiswaPage() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="7" style={{ textAlign: 'center', padding: '32px', color: '#64748b' }}>
+                      <td colSpan="8" style={{ textAlign: 'center', padding: '32px', color: '#64748b' }}>
                         {searchQuery ? 'Data tidak ditemukan.' : 'Belum ada data siswa di database.'}
                       </td>
                     </tr>
@@ -479,6 +490,36 @@ function DataSiswaPage() {
                     </select>
                   </div>
                   <div className="form-group">
+                    <label className="form-label">Jurusan</label>
+                    <select
+                      className="form-input"
+                      value={formData.jurusan}
+                      onChange={e => setFormData({...formData, jurusan: e.target.value})}
+                    >
+                      <option value="">Pilih Jurusan</option>
+                      <option value="MIPA">MIPA / IPA</option>
+                      <option value="IPS">IPS</option>
+                      <option value="Bahasa">Bahasa</option>
+                      <option value="RPL">RPL</option>
+                      <option value="TKJ">TKJ</option>
+                      <option value="Multimedia / DKV">Multimedia / DKV</option>
+                      <option value="Akuntansi">Akuntansi</option>
+                      <option value="Lainnya">Lainnya</option>
+                    </select>
+                  </div>
+                  {formData.jurusan === 'Lainnya' && (
+                    <div className="form-group" style={{marginTop: '15px'}}>
+                      <label className="form-label">Sebutkan Jurusan</label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        placeholder="Ketik jurusan..."
+                        value={formData.jurusanLainnya}
+                        onChange={e => setFormData({...formData, jurusanLainnya: e.target.value})}
+                      />
+                    </div>
+                  )}
+                  <div className="form-group" style={{marginTop: '15px'}}>
                     <label className="form-label">Kelas</label>
                     <select
                       className="form-input"
