@@ -196,13 +196,6 @@ function UjianPage() {
 
         {/* Question Body */}
         <div className="m-body ujian-body">
-          {/* Flag indicator */}
-          {flagged[currentQ] && (
-            <div className="ujian-flag-indicator">
-              <Flag size={13} /> Ditandai ragu-ragu
-            </div>
-          )}
-
           {soal && (
             <div className="ujian-question-card">
               <span className="ujian-question-eyebrow">Pertanyaan</span>

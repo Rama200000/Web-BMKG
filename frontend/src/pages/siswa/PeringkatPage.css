@@ -1,54 +1,25 @@
 /* PeringkatPage.css — style umum ada di siswa-navy.css */
 
-/* Bulatan biru lembut di belakang konten */
 .peringkat-body {
   position: relative;
   overflow-x: hidden;
+  background-color: #FAFAFA;
 }
 .peringkat-body::before {
   content: '';
   position: absolute;
-  top: 10px;
-  left: 18%;
-  width: 560px;
-  height: 560px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 40% 40%, #DCE8FB 0%, #E6EFFC 55%, rgba(230, 239, 252, 0) 72%);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: repeating-conic-gradient(
+    from 0deg at 50% 30%,
+    transparent 0deg 8deg,
+    rgba(0, 0, 0, 0.025) 8deg 16deg
+  );
   pointer-events: none;
+  z-index: 0;
 }
-.peringkat-body > * { position: relative; }
-
-/* ─── Ucapan ─── */
-.peringkat-hero {
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 4px;
-}
-.peringkat-hero-text { flex: 1; min-width: 0; }
-.peringkat-hero-title {
-  margin: 4px 0 8px;
-  font-size: 16px;
-  font-weight: 800;
-  line-height: 1.6;
-  color: var(--gray-900);
-}
-.peringkat-hero-sub {
-  margin: 0;
-  font-size: 12.5px;
-  line-height: 1.75;
-  color: var(--nv-muted);
-}
-.peringkat-hero-art {
-  position: relative;
-  width: 112px;
-  height: 120px;
-  margin: 70px -24px 0 0;   /* ilustrasi menempel ke tepi kanan layar */
-  flex-shrink: 0;
-}
-.peringkat-hero-art img { position: absolute; pointer-events: none; user-select: none; }
-.peringkat-art-books  { width: 76px; left: 26px; bottom: 6px; }
-.peringkat-art-cap    { width: 86px; left: 24px; bottom: 40px; filter: drop-shadow(0 4px 6px rgba(11, 26, 79, 0.18)); }
-.peringkat-art-scroll { width: 48px; left: 0; bottom: 4px; transform: rotate(-18deg); }
 
 /* ─── Papan peringkat ─── */
 .peringkat-title {
@@ -63,6 +34,7 @@
   font-size: 13px;
   color: var(--nv-muted);
 }
+.peringkat-body > * { position: relative; z-index: 1; }
 
 .peringkat-list {
   list-style: none;
@@ -80,10 +52,8 @@
   padding: 8px 18px 8px 14px;
   border-radius: 12px;
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+  background: white;
 }
-.peringkat-row.rank-1 { background: #F8E4B4; }
-.peringkat-row.rank-2 { background: #E1E1E1; }
-.peringkat-row.rank-3 { background: #FBD7CB; }
 .peringkat-row.rank-4 { background: #A9E2EC; }
 .peringkat-row.rank-5 { background: #CFE2F8; }
 .peringkat-row.me { box-shadow: 0 0 0 2px var(--nv-navy), 0 2px 6px rgba(15, 23, 42, 0.06); }
@@ -139,5 +109,108 @@
   border-left: 1.5px solid rgba(11, 26, 79, 0.35);
   font-size: 11.5px;
   line-height: 1.7;
+}
+
+/* ─── Podium Layout ─── */
+.peringkat-podium-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+  margin: 32px 0 24px;
+  padding: 0 4px;
+  height: 250px;
+}
+
+.podium-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 32%;
+}
+
+.podium-avatar {
+  background: #f0f0f0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  border: 3px solid #fff;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  color: #9AA0A8;
+}
+
+.podium-item.rank-1 .podium-avatar { width: 64px; height: 64px; }
+.podium-item.rank-2 .podium-avatar,
+.podium-item.rank-3 .podium-avatar { width: 54px; height: 54px; }
+
+.podium-name {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--gray-900);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.podium-score {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #3D5A80;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.podium-block {
+  width: 100%;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 16px;
+  font-size: 32px;
+  font-weight: 800;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.3);
+}
+
+.podium-item.rank-1 .podium-block {
+  height: 140px;
+  background: linear-gradient(180deg, #FFC107 0%, #FF9800 100%);
+}
+
+.podium-item.rank-2 .podium-block {
+  height: 100px;
+  background: linear-gradient(180deg, #90CAF9 0%, #42A5F5 100%);
+}
+
+.podium-item.rank-3 .podium-block {
+  height: 80px;
+  background: linear-gradient(180deg, #FFAB91 0%, #FF7043 100%);
+}
+
+.podium-item.me .podium-block {
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.3), 0 0 0 3px var(--nv-navy);
+}
+
+.peringkat-details {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.peringkat-details .peringkat-name {
+  margin: 0;
+  font-size: 14.5px;
+}
+.peringkat-score {
+  font-size: 12.5px;
+  font-weight: 600;
   color: #3D5A80;
 }

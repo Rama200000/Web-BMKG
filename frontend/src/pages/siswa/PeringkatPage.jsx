@@ -52,6 +52,11 @@ function PeringkatPage() {
     .sort((a, b) => b.skor - a.skor || a.waktu - b.waktu)
     .slice(0, 5);
   const masukTop5 = top5.includes(saya);
+  
+  const top3 = top5.slice(0, 3);
+  const others = top5.slice(3, 5);
+
+  const formatTime = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 
   return (
     <div className="m-app">
@@ -78,49 +83,61 @@ function PeringkatPage() {
         </header>
 
         <div className="m-body nv-body peringkat-body">
-          {/* Ucapan */}
-          <section className="peringkat-hero">
-            <div className="peringkat-hero-text">
-              <h1 className="peringkat-hero-title">
-                {masukTop5
-                  ? <>Luar Biasa, Kamu adalah Bintang Iklim Muda! <span aria-hidden="true">🎉</span></>
-                  : <>Terima Kasih Sudah Berjuang! <span aria-hidden="true">💪</span></>}
-              </h1>
-              <p className="peringkat-hero-sub">
-                Berikut adalah peringkat 1 sampai 5 siswa terbaik yang telah menyelesaikan tugas dengan luar biasa.
-                {masukTop5 && ' Pertahankan pencapaian luar biasamu dalam menguasai keselamatan kerja dan lingkungan.'}
-                {' '}Teruslah belajar bersama Si Iklim Muda.
-              </p>
-            </div>
-            <div className="peringkat-hero-art" aria-hidden="true">
-              <img src={imgScroll} alt="" className="peringkat-art-scroll" />
-              <img src={imgBooks} alt="" className="peringkat-art-books" />
-              <img src={imgGraduationCap} alt="" className="peringkat-art-cap" />
-            </div>
-          </section>
-
           {/* Papan peringkat */}
           <h2 className="peringkat-title">Papan Peringkat 1–5</h2>
           <p className="peringkat-sub">Daftar nama siswa terbaik</p>
 
-          <ol className="peringkat-list">
-            {top5.map((p, i) => (
-              <li key={p.isMe ? 'saya' : p.nama} className={`peringkat-row rank-${i + 1}${p.isMe ? ' me' : ''}`}>
-                <div className="peringkat-avatar" aria-hidden="true"><UserRound size={24} strokeWidth={2} /></div>
-                <span className="peringkat-name">
-                  {i + 1}. {p.nama}{p.isMe && ' (Kamu)'} <span aria-hidden="true">🏆</span>
-                </span>
-                <span className="peringkat-check" aria-hidden="true"><Check size={13} strokeWidth={3.5} /></span>
-              </li>
-            ))}
-          </ol>
+          <div className="peringkat-podium-container">
+            {top3[1] && (
+              <div className={`podium-item rank-2 ${top3[1].isMe ? 'me' : ''}`}>
+                <div className="podium-avatar"><UserRound size={32} /></div>
+                <div className="podium-name">{top3[1].nama}{top3[1].isMe && ' (Kamu)'}</div>
+                <div className="podium-score">Skor: {top3[1].skor} | {formatTime(top3[1].waktu)}</div>
+                <div className="podium-block">2</div>
+              </div>
+            )}
+            
+            {top3[0] && (
+              <div className={`podium-item rank-1 ${top3[0].isMe ? 'me' : ''}`}>
+                <div className="podium-avatar"><UserRound size={38} /></div>
+                <div className="podium-name">{top3[0].nama}{top3[0].isMe && ' (Kamu)'}</div>
+                <div className="podium-score">Skor: {top3[0].skor} | {formatTime(top3[0].waktu)}</div>
+                <div className="podium-block">1</div>
+              </div>
+            )}
+
+            {top3[2] && (
+              <div className={`podium-item rank-3 ${top3[2].isMe ? 'me' : ''}`}>
+                <div className="podium-avatar"><UserRound size={32} /></div>
+                <div className="podium-name">{top3[2].nama}{top3[2].isMe && ' (Kamu)'}</div>
+                <div className="podium-score">Skor: {top3[2].skor} | {formatTime(top3[2].waktu)}</div>
+                <div className="podium-block">3</div>
+              </div>
+            )}
+          </div>
+
+          {others.length > 0 && (
+            <ol className="peringkat-list" start="4">
+              {others.map((p, i) => (
+                <li key={p.isMe ? 'saya' : p.nama} className={`peringkat-row rank-${i + 4}${p.isMe ? ' me' : ''}`}>
+                  <div className="peringkat-avatar" aria-hidden="true"><UserRound size={24} strokeWidth={2} /></div>
+                  <div className="peringkat-details">
+                    <span className="peringkat-name">
+                      {i + 4}. {p.nama}{p.isMe && ' (Kamu)'}
+                    </span>
+                    <span className="peringkat-score">Skor: {p.skor} | {formatTime(p.waktu)}</span>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          )}
 
           <div className="peringkat-info">
             <span className="peringkat-check" aria-hidden="true"><Check size={13} strokeWidth={3.5} /></span>
             <p>
               {masukTop5
-                ? 'Selamat masuk 5 besar! Kerja kerasmu membuahkan hasil, terus pertahankan prestasi ini.'
-                : 'Kamu belum masuk 5 besar. Terus belajar bersama Si Iklim Muda dan raih peringkat terbaikmu!'}
+                ? 'Selamat! Kamu masuk Top 5 leaderboard. Kerja kerasmu membuahkan hasil, terus pertahankan prestasi ini.'
+                : 'Tetap semangat! Anda belum masuk Top 5 leaderboard. Terus belajar bersama Si Iklim Muda dan raih peringkat terbaikmu!'}
             </p>
           </div>
 
