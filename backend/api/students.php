@@ -1,5 +1,5 @@
 <?php
-require_once '../config/database.php';
+require_once __DIR__ . '/../config/database.php';
 setCorsHeaders();
 
 $pdo = getDB();
@@ -15,6 +15,7 @@ switch ($method) {
                 s.no_hp, 
                 s.sekolah_id, 
                 sch.nama as sekolah, 
+                s.jurusan,
                 s.kelas_id, 
                 c.nama as kelas,
                 s.is_active, 
@@ -43,11 +44,12 @@ switch ($method) {
         }
 
         try {
-            $stmt = $pdo->prepare("INSERT INTO students (nama, no_hp, sekolah_id, kelas_id, is_active) VALUES (?, ?, ?, ?, ?)");
+            $stmt = $pdo->prepare("INSERT INTO students (nama, no_hp, sekolah_id, jurusan, kelas_id, is_active) VALUES (?, ?, ?, ?, ?, ?)");
             $stmt->execute([
                 $data['nama'],
                 $data['no_hp'],
                 $data['sekolah_id'],
+                isset($data['jurusan']) ? $data['jurusan'] : null,
                 $data['kelas_id'],
                 isset($data['is_active']) ? $data['is_active'] : 1
             ]);
@@ -74,11 +76,12 @@ switch ($method) {
         }
 
         try {
-            $stmt = $pdo->prepare("UPDATE students SET nama = ?, no_hp = ?, sekolah_id = ?, kelas_id = ?, is_active = ? WHERE id = ?");
+            $stmt = $pdo->prepare("UPDATE students SET nama = ?, no_hp = ?, sekolah_id = ?, jurusan = ?, kelas_id = ?, is_active = ? WHERE id = ?");
             $stmt->execute([
                 $data['nama'],
                 $data['no_hp'],
                 $data['sekolah_id'],
+                isset($data['jurusan']) ? $data['jurusan'] : null,
                 $data['kelas_id'],
                 isset($data['is_active']) ? $data['is_active'] : 1,
                 $data['id']

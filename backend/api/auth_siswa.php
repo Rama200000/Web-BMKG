@@ -1,5 +1,5 @@
 <?php
-require_once '../config/database.php';
+require_once __DIR__ . '/../config/database.php';
 setCorsHeaders();
 
 $pdo = getDB();
@@ -16,7 +16,7 @@ if ($method === 'POST') {
 
     try {
         $stmt = $pdo->prepare("
-            SELECT s.id, s.nama, s.no_hp, s.sekolah_id, sch.nama as sekolah, s.kelas_id, c.nama as kelas, s.is_active 
+            SELECT s.id, s.nama, s.no_hp, s.sekolah_id, sch.nama as sekolah, s.jurusan, s.kelas_id, c.nama as kelas, s.is_active 
             FROM students s
             LEFT JOIN schools sch ON s.sekolah_id = sch.id
             LEFT JOIN classes c ON s.kelas_id = c.id

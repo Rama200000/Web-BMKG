@@ -65,6 +65,7 @@ CREATE TABLE IF NOT EXISTS students (
     no_hp VARCHAR(20) NOT NULL UNIQUE,
     nama VARCHAR(150) NOT NULL,
     sekolah_id INT NOT NULL,
+    jurusan VARCHAR(100) DEFAULT NULL,
     kelas_id INT NOT NULL,
     is_active TINYINT(1) DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

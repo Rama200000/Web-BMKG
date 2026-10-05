@@ -47,10 +47,11 @@ function UjianPage() {
       return newArr;
     };
 
-    const preparedSoal = bankSoal.map(s => {
+    let preparedSoal = bankSoal.map(s => {
       const options = s.pilihan.map((text, idx) => ({ text, isOriginalKey: idx === s.kunci }));
       return { ...s, pilihanShuffled: shuffle(options) };
     });
+    preparedSoal = shuffle(preparedSoal); // Acak urutan soal
     setSoalList(preparedSoal);
 
     return () => clearInterval(t);

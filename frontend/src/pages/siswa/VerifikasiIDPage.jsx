@@ -5,14 +5,14 @@ import './mobile-green-theme.css';
 import './siswa-navy.css';
 import './VerifikasiIDPage.css';
 
-const API_URL = 'http://localhost/WEB_BMKG/Web-BMKG/backend/api/auth_siswa.php';
+const API_URL = 'http://localhost:8000/api/auth_siswa.php';
 
 function VerifikasiIDPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const untukPosttest = searchParams.get('untuk') === 'posttest';
   
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState('+62');
   const [currentTime, setCurrentTime] = useState('');
   const [checking, setChecking] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -63,9 +63,13 @@ function VerifikasiIDPage() {
         localStorage.setItem('userRole', 'siswa'); // so ProtectedRoute passes if you have one
         
         navigate('/siswa/dashboard');
+      } else if (response.status === 404) {
+        // Number not found, redirect to register
+        localStorage.setItem('siswaPhone', phone);
+        navigate('/siswa/biodata');
       } else {
-        // Number not found
-        setErrorMsg(result.message || 'Nomor HP tidak terdaftar. Silakan hubungi admin.');
+        // Other errors (e.g., account disabled)
+        setErrorMsg(result.message || 'Terjadi kesalahan saat verifikasi.');
       }
     } catch (err) {
       console.error(err);
@@ -75,7 +79,7 @@ function VerifikasiIDPage() {
     }
   };
 
-  const isValid = phone.length >= 10;
+  const isValid = phone.length >= 12;
   const inputError = (phone.length > 0 && !isValid) || errorMsg !== '';
 
   return (
@@ -105,7 +109,7 @@ function VerifikasiIDPage() {
           <p className="nv-subtitle">
             {untukPosttest
               ? 'Masukkan kembali nomor telepon Anda untuk memulai posttest.'
-              : 'Masukkan nomor telepon Anda (ID Siswa) yang sudah didaftarkan admin.'}
+              : 'Masukkan nomor telepon Anda (ID Siswa) untuk masuk atau mendaftar.'}
           </p>
 
           <form className="vid-form" onSubmit={handleSubmit}>
@@ -123,11 +127,18 @@ function VerifikasiIDPage() {
                   type="tel"
                   inputMode="numeric"
                   autoComplete="tel"
-                  placeholder="Contoh: 081234567890"
+                  placeholder="81234567890"
                   value={phone}
-                  onChange={(e) => { setPhone(e.target.value.replace(/\D/g, '')); setErrorMsg(''); }}
+                  onChange={(e) => { 
+                    let val = e.target.value;
+                    if (!val.startsWith('+62')) val = '+62';
+                    let digits = val.substring(3).replace(/\D/g, '');
+                    if (digits.startsWith('0')) digits = digits.substring(1);
+                    setPhone('+62' + digits);
+                    setErrorMsg(''); 
+                  }}
                   required
-                  maxLength={13}
+                  maxLength={15}
                   aria-invalid={inputError}
                 />
               </div>
@@ -136,7 +147,7 @@ function VerifikasiIDPage() {
                   ? errorMsg 
                   : (phone.length > 0 && !isValid) 
                     ? 'Minimal 10 digit nomor telepon.' 
-                    : 'Gunakan nomor yang telah didaftarkan oleh admin.'}
+                    : 'Nomor yang belum terdaftar akan otomatis diarahkan untuk pendaftaran.'}
               </p>
             </div>
 

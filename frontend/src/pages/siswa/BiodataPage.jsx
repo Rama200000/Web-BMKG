@@ -3,33 +3,21 @@ import { ChevronLeft, ChevronDown, GraduationCap, ArrowRight, Info } from 'lucid
 import { useNavigate } from 'react-router-dom';
 import './mobile-green-theme.css';
 import './siswa-navy.css';
+import './siswa-navy.css';
 import './BiodataPage.css';
 
-// Daftar sementara (sama dengan data contoh di dashboard admin).
-// Ganti dengan data dari backend setelah fitur kelola sekolah tersedia.
-const SEKOLAH_OPTIONS = [
-  'SMA 3 Bandung',
-  'SMAN 1 Cimahi',
-  'SMAN 4 Cimahi',
-  'SMKN 1 Bandung',
-  'SMKN 2 Bandung',
-];
-
 const JURUSAN_OPTIONS = [
-  { value: 'IPA', label: 'IPA' },
+  { value: 'MIPA', label: 'MIPA / IPA' },
   { value: 'IPS', label: 'IPS' },
+  { value: 'Bahasa', label: 'Bahasa' },
   { value: 'RPL', label: 'RPL (Rekayasa Perangkat Lunak)' },
   { value: 'TKJ', label: 'TKJ (Teknik Komputer Jaringan)' },
-  { value: 'Bahasa', label: 'Bahasa' },
+  { value: 'Multimedia / DKV', label: 'Multimedia / DKV' },
+  { value: 'Akuntansi', label: 'Akuntansi' },
+  { value: 'Lainnya', label: 'Lainnya' }
 ];
 
-const KELAS_OPTIONS = [
-  { value: 'X', label: 'Kelas X' },
-  { value: 'XI', label: 'Kelas XI' },
-  { value: 'XII', label: 'Kelas XII' },
-];
-
-function SelectField({ id, name, label, placeholder, value, onChange, options }) {
+function SelectField({ id, name, label, placeholder, value, onChange, options, disabled }) {
   return (
     <div className="bio-field">
       <label className="bio-label" htmlFor={id}>{label} <span className="req">*</span></label>
@@ -40,6 +28,7 @@ function SelectField({ id, name, label, placeholder, value, onChange, options })
           className={`bio-input bio-select${value ? '' : ' empty'}`}
           value={value}
           onChange={onChange}
+          disabled={disabled}
           required
         >
           <option value="" disabled hidden>{placeholder}</option>
@@ -58,11 +47,46 @@ function BiodataPage() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     nama: '',
-    sekolah: '',
+    sekolah: '', // This will hold sekolah_id
     jurusan: '',
-    kelas: ''
+    kelas: ''    // This will hold kelas_id
   });
+  
+  const [schools, setSchools] = useState([]);
+  const [classes, setClasses] = useState([]);
   const [currentTime, setCurrentTime] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+
+  // Fetch schools on mount
+  useEffect(() => {
+    fetch('http://localhost:8000/api/schools.php')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setSchools(data.data.map(s => ({ value: s.id, label: s.nama })));
+        }
+      })
+      .catch(err => console.error("Error fetching schools:", err));
+  }, []);
+
+  // Fetch classes when school changes
+  useEffect(() => {
+    if (formData.sekolah) {
+      fetch(`http://localhost:8000/api/classes.php?sekolah_id=${formData.sekolah}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            setClasses(data.data.map(c => ({ value: c.id, label: c.nama })));
+          }
+        })
+        .catch(err => console.error("Error fetching classes:", err));
+    } else {
+      setClasses([]);
+    }
+    // Reset kelas when sekolah changes
+    setFormData(prev => ({ ...prev, kelas: '' }));
+  }, [formData.sekolah]);
 
   useEffect(() => {
     const updateTime = () => {
@@ -80,30 +104,59 @@ function BiodataPage() {
 
   const isValid = formData.nama.trim() && formData.sekolah && formData.jurusan && formData.kelas;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!isValid) return;
+
+    setLoading(true);
+    setErrorMsg('');
+    
     const phone = localStorage.getItem('siswaPhone') || '';
-    const student = {
-      id: Date.now(),
-      nama: formData.nama.trim(),
-      sekolah: formData.sekolah,
-      jurusan: formData.jurusan,
-      kelas: formData.kelas,
-      phone: phone,
-      tanggal: new Date().toISOString(),
-      pretestDone: false,
-      modulDone: false,
-      skorPretest: null,
-      skorPosttest: null
-    };
-    localStorage.setItem('currentStudent', JSON.stringify(student));
+    
+    try {
+      const response = await fetch('http://localhost:8000/api/students.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nama: formData.nama.trim(),
+          no_hp: phone,
+          sekolah_id: formData.sekolah,
+          jurusan: formData.jurusan,
+          kelas_id: formData.kelas
+        })
+      });
 
-    // Register user in shared registry (keyed by phone) for session recovery
-    const users = JSON.parse(localStorage.getItem('registeredUsers') || '{}');
-    users[phone] = student;
-    localStorage.setItem('registeredUsers', JSON.stringify(users));
-
-    navigate('/siswa/dashboard');
+      const result = await response.json();
+      
+      if (result.success) {
+        // Construct user object for local storage based on selection
+        const selectedSchool = schools.find(s => s.value == formData.sekolah);
+        const selectedClass = classes.find(c => c.value == formData.kelas);
+        
+        const student = {
+          id: result.id,
+          nama: formData.nama.trim(),
+          no_hp: phone,
+          sekolah_id: formData.sekolah,
+          sekolah: selectedSchool ? selectedSchool.label : '',
+          jurusan: formData.jurusan,
+          kelas_id: formData.kelas,
+          kelas: selectedClass ? selectedClass.label : '',
+          is_active: 1
+        };
+        
+        localStorage.setItem('currentStudent', JSON.stringify(student));
+        localStorage.setItem('userRole', 'siswa'); // so ProtectedRoute passes if you have one
+        navigate('/siswa/dashboard');
+      } else {
+        setErrorMsg(result.message || 'Terjadi kesalahan saat menyimpan data.');
+      }
+    } catch (err) {
+      console.error(err);
+      setErrorMsg('Gagal terhubung ke server.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -134,6 +187,8 @@ function BiodataPage() {
         <div className="m-body nv-body bio-body">
           <h1 className="bio-title">Data Pengguna</h1>
           <p className="bio-subtitle">Lengkapi data diri sebelum memulai pretest.</p>
+          
+          {errorMsg && <div className="error-message" style={{color: 'red', marginBottom: '15px'}}>{errorMsg}</div>}
 
           <form className="bio-form" onSubmit={handleSubmit}>
             <div className="bio-field">
@@ -158,7 +213,7 @@ function BiodataPage() {
               placeholder="Pilih nama sekolah"
               value={formData.sekolah}
               onChange={handleChange}
-              options={SEKOLAH_OPTIONS}
+              options={schools}
             />
 
             <SelectField
@@ -178,7 +233,8 @@ function BiodataPage() {
               placeholder="Pilih kelas"
               value={formData.kelas}
               onChange={handleChange}
-              options={KELAS_OPTIONS}
+              options={classes}
+              disabled={!formData.sekolah}
             />
 
             <div className="bio-info">
@@ -187,8 +243,8 @@ function BiodataPage() {
             </div>
 
             <div className="nv-footer">
-              <button type="submit" className="nv-btn" disabled={!isValid}>
-                Lanjut ke Pretest <ArrowRight size={18} />
+              <button type="submit" className="nv-btn" disabled={!isValid || loading}>
+                {loading ? 'Menyimpan...' : <>Lanjut ke Pretest <ArrowRight size={18} /></>}
               </button>
             </div>
           </form>

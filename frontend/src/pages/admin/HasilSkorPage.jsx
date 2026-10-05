@@ -22,7 +22,7 @@ import * as XLSX from 'xlsx';
 import Sidebar from '../../components/Sidebar';
 import './HasilSkorPage.css';
 
-const API_BASE_URL = 'http://localhost/WEB_BMKG/Web-BMKG/backend/api';
+const API_BASE_URL = 'http://localhost:8000/api';
 
 function HasilSkorPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);

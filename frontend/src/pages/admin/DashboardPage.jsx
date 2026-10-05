@@ -27,7 +27,7 @@ import 'jspdf-autotable';
 import Sidebar from '../../components/Sidebar';
 import './DashboardPage.css';
 
-const API_BASE_URL = 'http://localhost/WEB_BMKG/Web-BMKG/backend/api';
+const API_BASE_URL = 'http://localhost:8000/api';
 
 function DashboardPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);

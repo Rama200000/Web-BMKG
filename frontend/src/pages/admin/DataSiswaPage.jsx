@@ -18,7 +18,7 @@ import {
 import Sidebar from '../../components/Sidebar';
 import './DataSiswaPage.css';
 
-const API_BASE_URL = 'http://localhost/WEB_BMKG/Web-BMKG/backend/api';
+const API_BASE_URL = 'http://localhost:8000/api';
 
 const ITEMS_PER_PAGE = 7;
 
