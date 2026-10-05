@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Menu,
@@ -11,13 +11,53 @@ import {
   CheckCircle2,
   Save,
   MessageSquare,
-  Lock
+  Lock,
+  Plus
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import './SoalPage.css';
 
+const API_BASE_URL = 'http://localhost/WEB_BMKG/Web-BMKG/backend/api';
+
 function SoalPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [questions, setQuestions] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchQuestions = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/questions.php`);
+      const data = await res.json();
+      if (data.success) {
+        setQuestions(data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching questions:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Yakin ingin menghapus soal ini?')) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/questions.php?id=${id}`, { method: 'DELETE' });
+        const result = await res.json();
+        if (result.success) {
+          fetchQuestions();
+        } else {
+          alert(result.message);
+        }
+      } catch (err) {
+        console.error('Error deleting:', err);
+      }
+    }
+  };
 
   return (
     <div className={`soal-layout ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
@@ -53,14 +93,18 @@ function SoalPage() {
         <div className="soal-content">
           
           {/* Header */}
-          <div className="soal-header-wrapper">
-            <div className="soal-breadcrumb">
-              <span className="breadcrumb-root">Dashboard</span>
-              <ChevronRight size={13} className="breadcrumb-sep" />
-              <span className="breadcrumb-current">Soal</span>
+          <div className="soal-header-wrapper" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+            <div>
+              <div className="soal-breadcrumb">
+                <span className="breadcrumb-root">Dashboard</span>
+                <ChevronRight size={13} className="breadcrumb-sep" />
+                <span className="breadcrumb-current">Soal</span>
+              </div>
+              <h1 className="soal-title">Manajemen Bank Soal</h1>
             </div>
-            
-            <h1 className="soal-title">Manajemen Bank Soal</h1>
+            <Link to="/tambah-soal" className="btn-simpan" style={{ textDecoration: 'none' }}>
+              <Plus size={14} /> Tambah Soal
+            </Link>
           </div>
 
           {/* Stats Bar */}
@@ -68,12 +112,7 @@ function SoalPage() {
             <div className="stat-pill">
               <div className="stat-dot blue"></div>
               <span>Total Soal:</span>
-              <strong>25</strong>
-            </div>
-            <div className="stat-pill">
-              <div className="stat-dot green"></div>
-              <span>Pilihan Ganda:</span>
-              <strong>20</strong>
+              <strong>{questions.length}</strong>
             </div>
           </div>
 
@@ -85,196 +124,72 @@ function SoalPage() {
               <div className="question-list-header">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <h3 className="question-list-title">Daftar Pertanyaan</h3>
-                  <span className="question-list-subtitle">(3 Ditampilkan)</span>
+                  <span className="question-list-subtitle">({questions.length} Ditampilkan)</span>
                 </div>
                 <div className="question-list-actions">
-                  <button className="question-action-btn"><Filter size={14} /></button>
-                  <button className="question-action-btn"><ArrowDownUp size={14} /></button>
+                  {/* Empty or you can add filter buttons later */}
                 </div>
               </div>
 
-              {/* Question Card 1 */}
-              <div className="question-card">
-                <div className="qc-header">
-                  <div className="qc-header-left">
-                    <div className="qc-number active">1</div>
-                    <span className="qc-type-badge">Pilihan Ganda</span>
-                    <span className="qc-status"><CheckCircle2 size={12} /> Kunci Terkonfirmasi</span>
-                  </div>
-                  <div className="qc-actions">
-                    <button className="qc-btn lihat"><Eye size={14} /> Lihat</button>
-                    <button className="qc-btn hapus"><Trash2 size={14} /> Hapus</button>
-                  </div>
-                </div>
-                
-                <h4 className="qc-question-text">Apa perintah untuk menampilkan output di JavaScript?</h4>
-                
-                <div className="qc-options-grid">
-                  <div className="qc-option correct">
-                    <div className="qc-option-left">
-                      <div className="qc-option-label correct">A</div>
-                      <span>console.log()</span>
+              {isLoading ? (
+                <p style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>Memuat bank soal...</p>
+              ) : questions.length === 0 ? (
+                <p style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>Belum ada soal terdaftar.</p>
+              ) : (
+                questions.map((q, idx) => (
+                  <div className="question-card" key={q.id}>
+                    <div className="qc-header">
+                      <div className="qc-header-left">
+                        <div className="qc-number active">{idx + 1}</div>
+                        <span className="qc-type">Pilihan Ganda</span>
+                      </div>
+                      <div className="qc-header-right">
+                        <button className="qc-btn-icon"><Eye size={15} /></button>
+                        <button className="qc-btn-icon" onClick={() => handleDelete(q.id)}><Trash2 size={15} /></button>
+                      </div>
                     </div>
-                    <CheckCircle2 size={16} className="qc-option-icon" />
-                  </div>
-                  <div className="qc-option">
-                    <div className="qc-option-left">
-                      <div className="qc-option-label">B</div>
-                      <span>alert()</span>
+                    <div className="qc-body">
+                      <h4 className="qc-question-text">{q.pertanyaan}</h4>
+                      <div className="qc-options-list">
+                        <div className={`qc-option ${q.kunci_jawaban === 'A' ? 'correct' : ''}`}>
+                          <div className="qc-option-letter">A</div>
+                          <span className="qc-option-text">{q.opsi_a}</span>
+                          {q.kunci_jawaban === 'A' && <CheckCircle2 size={14} className="qc-correct-icon" />}
+                        </div>
+                        <div className={`qc-option ${q.kunci_jawaban === 'B' ? 'correct' : ''}`}>
+                          <div className="qc-option-letter">B</div>
+                          <span className="qc-option-text">{q.opsi_b}</span>
+                          {q.kunci_jawaban === 'B' && <CheckCircle2 size={14} className="qc-correct-icon" />}
+                        </div>
+                        <div className={`qc-option ${q.kunci_jawaban === 'C' ? 'correct' : ''}`}>
+                          <div className="qc-option-letter">C</div>
+                          <span className="qc-option-text">{q.opsi_c}</span>
+                          {q.kunci_jawaban === 'C' && <CheckCircle2 size={14} className="qc-correct-icon" />}
+                        </div>
+                        <div className={`qc-option ${q.kunci_jawaban === 'D' ? 'correct' : ''}`}>
+                          <div className="qc-option-letter">D</div>
+                          <span className="qc-option-text">{q.opsi_d}</span>
+                          {q.kunci_jawaban === 'D' && <CheckCircle2 size={14} className="qc-correct-icon" />}
+                        </div>
+                        {q.opsi_e && (
+                          <div className={`qc-option ${q.kunci_jawaban === 'E' ? 'correct' : ''}`}>
+                            <div className="qc-option-letter">E</div>
+                            <span className="qc-option-text">{q.opsi_e}</span>
+                            {q.kunci_jawaban === 'E' && <CheckCircle2 size={14} className="qc-correct-icon" />}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="qc-footer">
+                      <div className="qc-meta-tags">
+                        <span className="qc-tag gray">Modul: {q.modul_judul}</span>
+                      </div>
                     </div>
                   </div>
-                  <div className="qc-option">
-                    <div className="qc-option-left">
-                      <div className="qc-option-label">C</div>
-                      <span>document.write()</span>
-                    </div>
-                  </div>
-                  <div className="qc-option">
-                    <div className="qc-option-left">
-                      <div className="qc-option-label">D</div>
-                      <span>print()</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="qc-footer">
-                  <span className="qc-footer-kunci">Kunci: <strong>A. console.log()</strong></span>
-                  <span className="qc-footer-bobot">Bobot: 4 Poin</span>
-                </div>
-              </div>
-
-              {/* Question Card 2 */}
-              <div className="question-card">
-                <div className="qc-header">
-                  <div className="qc-header-left">
-                    <div className="qc-number">2</div>
-                    <span className="qc-type-badge">Pilihan Ganda</span>
-                    <span className="qc-status"><CheckCircle2 size={12} /> Kunci Terkonfirmasi</span>
-                  </div>
-                  <div className="qc-actions">
-                    <button className="qc-btn lihat"><Eye size={14} /> Lihat</button>
-                    <button className="qc-btn hapus"><Trash2 size={14} /> Hapus</button>
-                  </div>
-                </div>
-                
-                <h4 className="qc-question-text">Apa fungsi dari tag &lt;div&gt; dalam HTML?</h4>
-                
-                <div className="qc-footer">
-                  <span className="qc-footer-kunci">Kunci: <strong>B. Container / pembungkus elemen</strong></span>
-                  <span className="qc-footer-bobot">Bobot: 4 Poin</span>
-                </div>
-              </div>
-
-              {/* Question Card 3 */}
-              <div className="question-card">
-                <div className="qc-header">
-                  <div className="qc-header-left">
-                    <div className="qc-number">3</div>
-                    <span className="qc-type-badge">Pilihan Ganda</span>
-                    <span className="qc-status"><CheckCircle2 size={12} /> Kunci Terkonfirmasi</span>
-                  </div>
-                  <div className="qc-actions">
-                    <button className="qc-btn lihat"><Eye size={14} /> Lihat</button>
-                    <button className="qc-btn hapus"><Trash2 size={14} /> Hapus</button>
-                  </div>
-                </div>
-                
-                <h4 className="qc-question-text">Bahasa pemrograman untuk web interaktif?</h4>
-                
-                <div className="qc-footer">
-                  <span className="qc-footer-kunci">Kunci: <strong>C. JavaScript</strong></span>
-                  <span className="qc-footer-bobot">Bobot: 4 Poin</span>
-                </div>
-              </div>
-
-              {/* Pagination */}
-              <div className="soal-pagination">
-                <span className="pagination-text">Menampilkan 3 dari 25 butir soal</span>
-                <div className="pagination-controls">
-                  <button className="page-btn"><ChevronRight size={14} style={{ transform: 'rotate(180deg)' }} /></button>
-                  <button className="page-btn active">1</button>
-                  <button className="page-btn">2</button>
-                  <button className="page-btn">3</button>
-                  <button className="page-btn"><ChevronRight size={14} /></button>
-                </div>
-              </div>
-
+                ))
+              )}
             </div>
-
-            {/* Right Column (Editor) */}
-            <div className="soal-editor-column">
-              <div className="editor-card">
-                
-                <div className="editor-header">
-                  <div className="editor-icon-box">
-                    <MessageSquare size={18} />
-                  </div>
-                  <div className="editor-title">
-                    <h3>Tambah Soal</h3>
-                    <p>Editor parameter & format jawaban</p>
-                  </div>
-                </div>
-
-                <div className="editor-form-group">
-                  <label className="editor-label">Pilih Modul <span className="req">*</span></label>
-                  <div className="editor-select-wrapper light-blue">
-                    <select>
-                      <option>Dasar Pemrograman</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="editor-form-group">
-                  <label className="editor-label">Pertanyaan <span className="req">*</span></label>
-                  <textarea className="editor-textarea light-blue" defaultValue="Apa perintah untuk menampilkan output di JavaScript?"></textarea>
-                </div>
-
-                <div className="editor-form-group">
-                  <label className="editor-label">Pilihan Jawaban</label>
-                  <div className="option-inputs">
-                    <div className="option-input-row">
-                      <div className="option-input-label">A</div>
-                      <input type="text" className="editor-input light-blue" defaultValue="console.log()" />
-                    </div>
-                    <div className="option-input-row">
-                      <div className="option-input-label">B</div>
-                      <input type="text" className="editor-input light-blue" defaultValue="alert()" />
-                    </div>
-                    <div className="option-input-row">
-                      <div className="option-input-label">C</div>
-                      <input type="text" className="editor-input light-blue" defaultValue="document.write()" />
-                    </div>
-                    <div className="option-input-row">
-                      <div className="option-input-label">D</div>
-                      <input type="text" className="editor-input light-blue" defaultValue="print()" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="editor-form-group">
-                  <label className="editor-label">
-                    Jawaban Benar / Kunci 
-                    <Lock size={12} style={{ color: '#16a34a', marginLeft: 4 }} />
-                  </label>
-                  <div className="editor-select-wrapper light-green">
-                    <select>
-                      <option>A. console.log()</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="editor-footer">
-                  <button className="btn-batal">Batal</button>
-                  <button className="btn-simpan">
-                    <Save size={14} /> Simpan
-                  </button>
-                </div>
-
-              </div>
-            </div>
-
           </div>
-
         </div>
       </div>
     </div>

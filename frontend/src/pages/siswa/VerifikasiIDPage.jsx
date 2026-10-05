@@ -5,22 +5,17 @@ import './mobile-green-theme.css';
 import './siswa-navy.css';
 import './VerifikasiIDPage.css';
 
-/**
- * VerifikasiIDPage — Session Recovery System
- * 1 Nomor Telepon = 1 Data User (Primary Key)
- * - Nomor BARU → arahkan ke Form Biodata
- * - Nomor SUDAH ADA → langsung ke Dashboard (recovery sesi)
- * Mode `?untuk=posttest` (setelah scan dari kartu Posttest): nomor harus sama dengan
- * nomor siswa yang sedang masuk, lalu lanjut ke informasi waktu posttest.
- */
+const API_URL = 'http://localhost/WEB_BMKG/Web-BMKG/backend/api/auth_siswa.php';
+
 function VerifikasiIDPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const untukPosttest = searchParams.get('untuk') === 'posttest';
+  
   const [phone, setPhone] = useState('');
   const [currentTime, setCurrentTime] = useState('');
   const [checking, setChecking] = useState(false);
-  const [mismatch, setMismatch] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
     const updateTime = () => {
@@ -32,62 +27,56 @@ function VerifikasiIDPage() {
     return () => clearInterval(t);
   }, []);
 
-  // Retrieve all registered users from localStorage
-  const getRegisteredUsers = () => {
-    try {
-      return JSON.parse(localStorage.getItem('registeredUsers') || '{}');
-    } catch { return {}; }
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setChecking(true);
+    setErrorMsg('');
 
-    // Simulate a brief check delay
-    setTimeout(() => {
+    try {
       if (untukPosttest) {
-        setChecking(false);
-        if (phone !== localStorage.getItem('siswaPhone')) {
-          setMismatch(true);
+        // Mode post-test: verify phone matches currently logged-in student
+        const currentPhone = localStorage.getItem('siswaPhone');
+        if (phone !== currentPhone) {
+          setErrorMsg('Nomor telepon tidak cocok dengan data sesi Anda saat ini.');
+          setChecking(false);
           return;
         }
         sessionStorage.setItem('posttestVerified', 'true');
-        // replace: tombol kembali dari halaman info tidak membuka verifikasi lagi
+        setChecking(false);
         navigate('/siswa/posttest-info', { replace: true });
         return;
       }
 
-      const users = getRegisteredUsers();
-      const existingUser = users[phone];
+      // Normal login verification
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ no_hp: phone })
+      });
+      
+      const result = await response.json();
 
-      if (existingUser) {
-        // Auto resume session and navigate to dashboard
+      if (result.success) {
+        // Successfully found student
         localStorage.setItem('siswaPhone', phone);
-        localStorage.setItem('currentStudent', JSON.stringify(existingUser));
+        localStorage.setItem('currentStudent', JSON.stringify(result.data));
+        localStorage.setItem('userRole', 'siswa'); // so ProtectedRoute passes if you have one
         
-        // Restore progress flags
-        if (existingUser.pretestDone) localStorage.setItem('pretestDone', 'true');
-        if (existingUser.modulDone) localStorage.setItem('modulDone', 'true');
-        if (existingUser.skorPretest) localStorage.setItem('skorPretest', existingUser.skorPretest);
-        if (existingUser.rekapPretest) localStorage.setItem('rekapPretest', existingUser.rekapPretest);
-        if (existingUser.skorPosttest) localStorage.setItem('skorPosttest', existingUser.skorPosttest);
-        if (existingUser.rekapPosttest) localStorage.setItem('rekapPosttest', existingUser.rekapPosttest);
-        if (existingUser.posttestTime) localStorage.setItem('posttestTime', existingUser.posttestTime);
-
-        setChecking(false);
         navigate('/siswa/dashboard');
       } else {
-        // New user — proceed to biodata
-        localStorage.setItem('siswaPhone', phone);
-        setChecking(false);
-        navigate('/siswa/biodata');
+        // Number not found
+        setErrorMsg(result.message || 'Nomor HP tidak terdaftar. Silakan hubungi admin.');
       }
-    }, 800);
+    } catch (err) {
+      console.error(err);
+      setErrorMsg('Gagal terhubung ke server database.');
+    } finally {
+      setChecking(false);
+    }
   };
 
   const isValid = phone.length >= 10;
-  const tooShort = phone.length > 0 && !isValid;
-  const inputError = tooShort || mismatch;
+  const inputError = (phone.length > 0 && !isValid) || errorMsg !== '';
 
   return (
     <div className="m-app">
@@ -116,7 +105,7 @@ function VerifikasiIDPage() {
           <p className="nv-subtitle">
             {untukPosttest
               ? 'Masukkan kembali nomor telepon Anda untuk memulai posttest.'
-              : 'Masukkan nomor telepon Anda sebagai ID siswa untuk verifikasi identitas.'}
+              : 'Masukkan nomor telepon Anda (ID Siswa) yang sudah didaftarkan admin.'}
           </p>
 
           <form className="vid-form" onSubmit={handleSubmit}>
@@ -134,19 +123,20 @@ function VerifikasiIDPage() {
                   type="tel"
                   inputMode="numeric"
                   autoComplete="tel"
-                  placeholder="08xxxxxxxxxx"
+                  placeholder="Contoh: 081234567890"
                   value={phone}
-                  onChange={(e) => { setPhone(e.target.value.replace(/\D/g, '')); setMismatch(false); }}
+                  onChange={(e) => { setPhone(e.target.value.replace(/\D/g, '')); setErrorMsg(''); }}
                   required
                   maxLength={13}
                   aria-invalid={inputError}
-                  aria-describedby="vid-phone-help"
                 />
               </div>
-              <p id="vid-phone-help" className={`vid-help${inputError ? ' error' : ''}`} role={mismatch ? 'alert' : undefined}>
-                {mismatch
-                  ? 'Nomor telepon tidak cocok dengan data Anda.'
-                  : tooShort ? 'Minimal 10 digit nomor telepon.' : 'Gunakan nomor aktif, 10–13 digit angka.'}
+              <p className={`vid-help${inputError ? ' error' : ''}`}>
+                {errorMsg 
+                  ? errorMsg 
+                  : (phone.length > 0 && !isValid) 
+                    ? 'Minimal 10 digit nomor telepon.' 
+                    : 'Gunakan nomor yang telah didaftarkan oleh admin.'}
               </p>
             </div>
 
@@ -167,8 +157,8 @@ function VerifikasiIDPage() {
                 <Info size={14} className="nv-note-icon" />
                 <span>
                   {untukPosttest
-                    ? 'Gunakan nomor telepon yang sama dengan saat Anda mendaftar.'
-                    : 'Nomor ini menjadi ID unik Anda. Jika sudah pernah mendaftar, Anda akan otomatis masuk ke Dashboard.'}
+                    ? 'Pastikan sesuai dengan akun yang Anda gunakan.'
+                    : 'Akses ujian akan masuk langsung ke Dashboard setelah verifikasi.'}
                 </span>
               </p>
             </div>

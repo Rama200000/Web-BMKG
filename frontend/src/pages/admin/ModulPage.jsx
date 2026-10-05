@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Menu,
@@ -18,13 +18,48 @@ import {
 import Sidebar from '../../components/Sidebar';
 import './ModulPage.css';
 
-const modulData = [
-  { no: 1, nama: 'Dasar Pemrograman', deskripsi: 'Pengenalan konsep dasar pemrograman', soal: 25, icon: PlaySquare },
-];
+const API_BASE_URL = 'http://localhost/WEB_BMKG/Web-BMKG/backend/api';
 
 function ModulPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [modules, setModules] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchModules = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/modules.php`);
+      const data = await res.json();
+      if (data.success) {
+        setModules(data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching modules:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchModules();
+  }, []);
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Yakin ingin menghapus modul ini? Semua soal di dalam modul akan terhapus!')) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/modules.php?id=${id}`, { method: 'DELETE' });
+        const result = await res.json();
+        if (result.success) {
+          fetchModules();
+        } else {
+          alert(result.message);
+        }
+      } catch (err) {
+        console.error('Error deleting:', err);
+      }
+    }
+  };
 
   return (
     <div className={`modul-layout ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
@@ -77,7 +112,7 @@ function ModulPage() {
             <div className="modul-stat-card">
               <div className="modul-stat-info">
                 <span className="modul-stat-label">TOTAL MODUL</span>
-                <span className="modul-stat-value">1</span>
+                <span className="modul-stat-value">{isLoading ? '-' : modules.length}</span>
               </div>
               <div className="modul-stat-icon-wrap blue"><BookOpen size={20} /></div>
             </div>
@@ -85,8 +120,8 @@ function ModulPage() {
               <div className="modul-stat-info">
                 <span className="modul-stat-label">TOTAL SOAL</span>
                 <div className="stat-value-row">
-                  <span className="modul-stat-value">120</span>
-                  <span className="modul-stat-subtext">Rata-rata 20 per modul</span>
+                  <span className="modul-stat-value">{isLoading ? '-' : modules.reduce((sum, m) => sum + parseInt(m.jumlah_soal || 0), 0)}</span>
+                  <span className="modul-stat-subtext">Tersebar di {modules.length} modul</span>
                 </div>
               </div>
               <div className="modul-stat-icon-wrap gray"><FileText size={20} /></div>
@@ -127,21 +162,29 @@ function ModulPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {modulData.map((item) => (
-                    <tr key={item.no}>
-                      <td className="td-no">{item.no}</td>
+                  {isLoading ? (
+                    <tr>
+                      <td colSpan="5" style={{ textAlign: 'center', padding: '24px', color: '#64748b' }}>Memuat modul...</td>
+                    </tr>
+                  ) : modules.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" style={{ textAlign: 'center', padding: '24px', color: '#64748b' }}>Belum ada modul yang ditambahkan.</td>
+                    </tr>
+                  ) : modules.map((item, index) => (
+                    <tr key={item.id}>
+                      <td className="td-no">{index + 1}</td>
                       <td>
                         <div className="cell-nama-modul">
                           <div className="modul-icon-wrapper">
-                            <item.icon size={16} />
+                            <PlaySquare size={16} />
                           </div>
-                          <span className="nama-modul-text">{item.nama}</span>
+                          <span className="nama-modul-text">{item.judul}</span>
                         </div>
                       </td>
-                      <td className="td-desc">{item.deskripsi}</td>
+                      <td className="td-desc">{item.deskripsi || '-'}</td>
                       <td>
                         <span className="cell-jumlah-soal">
-                          {item.soal} Soal
+                          <FileText size={14} style={{ marginRight: 6 }} /> {item.jumlah_soal || 0} Soal
                         </span>
                       </td>
                       <td>
@@ -149,7 +192,7 @@ function ModulPage() {
                           <button className="row-action-btn edit" title="Edit">
                             <Pencil size={14} />
                           </button>
-                          <button className="row-action-btn delete" title="Hapus">
+                          <button className="row-action-btn delete" title="Hapus" onClick={() => handleDelete(item.id)}>
                             <Trash2 size={14} />
                           </button>
                         </div>
@@ -162,11 +205,13 @@ function ModulPage() {
 
             {/* Pagination */}
             <div className="ds-table-footer">
-              <span className="ds-table-info">Menampilkan 1 dari 1 Modul</span>
+              <span className="ds-table-info">
+                {isLoading ? 'Memuat...' : `Menampilkan ${modules.length} dari ${modules.length} Modul`}
+              </span>
               <div className="ds-pagination">
                 <button className="page-btn" disabled><ChevronLeft size={14} /></button>
                 <button className="page-btn active" onClick={() => setCurrentPage(1)}>1</button>
-                <button className="page-btn"><ChevronRight size={14} /></button>
+                <button className="page-btn" disabled><ChevronRight size={14} /></button>
               </div>
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Menu,
@@ -22,20 +22,65 @@ import * as XLSX from 'xlsx';
 import Sidebar from '../../components/Sidebar';
 import './HasilSkorPage.css';
 
-const hasilSkorData = [
-  { no: 1, nama: 'Alya Putri', hp: '081234567890', sekolah: 'SMKN 1', kelas: 'XII RPL 1', preTest: 60, postTest: 85, peningkatan: 25 },
-  { no: 2, nama: 'Bima Pratama', hp: '085678901234', sekolah: 'SMKN 1', kelas: 'XII IPA 2', preTest: 55, postTest: 85, peningkatan: 30 },
-  { no: 3, nama: 'Citra Lestari', hp: '082134567890', sekolah: 'SMKN 1', kelas: 'XI TKJ 1', preTest: 65, postTest: 80, peningkatan: 15 },
-  { no: 4, nama: 'Danu Saputra', hp: '081345678901', sekolah: 'SMKN 1', kelas: 'XI IPS 1', preTest: 50, postTest: 70, peningkatan: 20 },
-  { no: 5, nama: 'Eka Wijaya', hp: '089876543210', sekolah: 'SMAN 4', kelas: 'XII IPA 1', preTest: 70, postTest: 75, peningkatan: 5 },
-  { no: 6, nama: 'Fajar Ramadhan', hp: '085712345678', sekolah: 'SMKN 1', kelas: 'XII RPL 2', preTest: 45, postTest: 60, peningkatan: 15 },
-  { no: 7, nama: 'Gilang Dirga', hp: '082298765432', sekolah: 'SMAN 1', kelas: 'XII IPS 2', preTest: 80, postTest: 75, peningkatan: -5 }, // Added to show negative
-];
+const API_BASE_URL = 'http://localhost/WEB_BMKG/Web-BMKG/backend/api';
 
 function HasilSkorPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
-  const [selectedFormat, setSelectedFormat] = useState('pdf'); // 'pdf' or 'excel'
+  const [selectedFormat, setSelectedFormat] = useState('pdf');
+  const [hasilSkorData, setHasilSkorData] = useState([]);
+  const [stats, setStats] = useState({ avgPreTest: 0, avgPostTest: 0, nGain: 0, totalPeserta: 0 });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSkor = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/skor.php`);
+        const result = await res.json();
+        if (result.success) {
+          const formattedData = result.data.map((item, index) => ({
+            no: index + 1,
+            nama: item.siswa,
+            hp: item.hp,
+            sekolah: item.sekolah,
+            kelas: item.kelas,
+            preTest: parseFloat(item.pre_test_score) || 0,
+            postTest: parseFloat(item.post_test_score) || 0,
+            peningkatan: (parseFloat(item.post_test_score) || 0) - (parseFloat(item.pre_test_score) || 0)
+          }));
+          
+          setHasilSkorData(formattedData);
+
+          // Hitung statistik
+          const avgPre = formattedData.length ? formattedData.reduce((s, d) => s + d.preTest, 0) / formattedData.length : 0;
+          const avgPost = formattedData.length ? formattedData.reduce((s, d) => s + d.postTest, 0) / formattedData.length : 0;
+          
+          let nGainTotal = 0;
+          let nGainCount = 0;
+          formattedData.forEach(d => {
+            if (d.preTest < 100) {
+              const gain = (d.postTest - d.preTest) / (100 - d.preTest);
+              nGainTotal += gain;
+              nGainCount++;
+            }
+          });
+          const avgNGain = nGainCount ? (nGainTotal / nGainCount) : 0;
+
+          setStats({
+            avgPreTest: avgPre.toFixed(1),
+            avgPostTest: avgPost.toFixed(1),
+            nGain: avgNGain.toFixed(2),
+            totalPeserta: formattedData.length
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching skor:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchSkor();
+  }, []);
 
   const handleExportPDF = () => {
     const doc = new jsPDF();
@@ -168,28 +213,28 @@ function HasilSkorPage() {
             <div className="hs-stat-card">
               <div className="hs-stat-info">
                 <span className="hs-stat-label">RATA-RATA PRE-TEST</span>
-                <span className="hs-stat-value">64.5</span>
+                <span className="hs-stat-value">{isLoading ? '-' : stats.avgPreTest}</span>
               </div>
               <div className="hs-stat-icon-wrap gray"><FileText size={20} /></div>
             </div>
             <div className="hs-stat-card">
               <div className="hs-stat-info">
                 <span className="hs-stat-label">RATA-RATA POST-TEST</span>
-                <span className="hs-stat-value">82.8</span>
+                <span className="hs-stat-value">{isLoading ? '-' : stats.avgPostTest}</span>
               </div>
               <div className="hs-stat-icon-wrap blue"><Star size={20} /></div>
             </div>
             <div className="hs-stat-card">
               <div className="hs-stat-info">
                 <span className="hs-stat-label">RATA-RATA N-GAIN</span>
-                <span className="hs-stat-value">0.52 <span className="stat-unit">%</span></span>
+                <span className="hs-stat-value">{isLoading ? '-' : stats.nGain} <span className="stat-unit">%</span></span>
               </div>
               <div className="hs-stat-icon-wrap green"><TrendingUp size={20} /></div>
             </div>
             <div className="hs-stat-card">
               <div className="hs-stat-info">
                 <span className="hs-stat-label">TOTAL PESERTA DINILAI</span>
-                <span className="hs-stat-value">120</span>
+                <span className="hs-stat-value">{isLoading ? '-' : stats.totalPeserta}</span>
               </div>
               <div className="hs-stat-icon-wrap pink"><Users size={20} /></div>
             </div>
@@ -243,7 +288,15 @@ function HasilSkorPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {hasilSkorData.map((item) => (
+                  {isLoading ? (
+                    <tr>
+                      <td colSpan="8" style={{ textAlign: 'center', padding: '24px', color: '#64748b' }}>Memuat data skor...</td>
+                    </tr>
+                  ) : hasilSkorData.length === 0 ? (
+                    <tr>
+                      <td colSpan="8" style={{ textAlign: 'center', padding: '24px', color: '#64748b' }}>Belum ada data skor yang terkumpul.</td>
+                    </tr>
+                  ) : hasilSkorData.map((item) => (
                     <tr key={item.no}>
                       <td className="td-no">{item.no}</td>
                       <td>

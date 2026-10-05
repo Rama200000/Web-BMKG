@@ -6,111 +6,196 @@ import {
   ChevronRight,
   GraduationCap,
   Search,
-  ChevronDown,
   RefreshCw,
-  Eye,
+  Edit2,
   Trash2,
   ChevronLeft,
   Plus,
   TrendingUp,
   LayoutDashboard,
+  X
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import './DataSiswaPage.css';
 
-// Data dummy siswa (7 per halaman sesuai desain)
-const allSiswaData = [
-  { no: 1,  nama: 'Eka Wijaya',       sekolah: 'SMAN 2',  jurusan: 'IPA',  kelas: 'XII A' },
-  { no: 2,  nama: 'Gita Permata',     sekolah: 'SMAN 2',  jurusan: 'IPS',  kelas: 'XI A'  },
-  { no: 3,  nama: 'Alya Putri',       sekolah: 'SMKN 1',  jurusan: 'RPL',  kelas: 'XII C' },
-  { no: 4,  nama: 'Bima Pratama',     sekolah: 'SMAN 1',  jurusan: 'IPA',  kelas: 'XII A' },
-  { no: 5,  nama: 'Fajar Ramadhan',   sekolah: 'SMKN 1',  jurusan: 'RPL',  kelas: 'XII C' },
-  { no: 6,  nama: 'Citra Lestari',    sekolah: 'SMKN 2',  jurusan: 'TKJ',  kelas: 'XI B'  },
-  { no: 7,  nama: 'Danu Saputra',     sekolah: 'SMA 3',   jurusan: 'IPS',  kelas: 'XI A'  },
-  { no: 8,  nama: 'Hani Rahayu',      sekolah: 'SMAN 1',  jurusan: 'IPA',  kelas: 'XII B' },
-  { no: 9,  nama: 'Ilham Saputra',    sekolah: 'SMKN 2',  jurusan: 'TKJ',  kelas: 'XI C'  },
-  { no: 10, nama: 'Jeni Kurniawati',  sekolah: 'SMAN 2',  jurusan: 'IPS',  kelas: 'XI A'  },
-  { no: 11, nama: 'Kevin Pratama',    sekolah: 'SMKN 1',  jurusan: 'RPL',  kelas: 'XII A' },
-  { no: 12, nama: 'Laras Setiawati',  sekolah: 'SMAN 3',  jurusan: 'IPA',  kelas: 'XII C' },
-  { no: 13, nama: 'Muhammad Rizki',   sekolah: 'SMAN 1',  jurusan: 'IPA',  kelas: 'XI A'  },
-  { no: 14, nama: 'Nadia Putri',      sekolah: 'SMKN 2',  jurusan: 'RPL',  kelas: 'XII B' },
-  { no: 15, nama: 'Oscar Firmansyah', sekolah: 'SMA 3',   jurusan: 'IPS',  kelas: 'XII A' },
-];
+const API_BASE_URL = 'http://localhost/WEB_BMKG/Web-BMKG/backend/api';
 
 const ITEMS_PER_PAGE = 7;
 
-const jurusanColorMap = {
-  'IPA': 'jurusan-ipa',
-  'IPS': 'jurusan-ips',
-  'RPL': 'jurusan-rpl',
-  'TKJ': 'jurusan-tkj',
-};
-
 function DataSiswaPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [currentPage, setCurrentPage]     = useState(1);
-  const [siswaData, setSiswaData]         = useState(allSiswaData);
-  const [searchQuery, setSearchQuery]     = useState('');
+  
+  // Data States
+  const [siswaData, setSiswaData] = useState([]);
+  const [schools, setSchools] = useState([]);
+  const [classes, setClasses] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Filter States
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
   const [filterSekolah, setFilterSekolah] = useState('Semua Sekolah');
-  const [filterJurusan, setFilterJurusan] = useState('Semua Jurusan');
-  const [filterKelas, setFilterKelas]     = useState('Semua Kelas');
+  const [filterKelas, setFilterKelas] = useState('Semua Kelas');
 
-  // Gabungkan dari localStorage juga
-  useEffect(() => {
-    const records = JSON.parse(localStorage.getItem('studentRecords') || '[]');
-    const currentStudent = JSON.parse(localStorage.getItem('currentStudent') || '{}');
+  // Modal States
+  const [showModal, setShowModal] = useState(false);
+  const [modalMode, setModalMode] = useState('add'); // 'add' or 'edit'
+  const [currentStudent, setCurrentStudent] = useState(null);
 
-    const fromStorage = records.map((rec, i) => ({
-      no: allSiswaData.length + i + 1,
-      nama: rec.nama,
-      sekolah: rec.sekolah,
-      jurusan: rec.jurusan,
-      kelas: rec.kelas,
-    }));
+  // Form State
+  const [formData, setFormData] = useState({
+    nama: '',
+    no_hp: '',
+    sekolah_id: '',
+    kelas_id: '',
+    is_active: 1
+  });
 
-    if (currentStudent?.nama) {
-      fromStorage.push({
-        no: allSiswaData.length + records.length + 1,
-        nama: currentStudent.nama,
-        sekolah: currentStudent.sekolah,
-        jurusan: currentStudent.jurusan,
-        kelas: currentStudent.kelas,
-      });
+  // Fetch Data
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      // Fetch Schools
+      const resSchools = await fetch(`${API_BASE_URL}/schools.php`);
+      const dataSchools = await resSchools.json();
+      if (dataSchools.success) setSchools(dataSchools.data);
+
+      // Fetch Classes
+      const resClasses = await fetch(`${API_BASE_URL}/classes.php`);
+      const dataClasses = await resClasses.json();
+      if (dataClasses.success) setClasses(dataClasses.data);
+
+      // Fetch Students
+      const resStudents = await fetch(`${API_BASE_URL}/students.php`);
+      const dataStudents = await resStudents.json();
+      if (dataStudents.success) setSiswaData(dataStudents.data);
+
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setIsLoading(false);
     }
+  };
 
-    setSiswaData([...allSiswaData, ...fromStorage]);
+  useEffect(() => {
+    fetchData();
   }, []);
 
-  // Filter data
+  // Set default sekolah/kelas values when modal opens if empty
+  useEffect(() => {
+    if (showModal && modalMode === 'add' && schools.length > 0 && !formData.sekolah_id) {
+      setFormData(prev => ({ ...prev, sekolah_id: schools[0].id }));
+    }
+  }, [showModal, modalMode, schools]);
+
+  useEffect(() => {
+    if (showModal && modalMode === 'add' && classes.length > 0 && !formData.kelas_id) {
+      // Find classes for the selected school
+      const schoolClasses = classes.filter(c => c.sekolah_id == formData.sekolah_id);
+      if (schoolClasses.length > 0) {
+        setFormData(prev => ({ ...prev, kelas_id: schoolClasses[0].id }));
+      }
+    }
+  }, [showModal, modalMode, classes, formData.sekolah_id]);
+
+  // Form Handling
+  const handleSaveStudent = async () => {
+    try {
+      const method = modalMode === 'add' ? 'POST' : 'PUT';
+      const body = modalMode === 'add' ? formData : { ...formData, id: currentStudent.id };
+      
+      const response = await fetch(`${API_BASE_URL}/students.php`, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      
+      const result = await response.json();
+      if (result.success) {
+        setShowModal(false);
+        fetchData();
+      } else {
+        alert(result.message);
+      }
+    } catch (error) {
+      console.error('Error saving student:', error);
+      alert('Terjadi kesalahan saat menyimpan data.');
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Yakin ingin menghapus data siswa ini?')) {
+      try {
+        const response = await fetch(`${API_BASE_URL}/students.php?id=${id}`, {
+          method: 'DELETE'
+        });
+        const result = await response.json();
+        if (result.success) {
+          fetchData();
+        } else {
+          alert(result.message);
+        }
+      } catch (error) {
+        console.error('Error deleting student:', error);
+      }
+    }
+  };
+
+  const openAddModal = () => {
+    setModalMode('add');
+    setFormData({
+      nama: '',
+      no_hp: '',
+      sekolah_id: schools.length > 0 ? schools[0].id : '',
+      kelas_id: '',
+      is_active: 1
+    });
+    setShowModal(true);
+  };
+
+  const openEditModal = (student) => {
+    setModalMode('edit');
+    setCurrentStudent(student);
+    setFormData({
+      nama: student.nama,
+      no_hp: student.no_hp,
+      sekolah_id: student.sekolah_id,
+      kelas_id: student.kelas_id,
+      is_active: student.is_active
+    });
+    setShowModal(true);
+  };
+
+  // Filter & Pagination Logic
   const filtered = siswaData.filter(s => {
     const q = searchQuery.toLowerCase();
     const matchSearch = !q || s.nama.toLowerCase().includes(q)
-      || s.sekolah.toLowerCase().includes(q)
-      || s.kelas.toLowerCase().includes(q);
-    const matchSekolah  = filterSekolah  === 'Semua Sekolah'  || s.sekolah  === filterSekolah;
-    const matchJurusan  = filterJurusan  === 'Semua Jurusan'  || s.jurusan  === filterJurusan;
-    const matchKelas    = filterKelas    === 'Semua Kelas'    || s.kelas    === filterKelas;
-    return matchSearch && matchSekolah && matchJurusan && matchKelas;
+      || (s.sekolah && s.sekolah.toLowerCase().includes(q))
+      || (s.kelas && s.kelas.toLowerCase().includes(q));
+    
+    const matchSekolah = filterSekolah === 'Semua Sekolah' || s.sekolah === filterSekolah;
+    const matchKelas   = filterKelas === 'Semua Kelas' || s.kelas === filterKelas;
+    
+    return matchSearch && matchSekolah && matchKelas;
   });
 
-  const totalPages  = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
-  const paginated   = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
-  const startItem   = filtered.length > 0 ? (currentPage - 1) * ITEMS_PER_PAGE + 1 : 0;
-  const endItem     = Math.min(currentPage * ITEMS_PER_PAGE, filtered.length);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
+  const paginated = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const startItem = filtered.length > 0 ? (currentPage - 1) * ITEMS_PER_PAGE + 1 : 0;
+  const endItem = Math.min(currentPage * ITEMS_PER_PAGE, filtered.length);
 
   const handleReset = () => {
     setSearchQuery('');
     setFilterSekolah('Semua Sekolah');
-    setFilterJurusan('Semua Jurusan');
     setFilterKelas('Semua Kelas');
     setCurrentPage(1);
   };
 
-  const sekolahList  = ['Semua Sekolah',  ...new Set(siswaData.map(s => s.sekolah))];
-  const jurusanList  = ['Semua Jurusan',  ...new Set(siswaData.map(s => s.jurusan))];
-  const kelasList    = ['Semua Kelas',    ...new Set(siswaData.map(s => s.kelas))];
+  // Generate unique lists for filter dropdowns based on existing data
+  const sekolahList = ['Semua Sekolah', ...new Set(siswaData.map(s => s.sekolah).filter(Boolean))];
+  const kelasList   = ['Semua Kelas', ...new Set(siswaData.map(s => s.kelas).filter(Boolean))];
 
-  // Pagination numbers
+  // Pagination Numbers
   const getPageNumbers = () => {
     const pages = [];
     if (totalPages <= 5) {
@@ -138,11 +223,9 @@ function DataSiswaPage() {
             <button
               className="topbar-toggle"
               onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              id="sidebar-toggle"
             >
               <Menu />
             </button>
-            {/* Breadcrumb di topbar */}
             <div className="topbar-breadcrumb">
               <Link to="/dashboard" className="breadcrumb-root">
                 <LayoutDashboard size={13} style={{ marginRight: 4, verticalAlign: 'middle' }} />
@@ -153,24 +236,22 @@ function DataSiswaPage() {
             </div>
           </div>
           <div className="topbar-right">
-            <button className="topbar-notification" id="notification-btn">
+            <button className="topbar-notification">
               <Bell />
               <span className="notification-badge"></span>
             </button>
-            <div className="topbar-profile" id="profile-btn">
+            <div className="topbar-profile">
               <div className="profile-avatar">A</div>
               <div className="profile-info">
                 <span className="profile-name">Admin</span>
                 <span className="profile-role">Administrator</span>
               </div>
             </div>
-
           </div>
         </header>
 
         {/* Content */}
         <div className="ds-content">
-          {/* Page Title */}
           <div className="ds-page-header">
             <div className="ds-title-row">
               <h1 className="ds-page-title">Data Siswa</h1>
@@ -178,7 +259,6 @@ function DataSiswaPage() {
             </div>
           </div>
 
-          {/* Stat Card — Total Siswa */}
           <div className="ds-stat-banner">
             <div className="ds-stat-icon-wrap">
               <GraduationCap size={24} />
@@ -189,13 +269,12 @@ function DataSiswaPage() {
                 <span className="ds-stat-value">{siswaData.length}</span>
                 <span className="ds-stat-growth">
                   <TrendingUp size={13} />
-                  +12%
+                  Realtime DB
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Table Card */}
           <div className="ds-table-card">
             {/* Filters */}
             <div className="ds-filters">
@@ -203,7 +282,7 @@ function DataSiswaPage() {
                 <Search size={15} />
                 <input
                   type="text"
-                  placeholder="Cari nama siswa, sekolah, atau kelas..."
+                  placeholder="Cari nama, sekolah, kelas..."
                   value={searchQuery}
                   onChange={e => { setSearchQuery(e.target.value); setCurrentPage(1); }}
                 />
@@ -215,14 +294,6 @@ function DataSiswaPage() {
                 onChange={e => { setFilterSekolah(e.target.value); setCurrentPage(1); }}
               >
                 {sekolahList.map(s => <option key={s}>{s}</option>)}
-              </select>
-
-              <select
-                className="ds-filter-select"
-                value={filterJurusan}
-                onChange={e => { setFilterJurusan(e.target.value); setCurrentPage(1); }}
-              >
-                {jurusanList.map(j => <option key={j}>{j}</option>)}
               </select>
 
               <select
@@ -245,78 +316,91 @@ function DataSiswaPage() {
                   <tr>
                     <th>NO</th>
                     <th>NAMA SISWA</th>
+                    <th>NO HP (LOGIN)</th>
                     <th>SEKOLAH</th>
-                    <th>JURUSAN</th>
                     <th>KELAS</th>
-                    <th>AKSI</th>
+                    <th>STATUS</th>
+                    <th style={{ textAlign: 'right' }}>AKSI</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {paginated.length === 0 ? (
+                  {isLoading ? (
                     <tr>
-                      <td colSpan="6" className="ds-empty">
-                        Tidak ada data siswa yang ditemukan.
+                      <td colSpan="7" style={{ textAlign: 'center', padding: '32px', color: '#64748b' }}>
+                        Mengambil data dari database...
                       </td>
                     </tr>
-                  ) : (
-                    paginated.map((siswa) => (
-                      <tr key={siswa.no}>
-                        <td className="td-no">{siswa.no}</td>
-                        <td className="td-nama">{siswa.nama}</td>
-                        <td className="td-sekolah">{siswa.sekolah}</td>
+                  ) : paginated.length > 0 ? (
+                    paginated.map((siswa, idx) => (
+                      <tr key={siswa.id}>
+                        <td className="td-no">{startItem + idx}</td>
+                        <td className="td-nama-siswa">{siswa.nama}</td>
+                        <td className="td-no-hp" style={{ color: '#64748b', fontSize: '13px' }}>{siswa.no_hp}</td>
+                        <td className="td-sekolah">{siswa.sekolah || `(ID: ${siswa.sekolah_id})`}</td>
                         <td>
-                          <span className={`jurusan-badge ${jurusanColorMap[siswa.jurusan] || 'jurusan-default'}`}>
-                            {siswa.jurusan}
+                          <span className="badge-kelas">{siswa.kelas || `(ID: ${siswa.kelas_id})`}</span>
+                        </td>
+                        <td>
+                          <span className={`badge-status ${siswa.is_active == 1 ? 'aktif' : 'non-aktif'}`}>
+                            {siswa.is_active == 1 ? 'Aktif' : 'Non-Aktif'}
                           </span>
                         </td>
-                        <td className="td-kelas">{siswa.kelas}</td>
-                        <td>
-                          <div className="ds-action-group">
-                            <button className="ds-action-btn view" title="Lihat Detail">
-                              <Eye size={16} />
+                        <td style={{ textAlign: 'right' }}>
+                          <div className="table-actions">
+                            <button className="btn-icon edit" onClick={() => openEditModal(siswa)}>
+                              <Edit2 size={15} />
                             </button>
-                            <button className="ds-action-btn delete" title="Hapus">
-                              <Trash2 size={16} />
+                            <button className="btn-icon delete" onClick={() => handleDelete(siswa.id)}>
+                              <Trash2 size={15} />
                             </button>
                           </div>
                         </td>
                       </tr>
                     ))
+                  ) : (
+                    <tr>
+                      <td colSpan="7" style={{ textAlign: 'center', padding: '32px', color: '#64748b' }}>
+                        {searchQuery ? 'Data tidak ditemukan.' : 'Belum ada data siswa di database.'}
+                      </td>
+                    </tr>
                   )}
                 </tbody>
               </table>
             </div>
 
-            {/* Pagination */}
+            {/* Footer / Pagination */}
             <div className="ds-table-footer">
-              <span className="ds-table-info">
-                Menampilkan {startItem} – {endItem} dari {filtered.length} data
-              </span>
+              <div className="ds-table-info">
+                Menampilkan <strong>{startItem}</strong> - <strong>{endItem}</strong> dari total <strong>{filtered.length}</strong> data
+              </div>
+              
               <div className="ds-pagination">
                 <button
-                  className="pg-btn"
+                  className="page-btn"
                   disabled={currentPage === 1}
-                  onClick={() => setCurrentPage(p => p - 1)}
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 >
                   <ChevronLeft size={14} />
                 </button>
-
-                {getPageNumbers().map((pg, i) =>
-                  pg === '...'
-                    ? <span key={`dots-${i}`} className="pg-dots">...</span>
-                    : <button
-                        key={pg}
-                        className={`pg-btn ${pg === currentPage ? 'active' : ''}`}
-                        onClick={() => setCurrentPage(pg)}
-                      >
-                        {pg}
-                      </button>
-                )}
+                
+                {getPageNumbers().map((num, i) => (
+                  num === '...' ? (
+                    <span key={`dots-${i}`} className="page-dots">...</span>
+                  ) : (
+                    <button
+                      key={num}
+                      className={`page-btn ${currentPage === num ? 'active' : ''}`}
+                      onClick={() => setCurrentPage(num)}
+                    >
+                      {num}
+                    </button>
+                  )
+                ))}
 
                 <button
-                  className="pg-btn"
+                  className="page-btn"
                   disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage(p => p + 1)}
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 >
                   <ChevronRight size={14} />
                 </button>
@@ -324,6 +408,109 @@ function DataSiswaPage() {
             </div>
           </div>
         </div>
+
+        {/* Floating Add Button */}
+        <button className="ds-fab" onClick={openAddModal}>
+          <Plus size={24} />
+        </button>
+
+        {/* Add/Edit Modal */}
+        {showModal && (
+          <div className="ds-modal-overlay">
+            <div className="ds-modal-content">
+              <div className="ds-modal-header">
+                <h3 className="ds-modal-title">
+                  {modalMode === 'add' ? 'Tambah Data Siswa' : 'Edit Data Siswa'}
+                </h3>
+                <button className="ds-modal-close" onClick={() => setShowModal(false)}>
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="ds-modal-body">
+                <div className="form-group">
+                  <label className="form-label">Nama Lengkap Siswa</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="Masukkan nama lengkap..."
+                    value={formData.nama}
+                    onChange={e => setFormData({...formData, nama: e.target.value})}
+                  />
+                </div>
+                
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">Nomor HP (ID Login Siswa)</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      placeholder="Contoh: 081234567890"
+                      value={formData.no_hp}
+                      onChange={e => setFormData({...formData, no_hp: e.target.value})}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Status Akun</label>
+                    <select
+                      className="form-input"
+                      value={formData.is_active}
+                      onChange={e => setFormData({...formData, is_active: e.target.value})}
+                    >
+                      <option value="1">Aktif (Bisa Login)</option>
+                      <option value="0">Non-Aktif (Diblokir)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">Asal Sekolah</label>
+                    <select
+                      className="form-input"
+                      value={formData.sekolah_id}
+                      onChange={e => {
+                        setFormData({...formData, sekolah_id: e.target.value, kelas_id: ''});
+                      }}
+                    >
+                      <option value="" disabled>Pilih Sekolah</option>
+                      {schools.map(s => (
+                        <option key={s.id} value={s.id}>{s.nama}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Kelas</label>
+                    <select
+                      className="form-input"
+                      value={formData.kelas_id}
+                      onChange={e => setFormData({...formData, kelas_id: e.target.value})}
+                      disabled={!formData.sekolah_id}
+                    >
+                      <option value="" disabled>Pilih Kelas</option>
+                      {classes
+                        .filter(c => c.sekolah_id == formData.sekolah_id)
+                        .map(c => (
+                          <option key={c.id} value={c.id}>{c.nama}</option>
+                        ))
+                      }
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div className="ds-modal-footer">
+                <button className="ds-btn-outline" onClick={() => setShowModal(false)}>Batal</button>
+                <button 
+                  className="ds-btn-primary" 
+                  onClick={handleSaveStudent}
+                  disabled={!formData.nama || !formData.no_hp || !formData.sekolah_id || !formData.kelas_id}
+                >
+                  Simpan Data
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );
