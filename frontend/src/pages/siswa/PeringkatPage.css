@@ -56,7 +56,7 @@
 }
 .peringkat-row.rank-4 { background: #A9E2EC; }
 .peringkat-row.rank-5 { background: #CFE2F8; }
-.peringkat-row.me { box-shadow: 0 0 0 2px var(--nv-navy), 0 2px 6px rgba(15, 23, 42, 0.06); }
+.peringkat-row.me { box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06); }
 
 .peringkat-avatar {
   width: 40px;
@@ -136,7 +136,6 @@
   align-items: center;
   justify-content: center;
   margin-bottom: 8px;
-  border: 3px solid #fff;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   color: #9AA0A8;
 }
@@ -196,7 +195,7 @@
 }
 
 .podium-item.me .podium-block {
-  box-shadow: inset 0 2px 4px rgba(255,255,255,0.3), 0 0 0 3px var(--nv-navy);
+  box-shadow: inset 0 2px 4px rgba(255,255,255,0.3);
 }
 
 .peringkat-details {

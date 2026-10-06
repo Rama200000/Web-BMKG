@@ -66,10 +66,10 @@ function UjianPage() {
             const keyLetters = ['A', 'B', 'C', 'D', 'E'];
             ['opsi_a', 'opsi_b', 'opsi_c', 'opsi_d', 'opsi_e'].forEach((optKey, idx) => {
               if (s[optKey]) {
-                options.push({ text: s[optKey], isOriginalKey: keyLetters[idx] === s.kunci_jawaban });
+                options.push({ text: s[optKey], isOriginalKey: keyLetters[idx] === s.kunci_jawaban, originalLabel: keyLetters[idx] });
               }
             });
-            return { pertanyaan: s.pertanyaan, pilihanShuffled: shuffle(options) };
+            return { id: s.id, pertanyaan: s.pertanyaan, pilihanShuffled: shuffle(options) };
           });
           preparedSoal = shuffle(preparedSoal);
           setSoalList(preparedSoal);
@@ -93,11 +93,21 @@ function UjianPage() {
 
     const elapsed = Math.round((Date.now() - startTime) / 1000);
     let benar = 0;
+    const answersData = [];
     soalList.forEach((soal, i) => {
       const selectedIndex = jawaban[i];
-      if (selectedIndex !== undefined && soal.pilihanShuffled[selectedIndex].isOriginalKey) {
-        benar++;
+      let isCorrect = false;
+      let selectedOption = null;
+      if (selectedIndex !== undefined) {
+        isCorrect = soal.pilihanShuffled[selectedIndex].isOriginalKey;
+        selectedOption = soal.pilihanShuffled[selectedIndex].originalLabel;
+        if (isCorrect) benar++;
       }
+      answersData.push({
+        question_id: soal.id,
+        selected_option: selectedOption,
+        is_correct: isCorrect ? 1 : 0
+      });
     });
     const skor = Math.round((benar / soalList.length) * 100);
 
@@ -145,7 +155,8 @@ function UjianPage() {
                 modul_id: 1,
                 test_type: mode === 'pretest' ? 'pre_test' : 'post_test',
                 score: skor,
-                time: elapsed
+                time: elapsed,
+                answers: answersData
             })
         }).catch(err => console.error("Gagal simpan skor ke database", err));
     }

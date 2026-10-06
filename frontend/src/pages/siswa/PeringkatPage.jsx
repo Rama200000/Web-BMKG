@@ -8,14 +8,7 @@ import './mobile-green-theme.css';
 import './siswa-navy.css';
 import './PeringkatPage.css';
 
-// Data simulasi peserta lain (skor posttest & waktu pengerjaan dalam detik)
-const PESERTA_LAIN = [
-  { nama: 'Aulia Rahma Dila', skor: 98, waktu: 504 },
-  { nama: 'Raihan Alvaro', skor: 95, waktu: 555 },
-  { nama: 'Tiara Andini', skor: 92, waktu: 603 },
-  { nama: 'Bagus Ali', skor: 88, waktu: 587 },
-  { nama: 'Eka Putri', skor: 85, waktu: 620 },
-];
+
 
 /**
  * Papan peringkat 1–5 setelah posttest (urut skor posttest, lalu waktu tercepat).
@@ -24,8 +17,15 @@ const PESERTA_LAIN = [
 function PeringkatPage() {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState('');
+  const [top5, setTop5] = useState([]);
+  const [loading, setLoading] = useState(true);
   const skorPosttest = localStorage.getItem('skorPosttest');
   const student = JSON.parse(localStorage.getItem('currentStudent') || '{}');
+
+  // Belum mengerjakan posttest → belum ada peringkat
+  useEffect(() => {
+    if (skorPosttest === null) navigate('/siswa/dashboard', { replace: true });
+  }, [skorPosttest, navigate]);
 
   useEffect(() => {
     const updateTime = () => {
@@ -37,22 +37,44 @@ function PeringkatPage() {
     return () => clearInterval(t);
   }, []);
 
-  // Belum mengerjakan posttest → belum ada peringkat
   useEffect(() => {
-    if (skorPosttest === null) navigate('/siswa/dashboard', { replace: true });
-  }, [skorPosttest, navigate]);
+    if (student.sekolah_id) {
+      fetch(`http://localhost:8000/api/skor.php?sekolah_id=${student.sekolah_id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            let list = data.data.map(d => ({
+              nama: d.siswa,
+              skor: parseInt(d.post_test_score || '0'),
+              waktu: parseInt(d.post_test_time_seconds || '0'),
+              isMe: d.hp === student.no_hp || d.hp === student.phone || d.siswa === student.nama
+            }));
+            
+            const saya = {
+              nama: student.nama || 'Kamu',
+              skor: parseInt(skorPosttest || '0'),
+              waktu: parseInt(localStorage.getItem('posttestTime') || '0'),
+              isMe: true,
+            };
+            if (!list.find(l => l.isMe)) {
+               list.push(saya);
+            }
+            
+            list.sort((a, b) => b.skor - a.skor || a.waktu - b.waktu);
+            setTop5(list.slice(0, 5));
+            setLoading(false);
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          setLoading(false);
+        });
+    } else {
+      setLoading(false);
+    }
+  }, [student.sekolah_id, student.no_hp, student.phone, student.nama, skorPosttest]);
 
-  const saya = {
-    nama: student.nama || 'Kamu',
-    skor: parseInt(skorPosttest || '0'),
-    waktu: parseInt(localStorage.getItem('posttestTime') || '0'),
-    isMe: true,
-  };
-  const top5 = [...PESERTA_LAIN, saya]
-    .sort((a, b) => b.skor - a.skor || a.waktu - b.waktu)
-    .slice(0, 5);
-  const masukTop5 = top5.includes(saya);
-  
+  const masukTop5 = top5.find(p => p.isMe);
   const top3 = top5.slice(0, 3);
   const others = top5.slice(3, 5);
 

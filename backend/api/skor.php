@@ -8,11 +8,15 @@ $method = $_SERVER['REQUEST_METHOD'];
 switch ($method) {
     case 'GET':
         // Retrieve all scores for Leaderboard / Hasil Skor
-        $stmt = $pdo->query("
+        $sekolah_id = isset($_GET['sekolah_id']) ? $_GET['sekolah_id'] : null;
+        
+        $sql = "
             SELECT 
                 s.id, 
+                st.id as student_id,
                 st.nama as siswa, 
                 st.no_hp as hp, 
+                st.sekolah_id,
                 sch.nama as sekolah, 
                 c.nama as kelas, 
                 m.judul as modul, 
@@ -21,12 +25,24 @@ switch ($method) {
                 s.pre_test_time_seconds,
                 s.post_test_time_seconds
             FROM scores s
-            JOIN students st ON s.student_id = st.id
-            JOIN schools sch ON st.sekolah_id = sch.id
-            JOIN classes c ON st.kelas_id = c.id
-            JOIN modules m ON s.modul_id = m.id
-            ORDER BY s.post_test_score DESC, s.post_test_time_seconds ASC
-        ");
+            LEFT JOIN students st ON s.student_id = st.id
+            LEFT JOIN schools sch ON st.sekolah_id = sch.id
+            LEFT JOIN classes c ON st.kelas_id = c.id
+            LEFT JOIN modules m ON s.modul_id = m.id
+        ";
+        
+        if ($sekolah_id) {
+            $sql .= " WHERE st.sekolah_id = :sekolah_id";
+        }
+        
+        $sql .= " ORDER BY s.post_test_score DESC, s.post_test_time_seconds ASC";
+        
+        $stmt = $pdo->prepare($sql);
+        if ($sekolah_id) {
+            $stmt->bindParam(':sekolah_id', $sekolah_id);
+        }
+        $stmt->execute();
+        
         $scores = $stmt->fetchAll();
         
         echo json_encode([
@@ -46,6 +62,8 @@ switch ($method) {
         }
 
         try {
+            $pdo->beginTransaction();
+
             // Check if record exists
             $stmt = $pdo->prepare("SELECT id FROM scores WHERE student_id = ? AND modul_id = ?");
             $stmt->execute([$data['student_id'], $data['modul_id']]);
@@ -71,8 +89,32 @@ switch ($method) {
                 }
             }
             
-            echo json_encode(['success' => true, 'message' => 'Skor berhasil disimpan']);
+            // Save detailed answers if provided
+            if (isset($data['answers']) && is_array($data['answers'])) {
+                // Remove old answers for this test type to avoid duplicates
+                $del = $pdo->prepare("DELETE FROM student_answers WHERE student_id = ? AND modul_id = ? AND test_type = ?");
+                $del->execute([$data['student_id'], $data['modul_id'], $data['test_type']]);
+
+                // Insert new answers
+                $insAns = $pdo->prepare("INSERT INTO student_answers (student_id, modul_id, question_id, test_type, selected_option, is_correct) VALUES (?, ?, ?, ?, ?, ?)");
+                foreach ($data['answers'] as $ans) {
+                    $insAns->execute([
+                        $data['student_id'],
+                        $data['modul_id'],
+                        $ans['question_id'],
+                        $data['test_type'],
+                        $ans['selected_option'],
+                        $ans['is_correct']
+                    ]);
+                }
+            }
+
+            $pdo->commit();
+            echo json_encode(['success' => true, 'message' => 'Skor dan jawaban berhasil disimpan']);
         } catch (PDOException $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Gagal menyimpan skor: ' . $e->getMessage()]);
         }

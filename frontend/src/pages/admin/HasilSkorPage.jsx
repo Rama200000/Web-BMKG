@@ -38,16 +38,17 @@ function HasilSkorPage() {
         const res = await fetch(`${API_BASE_URL}/skor.php`);
         const result = await res.json();
         if (result.success) {
-          const formattedData = result.data.map((item, index) => ({
-            no: index + 1,
-            nama: item.siswa,
-            hp: item.hp,
-            sekolah: item.sekolah,
-            kelas: item.kelas,
-            preTest: parseFloat(item.pre_test_score) || 0,
-            postTest: parseFloat(item.post_test_score) || 0,
-            peningkatan: (parseFloat(item.post_test_score) || 0) - (parseFloat(item.pre_test_score) || 0)
-          }));
+            const formattedData = result.data.map((item, index) => ({
+              no: index + 1,
+              student_id: item.student_id,
+              nama: item.siswa,
+              hp: item.hp,
+              sekolah: item.sekolah,
+              kelas: item.kelas,
+              preTest: parseFloat(item.pre_test_score) || 0,
+              postTest: parseFloat(item.post_test_score) || 0,
+              peningkatan: (parseFloat(item.post_test_score) || 0) - (parseFloat(item.pre_test_score) || 0)
+            }));
           
           setHasilSkorData(formattedData);
 
@@ -326,7 +327,7 @@ function HasilSkorPage() {
                       </td>
                       <td>
                         <div style={{ display: 'flex', justifyContent: 'center' }}>
-                          <Link to="/hasil-skor/detail" className="btn-detail-row">
+                          <Link to={`/hasil-skor/detail?student_id=${item.student_id}`} className="btn-detail-row">
                             <Eye size={14} />
                             Detail
                           </Link>
