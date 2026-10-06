@@ -20,6 +20,7 @@ function PeringkatPage() {
   const [top5, setTop5] = useState([]);
   const [loading, setLoading] = useState(true);
   const skorPosttest = localStorage.getItem('skorPosttest');
+  const skorPretest = localStorage.getItem('skorPretest');
   const student = JSON.parse(localStorage.getItem('currentStudent') || '{}');
 
   // Belum mengerjakan posttest → belum ada peringkat
@@ -45,14 +46,18 @@ function PeringkatPage() {
           if (data.success) {
             let list = data.data.map(d => ({
               nama: d.siswa,
-              skor: parseInt(d.post_test_score || '0'),
+              skor: Math.round(parseFloat(d.final_score || '0')),
               waktu: parseInt(d.post_test_time_seconds || '0'),
               isMe: d.hp === student.no_hp || d.hp === student.phone || d.siswa === student.nama
             }));
             
+            let localPre = parseFloat(skorPretest || '0');
+            let localPost = parseFloat(skorPosttest || '0');
+            let finalLocal = localPost >= 100 ? 100 : ((localPost - localPre) / (100 - localPost)) * 100;
+
             const saya = {
               nama: student.nama || 'Kamu',
-              skor: parseInt(skorPosttest || '0'),
+              skor: Math.round(finalLocal),
               waktu: parseInt(localStorage.getItem('posttestTime') || '0'),
               isMe: true,
             };

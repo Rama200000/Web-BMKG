@@ -47,7 +47,7 @@ function HasilSkorPage() {
               kelas: item.kelas,
               preTest: parseFloat(item.pre_test_score) || 0,
               postTest: parseFloat(item.post_test_score) || 0,
-              peningkatan: (parseFloat(item.post_test_score) || 0) - (parseFloat(item.pre_test_score) || 0)
+              peningkatan: Math.round(parseFloat(item.final_score || '0'))
             }));
           
           setHasilSkorData(formattedData);
