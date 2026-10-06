@@ -53,10 +53,10 @@ switch ($method) {
         try {
             $stmt = $pdo->prepare("UPDATE classes SET nama = ? WHERE id = ?");
             $stmt->execute([$data['nama'], $data['id']]);
-            echo json_encode(['success' => true, 'message' => 'Kelas berhasil diupdate']);
+            echo json_encode(['success' => true, 'message' => 'Kelas berhasil diperbarui']);
         } catch (PDOException $e) {
             http_response_code(500);
-            echo json_encode(['success' => false, 'message' => 'Gagal mengupdate kelas: ' . $e->getMessage()]);
+            echo json_encode(['success' => false, 'message' => 'Gagal memperbarui kelas: ' . $e->getMessage()]);
         }
         break;
 

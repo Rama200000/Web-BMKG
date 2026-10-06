@@ -13,7 +13,7 @@ import {
   GraduationCap,
   CloudUpload,
   Check,
-  Edit2
+  Pencil
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import './PengaturanSekolahPage.css';
@@ -130,40 +130,86 @@ function PengaturanSekolahPage() {
     }
   };
 
-  const handleEditSekolah = async (id, oldName) => {
-    const newName = window.prompt('Ubah Nama Sekolah:', oldName);
-    if (newName && newName.trim() !== '' && newName !== oldName) {
+  // Edit Data via API
+  const handleEditSekolah = async (sekolah) => {
+    const newName = window.prompt('Ubah Nama Sekolah:', sekolah.nama);
+    if (newName !== null && newName.trim() !== '' && newName.trim() !== sekolah.nama) {
       try {
         const res = await fetch(`${API_BASE_URL}/schools.php`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id, nama: newName.trim() })
+          body: JSON.stringify({ id: sekolah.id, nama: newName.trim() })
         });
         const result = await res.json();
-        if (result.success) fetchData();
-        else alert(result.message);
+        if (result.success) {
+          fetchData();
+        } else {
+          alert(result.message);
+        }
       } catch (err) {
         console.error(err);
-        alert('Gagal mengupdate sekolah.');
+        alert('Gagal memperbarui sekolah di server.');
       }
     }
   };
 
-  const handleEditKelas = async (id, oldName) => {
-    const newName = window.prompt('Ubah Nama Kelas:', oldName);
-    if (newName && newName.trim() !== '' && newName !== oldName) {
+  const handleAddKelasBaru = async (sekolahId) => {
+    const className = window.prompt('Masukkan nama kelas baru:');
+    if (className && className.trim() !== '') {
+      try {
+        const res = await fetch(`${API_BASE_URL}/classes.php`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sekolah_id: sekolahId, nama: className.trim() })
+        });
+        const result = await res.json();
+        if (result.success) {
+          fetchData();
+        } else {
+          alert(result.message);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Gagal menambah kelas.');
+      }
+    }
+  };
+
+  const handleEditKelas = async (kls) => {
+    const newName = window.prompt('Ubah nama kelas:', kls.nama);
+    if (newName !== null && newName.trim() !== '' && newName.trim() !== kls.nama) {
       try {
         const res = await fetch(`${API_BASE_URL}/classes.php`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id, nama: newName.trim() })
+          body: JSON.stringify({ id: kls.id, nama: newName.trim() })
         });
         const result = await res.json();
-        if (result.success) fetchData();
-        else alert(result.message);
+        if (result.success) {
+          fetchData();
+        } else {
+          alert(result.message);
+        }
       } catch (err) {
         console.error(err);
-        alert('Gagal mengupdate kelas.');
+        alert('Gagal memperbarui kelas.');
+      }
+    }
+  };
+
+  const handleDeleteKelas = async (id) => {
+    if (window.confirm('Yakin ingin menghapus kelas ini? Siswa di kelas ini bisa terdampak!')) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/classes.php?id=${id}`, { method: 'DELETE' });
+        const result = await res.json();
+        if (result.success) {
+          fetchData();
+        } else {
+          alert(result.message);
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Gagal menghapus kelas.');
       }
     }
   };
@@ -352,14 +398,14 @@ function PengaturanSekolahPage() {
                             </div>
                             <h3>{sekolah.nama}</h3>
                           </div>
-                          <div style={{display:'flex', gap:'8px'}}>
+                          <div style={{ display: 'flex', gap: '8px' }}>
                             <button 
                               className="btn-delete"
                               title="Edit Sekolah" 
-                              onClick={() => handleEditSekolah(sekolah.id, sekolah.nama)}
-                              style={{color:'#3b82f6', backgroundColor:'#eff6ff'}}
+                              onClick={() => handleEditSekolah(sekolah)}
+                              style={{ color: '#64748b', background: '#f1f5f9' }}
                             >
-                              <Edit2 size={14} />
+                              <Pencil size={14} />
                             </button>
                             <button 
                               className="btn-delete"
@@ -373,14 +419,37 @@ function PengaturanSekolahPage() {
                         <div className="ps-struktur-body">
                           <div className="ps-jurusan-row">
                             <span className="ps-badge-jurusan teal">Daftar Kelas</span>
-                            <div className="ps-kelas-list">
+                            <div className="ps-kelas-list" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', alignItems: 'center' }}>
                               {schoolClasses.length > 0 ? (
                                 schoolClasses.map(kls => (
-                                  <span key={kls.id} className="ps-badge-kelas" style={{cursor: 'pointer'}} title="Klik untuk edit" onClick={() => handleEditKelas(kls.id, kls.nama)}>{kls.nama}</span>
+                                  <div key={kls.id} className="ps-badge-kelas" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    {kls.nama}
+                                    <button 
+                                      onClick={() => handleEditKelas(kls)} 
+                                      style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '0', color: '#64748b', display: 'flex' }}
+                                      title="Edit Kelas"
+                                    >
+                                      <Pencil size={12} />
+                                    </button>
+                                    <button 
+                                      onClick={() => handleDeleteKelas(kls.id)} 
+                                      style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '0', color: '#ef4444', display: 'flex' }}
+                                      title="Hapus Kelas"
+                                    >
+                                      <Trash2 size={12} />
+                                    </button>
+                                  </div>
                                 ))
                               ) : (
                                 <span style={{ fontSize: '12px', color: '#94a3b8', fontStyle: 'italic' }}>Belum ada kelas.</span>
                               )}
+                              <button 
+                                onClick={() => handleAddKelasBaru(sekolah.id)}
+                                style={{ background: '#e0f2fe', color: '#0ea5e9', border: '1px dashed #7dd3fc', borderRadius: '4px', padding: '2px 8px', fontSize: '12px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }}
+                                title="Tambah Kelas"
+                              >
+                                <PlusCircle size={12} /> Tambah Kelas
+                              </button>
                             </div>
                           </div>
                         </div>

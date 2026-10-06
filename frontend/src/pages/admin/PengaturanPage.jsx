@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Menu,
   Bell,
@@ -23,6 +23,31 @@ import './PengaturanPage.css';
 
 function PengaturanPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const navigate = useNavigate();
+
+  // Form states
+  const [durasi, setDurasi] = useState('60');
+  const [mulai, setMulai] = useState('2025-07-12 08:00');
+  const [selesai, setSelesai] = useState('2025-07-12 09:00');
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSimpan = () => {
+    setIsSaving(true);
+    // Simpan ke localStorage sebagai contoh (nanti bisa dipindah ke API)
+    localStorage.setItem('pengaturan_ujian', JSON.stringify({
+      durasi,
+      mulai,
+      selesai
+    }));
+    setTimeout(() => {
+      setIsSaving(false);
+      alert('Pengaturan berhasil disimpan!');
+    }, 500);
+  };
+
+  const handleBatal = () => {
+    navigate('/dashboard');
+  };
 
   return (
     <div className={`pengaturan-layout ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
@@ -73,10 +98,10 @@ function PengaturanPage() {
                 <span className="pg-badge">Sesi Ujian Aktif</span>
               </div>
               <div className="pg-title-actions">
-                <button className="btn-log-audit">
+                <button className="btn-log-audit" onClick={() => alert('Fitur Log Audit sedang dalam pengembangan.')}>
                   <History size={16} /> Log Audit
                 </button>
-                <button className="btn-panduan">
+                <button className="btn-panduan" onClick={() => alert('Fitur Panduan Pengaturan sedang dalam pengembangan.')}>
                   <HelpCircle size={16} /> Panduan Pengaturan
                 </button>
               </div>
@@ -98,7 +123,7 @@ function PengaturanPage() {
                     <p>Konfigurasi batasan waktu jadwal ujian serta mekanisme keamanan sesi otomatis.</p>
                   </div>
                 </div>
-                <button className="btn-sinkron">
+                <button className="btn-sinkron" onClick={() => alert('Waktu server NTP telah sinkron secara otomatis.')}>
                   Sinkron Server NTP
                 </button>
               </div>
@@ -114,7 +139,7 @@ function PengaturanPage() {
                   <div className="pg-group">
                     <label className="pg-label">Durasi Pengerjaan (menit)</label>
                     <div className="pg-input-wrapper">
-                      <input type="text" className="pg-input with-suffix" defaultValue="60" />
+                      <input type="text" className="pg-input with-suffix" value={durasi} onChange={(e) => setDurasi(e.target.value)} />
                       <span className="pg-input-suffix">Mnt</span>
                     </div>
                     <span className="pg-help-text">Durasi countdown siswa saat tes.</span>
@@ -123,7 +148,7 @@ function PengaturanPage() {
                     <label className="pg-label">Mulai Pengerjaan</label>
                     <div className="pg-input-wrapper">
                       <Calendar size={16} />
-                      <input type="text" className="pg-input with-icon" defaultValue="2025-07-12 08:00" />
+                      <input type="text" className="pg-input with-icon" value={mulai} onChange={(e) => setMulai(e.target.value)} />
                     </div>
                     <span className="pg-help-text">Waktu pembukaan portal ujian.</span>
                   </div>
@@ -131,7 +156,7 @@ function PengaturanPage() {
                     <label className="pg-label">Selesai Pengerjaan</label>
                     <div className="pg-input-wrapper">
                       <Calendar size={16} />
-                      <input type="text" className="pg-input with-icon" defaultValue="2025-07-12 09:00" />
+                      <input type="text" className="pg-input with-icon" value={selesai} onChange={(e) => setSelesai(e.target.value)} />
                     </div>
                     <span className="pg-help-text">Batas akhir pengumpulan jawaban.</span>
                   </div>
@@ -193,9 +218,9 @@ function PengaturanPage() {
               </div>
 
               <div className="pg-form-footer">
-                <button className="btn-batal">Batal</button>
-                <button className="btn-simpan">
-                  <Save size={16} /> Simpan
+                <button className="btn-batal" onClick={handleBatal}>Batal</button>
+                <button className="btn-simpan" onClick={handleSimpan} disabled={isSaving}>
+                  <Save size={16} /> {isSaving ? 'Menyimpan...' : 'Simpan'}
                 </button>
               </div>
 

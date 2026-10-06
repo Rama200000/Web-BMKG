@@ -61,6 +61,34 @@ function ModulPage() {
     }
   };
 
+  const handleEdit = async (item) => {
+    const newJudul = window.prompt('Edit judul modul:', item.judul);
+    if (newJudul !== null && newJudul.trim() !== '') {
+      const newDeskripsi = window.prompt('Edit deskripsi modul:', item.deskripsi || '');
+      try {
+        const res = await fetch(`${API_BASE_URL}/modules.php`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: item.id,
+            judul: newJudul.trim(),
+            deskripsi: newDeskripsi !== null ? newDeskripsi.trim() : (item.deskripsi || ''),
+            is_active: item.is_active
+          })
+        });
+        const result = await res.json();
+        if (result.success) {
+          fetchModules();
+        } else {
+          alert(result.message);
+        }
+      } catch (err) {
+        console.error('Error updating:', err);
+        alert('Gagal memperbarui modul.');
+      }
+    }
+  };
+
   return (
     <div className={`modul-layout ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
       <Sidebar collapsed={sidebarCollapsed} />
@@ -189,7 +217,7 @@ function ModulPage() {
                       </td>
                       <td>
                         <div className="modul-row-actions">
-                          <button className="row-action-btn edit" title="Edit">
+                          <button className="row-action-btn edit" title="Edit" onClick={() => handleEdit(item)}>
                             <Pencil size={14} />
                           </button>
                           <button className="row-action-btn delete" title="Hapus" onClick={() => handleDelete(item.id)}>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Menu,
@@ -18,9 +18,54 @@ import {
 import Sidebar from '../../components/Sidebar';
 import './TambahModulPage.css';
 
+const API_BASE_URL = 'http://localhost:8000/api';
+
 function TambahModulPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const navigate = useNavigate();
+
+  // Form states
+  const [judul, setJudul] = useState('');
+  const [kategori, setKategori] = useState('Klimatologi & Pemanasan Global');
+  const [deskripsi, setDeskripsi] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // File upload states
+  const fileInputRef = useRef(null);
+  const [fileName, setFileName] = useState("");
+
+  const handleSimpan = async () => {
+    if (!judul.trim()) {
+      alert('Judul Modul wajib diisi!');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/modules.php`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          judul: judul.trim(),
+          deskripsi: deskripsi.trim(),
+          is_active: 1
+        })
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        alert('Modul berhasil ditambahkan!');
+        navigate('/modul');
+      } else {
+        alert('Gagal menambahkan modul: ' + result.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Terjadi kesalahan server saat menyimpan modul.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className={`tambah-modul-layout ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
@@ -82,17 +127,15 @@ function TambahModulPage() {
               </div>
 
               <div className="tm-form-row">
-                <div className="tm-form-group" style={{ flex: 1 }}>
-                  <label className="tm-label">Kode Modul</label>
-                  <div className="tm-input-wrapper tm-input-disabled">
-                    <input type="text" value="MOD-IKLIM-009" readOnly />
-                    <span className="tm-badge-auto">Auto</span>
-                  </div>
-                </div>
                 <div className="tm-form-group" style={{ flex: 2 }}>
                   <label className="tm-label">Judul Modul <span className="tm-req">*</span></label>
                   <div className="tm-input-wrapper">
-                    <input type="text" defaultValue="Mitigasi & Adaptasi Perubahan Iklim Global" />
+                    <input 
+                      type="text" 
+                      placeholder="Contoh: Mitigasi & Adaptasi Perubahan Iklim Global"
+                      value={judul}
+                      onChange={(e) => setJudul(e.target.value)}
+                    />
                   </div>
                 </div>
               </div>
@@ -100,7 +143,7 @@ function TambahModulPage() {
               <div className="tm-form-group">
                 <label className="tm-label">Kategori / Topik Iklim <span className="tm-req">*</span></label>
                 <div className="tm-select-wrapper">
-                  <select defaultValue="Klimatologi & Pemanasan Global">
+                  <select value={kategori} onChange={(e) => setKategori(e.target.value)}>
                     <option>Klimatologi & Pemanasan Global</option>
                     <option>Meteorologi Dasar</option>
                   </select>
@@ -113,7 +156,9 @@ function TambahModulPage() {
                 <div className="tm-input-wrapper" style={{ padding: 0 }}>
                   <textarea 
                     rows={3}
-                    defaultValue="Pemahaman komprehensif mengenai fenomena anomali cuaca global, efek gas rumah kaca, serta aksi mitigasi terapan berbasis lingkungan ekosistem sekolah."
+                    placeholder="Tuliskan deskripsi singkat tentang modul ini..."
+                    value={deskripsi}
+                    onChange={(e) => setDeskripsi(e.target.value)}
                   ></textarea>
                 </div>
               </div>
@@ -127,42 +172,41 @@ function TambahModulPage() {
                   <h2 className="tm-card-title">Materi & Struktur Bab</h2>
                 </div>
                 <span className="tm-card-subtitle tm-text-green">
-                  <div className="dot-green"></div> 1 Materi Terdaftar
+                  <div className="dot-green"></div> Opsional (Dapat ditambahkan nanti)
                 </span>
               </div>
 
-              <div className="tm-chapter-list">
-                <div className="tm-chapter-item">
-                  <div className="tm-chapter-left">
-                    <div className="tm-chapter-number">1</div>
-                    <div className="tm-chapter-info">
-                      <h4>Bab 1: Pengenalan Emisi Karbon & Siklus Atmosfer</h4>
-                      <p>Durasi baca: ~12 menit • 4 infografis interaktif</p>
-                    </div>
-                  </div>
-                  <div className="tm-chapter-actions">
-                    <button className="row-action-btn edit"><Pencil size={14} /></button>
-                    <button className="row-action-btn delete"><Trash2 size={14} /></button>
-                  </div>
-                </div>
-              </div>
-
-              <button className="btn-tambah-bab">
-                <Plus size={16} />
-                Tambah Sub-bab / Materi Baru
-              </button>
-
               <div className="tm-form-group" style={{ marginBottom: 0 }}>
                 <label className="tm-label" style={{ fontWeight: 600 }}>Unggah Buku Panduan Digital / Modul PDF BMKG</label>
-                <div className="tm-upload-area">
+                <div 
+                  className="tm-upload-area" 
+                  onClick={() => fileInputRef.current.click()}
+                  style={{ cursor: 'pointer' }}
+                >
                   <div className="upload-icon-box">
                     <CloudUpload size={24} />
                   </div>
                   <div className="upload-text">
-                    <h4>Klik atau seret berkas dokumen PDF / EPUB ke sini</h4>
+                    <h4>{fileName ? fileName : 'Klik atau seret berkas dokumen PDF / EPUB ke sini'}</h4>
                     <p>Mendukung format PDF/EPUB standar Kemendikbud & BMKG Edu (Maksimal 25 MB)</p>
                   </div>
-                  <button className="btn-pilih-berkas">Pilih Berkas</button>
+                  <button type="button" className="btn-pilih-berkas" onClick={(e) => {
+                    e.stopPropagation(); // prevent double trigger
+                    fileInputRef.current.click();
+                  }}>
+                    {fileName ? 'Ganti Berkas' : 'Pilih Berkas'}
+                  </button>
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    onChange={(e) => {
+                      if(e.target.files && e.target.files.length > 0) {
+                        setFileName(e.target.files[0].name);
+                      }
+                    }} 
+                    style={{ display: 'none' }} 
+                    accept=".pdf,.epub" 
+                  />
                 </div>
               </div>
             </div>
@@ -182,9 +226,9 @@ function TambahModulPage() {
             </div>
             <div className="tm-footer-actions">
               <button className="btn-batal-footer" onClick={() => navigate('/modul')}>Batal</button>
-              <button className="btn-simpan-publish">
+              <button className="btn-simpan-publish" onClick={handleSimpan} disabled={isSubmitting}>
                 <CheckCircle2 size={16} />
-                Simpan & Terbitkan Modul
+                {isSubmitting ? 'Menyimpan...' : 'Simpan & Terbitkan Modul'}
               </button>
             </div>
           </div>

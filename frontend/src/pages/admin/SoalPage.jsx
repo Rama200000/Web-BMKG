@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Menu,
   Bell,
@@ -12,7 +12,8 @@ import {
   Save,
   MessageSquare,
   Lock,
-  Plus
+  Plus,
+  Pencil
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import './SoalPage.css';
@@ -21,6 +22,7 @@ const API_BASE_URL = 'http://localhost:8000/api';
 
 function SoalPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const navigate = useNavigate();
   const [questions, setQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -144,7 +146,7 @@ function SoalPage() {
                         <span className="qc-type">Pilihan Ganda</span>
                       </div>
                       <div className="qc-header-right">
-                        <button className="qc-btn-icon"><Eye size={15} /></button>
+                        <button className="qc-btn-icon" onClick={() => navigate('/tambah-soal', { state: { editData: q } })} title="Edit Soal"><Pencil size={15} /></button>
                         <button className="qc-btn-icon" onClick={() => handleDelete(q.id)}><Trash2 size={15} /></button>
                       </div>
                     </div>
