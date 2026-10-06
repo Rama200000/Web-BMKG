@@ -45,14 +45,20 @@ function PeringkatPage() {
           if (data.success) {
             let list = data.data.map(d => ({
               nama: d.siswa,
-              skor: parseInt(d.post_test_score || '0'),
+              skor: parseInt(d.n_gain_score || '0'),
               waktu: parseInt(d.post_test_time_seconds || '0'),
               isMe: d.hp === student.no_hp || d.hp === student.phone || d.siswa === student.nama
             }));
             
+            const rawPre = parseInt(localStorage.getItem('skorPretest') || '0');
+            const rawPost = parseInt(skorPosttest || '0');
+            let myNGain = 0;
+            if (rawPre === 100) myNGain = rawPost === 100 ? 100 : 0;
+            else myNGain = Math.round(((rawPost - rawPre) / (100 - rawPre)) * 100);
+
             const saya = {
               nama: student.nama || 'Kamu',
-              skor: parseInt(skorPosttest || '0'),
+              skor: myNGain,
               waktu: parseInt(localStorage.getItem('posttestTime') || '0'),
               isMe: true,
             };
@@ -114,7 +120,7 @@ function PeringkatPage() {
               <div className={`podium-item rank-2 ${top3[1].isMe ? 'me' : ''}`}>
                 <div className="podium-avatar"><UserRound size={32} /></div>
                 <div className="podium-name">{top3[1].nama}{top3[1].isMe && ' (Kamu)'}</div>
-                <div className="podium-score">Skor: {top3[1].skor} | {formatTime(top3[1].waktu)}</div>
+                <div className="podium-score">Skor: {top3[1].skor}% | {formatTime(top3[1].waktu)}</div>
                 <div className="podium-block">2</div>
               </div>
             )}
@@ -123,7 +129,7 @@ function PeringkatPage() {
               <div className={`podium-item rank-1 ${top3[0].isMe ? 'me' : ''}`}>
                 <div className="podium-avatar"><UserRound size={38} /></div>
                 <div className="podium-name">{top3[0].nama}{top3[0].isMe && ' (Kamu)'}</div>
-                <div className="podium-score">Skor: {top3[0].skor} | {formatTime(top3[0].waktu)}</div>
+                <div className="podium-score">Skor: {top3[0].skor}% | {formatTime(top3[0].waktu)}</div>
                 <div className="podium-block">1</div>
               </div>
             )}
@@ -132,7 +138,7 @@ function PeringkatPage() {
               <div className={`podium-item rank-3 ${top3[2].isMe ? 'me' : ''}`}>
                 <div className="podium-avatar"><UserRound size={32} /></div>
                 <div className="podium-name">{top3[2].nama}{top3[2].isMe && ' (Kamu)'}</div>
-                <div className="podium-score">Skor: {top3[2].skor} | {formatTime(top3[2].waktu)}</div>
+                <div className="podium-score">Skor: {top3[2].skor}% | {formatTime(top3[2].waktu)}</div>
                 <div className="podium-block">3</div>
               </div>
             )}
@@ -147,7 +153,7 @@ function PeringkatPage() {
                     <span className="peringkat-name">
                       {i + 4}. {p.nama}{p.isMe && ' (Kamu)'}
                     </span>
-                    <span className="peringkat-score">Skor: {p.skor} | {formatTime(p.waktu)}</span>
+                    <span className="peringkat-score">Skor: {p.skor}% | {formatTime(p.waktu)}</span>
                   </div>
                 </li>
               ))}

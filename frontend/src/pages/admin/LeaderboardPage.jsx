@@ -27,18 +27,18 @@ function LeaderboardPage() {
         const res = await fetch(`${API_BASE_URL}/skor.php`);
         const result = await res.json();
         if (result.success) {
-          // Sort by postTest descending, then map rank
+          // Sort by n_gain_score descending, then map rank
           const sorted = result.data
-            .filter(item => item.post_test_score !== null)
-            .sort((a, b) => b.post_test_score - a.post_test_score)
+            .filter(item => item.n_gain_score !== null)
+            .sort((a, b) => b.n_gain_score - a.n_gain_score)
             .map((item, index) => ({
               rank: index + 1,
               nama: item.siswa,
               hp: item.hp,
               sekolah: item.sekolah,
               kelas: item.kelas,
-              nilai: item.post_test_score,
-              benar: Math.round(item.post_test_score / 4), // Asumsi per soal bobot 4
+              nilai: item.n_gain_score + '%',
+              benar: Math.round((item.post_test_score || 0) / 4), // Asumsi per soal bobot 4
               total: 25,
               waktu: '15m 30s' // Hardcoded fallback unless DB tracks time precisely
             }));
@@ -107,7 +107,7 @@ function LeaderboardPage() {
               <h1 className="lb-title">Peringkat Siswa Terbaik (Leaderboard)</h1>
             </div>
             <p className="lb-subtitle">
-              Peringkat dihitung berdasarkan nilai Post-Test tertinggi.
+              Peringkat dihitung berdasarkan nilai Peningkatan tertinggi (N-Gain).
             </p>
           </div>
 
