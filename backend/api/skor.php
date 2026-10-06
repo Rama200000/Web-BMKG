@@ -23,11 +23,7 @@ switch ($method) {
                 s.pre_test_score, 
                 s.post_test_score,
                 s.pre_test_time_seconds,
-                s.post_test_time_seconds,
-                CASE 
-                    WHEN s.post_test_score >= 100 THEN 100 
-                    ELSE ((IFNULL(s.post_test_score,0) - IFNULL(s.pre_test_score,0)) / (100 - IFNULL(s.post_test_score,0))) * 100
-                END AS final_score
+                s.post_test_time_seconds
             FROM scores s
             LEFT JOIN students st ON s.student_id = st.id
             LEFT JOIN schools sch ON st.sekolah_id = sch.id
@@ -39,7 +35,7 @@ switch ($method) {
             $sql .= " WHERE st.sekolah_id = :sekolah_id";
         }
         
-        $sql .= " ORDER BY final_score DESC, s.post_test_time_seconds ASC";
+        $sql .= " ORDER BY s.post_test_score DESC, s.post_test_time_seconds ASC";
         
         $stmt = $pdo->prepare($sql);
         if ($sekolah_id) {

@@ -47,7 +47,12 @@ function HasilSkorPage() {
               kelas: item.kelas,
               preTest: parseFloat(item.pre_test_score) || 0,
               postTest: parseFloat(item.post_test_score) || 0,
-              peningkatan: Math.round(parseFloat(item.final_score || '0'))
+              peningkatan: (() => {
+                const pre = parseFloat(item.pre_test_score) || 0;
+                const post = parseFloat(item.post_test_score) || 0;
+                if (pre === 100) return post === 100 ? 100 : 0;
+                return Math.round(((post - pre) / (100 - pre)) * 100);
+              })()
             }));
           
           setHasilSkorData(formattedData);
@@ -99,7 +104,7 @@ function HasilSkorPage() {
     const tableRows = [];
 
     hasilSkorData.forEach(item => {
-      const peningkatStr = item.peningkatan > 0 ? `+${item.peningkatan}` : item.peningkatan.toString();
+      const peningkatStr = item.peningkatan > 0 ? `+${item.peningkatan}%` : `${item.peningkatan}%`;
       const rowData = [
         item.no,
         item.nama,
@@ -133,7 +138,7 @@ function HasilSkorPage() {
       'Kelas': item.kelas,
       'Nilai Pre-Test': item.preTest,
       'Nilai Post-Test': item.postTest,
-      'Peningkatan': item.peningkatan > 0 ? `+${item.peningkatan}` : item.peningkatan
+      'Peningkatan': item.peningkatan > 0 ? `+${item.peningkatan}%` : `${item.peningkatan}%`
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(worksheetData);
@@ -321,7 +326,7 @@ function HasilSkorPage() {
                       <td style={{ textAlign: 'center' }}>
                         <div style={{ display: 'flex', justifyContent: 'center' }}>
                           <span className={`badge-peningkatan ${item.peningkatan >= 0 ? 'green' : 'red'}`}>
-                            {item.peningkatan > 0 ? `+${item.peningkatan}` : item.peningkatan}
+                            {item.peningkatan > 0 ? `+${item.peningkatan}%` : `${item.peningkatan}%`}
                           </span>
                         </div>
                       </td>

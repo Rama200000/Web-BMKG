@@ -153,7 +153,14 @@ function DetailSkorPage() {
                       <span className="box-label">PENINGKATAN</span>
                     </div>
                     <div className="box-score-large gray">
-                      {data['post-test'].score - data['pre-test'].score > 0 ? '+' : ''}{data['post-test'].score - data['pre-test'].score}
+                      {(() => {
+                        const pre = parseFloat(data['pre-test'].score) || 0;
+                        const post = parseFloat(data['post-test'].score) || 0;
+                        let nGain = 0;
+                        if (pre === 100) nGain = post === 100 ? 100 : 0;
+                        else nGain = Math.round(((post - pre) / (100 - pre)) * 100);
+                        return `${nGain > 0 ? '+' : ''}${nGain}%`;
+                      })()}
                     </div>
                   </div>
                 </div>
