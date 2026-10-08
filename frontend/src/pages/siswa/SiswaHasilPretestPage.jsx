@@ -23,16 +23,43 @@ function SiswaHasilPretestPage() {
     const skorPretest = parseInt(localStorage.getItem('skorPretest') || '0');
     setSkorSaya(skorPretest);
 
-    // Hitung tertinggi & terendah dari semua record yang ada
-    const allRecords = JSON.parse(localStorage.getItem('studentRecords') || '[]');
-    const allScores = allRecords
-      .map(r => r.nilaiPretest)
-      .filter(s => s != null && !isNaN(s));
-
-    if (allScores.length > 0) {
-      setSkorTertinggi(Math.max(...allScores));
-      setSkorTerendah(Math.min(...allScores));
-    }
+    // Hitung tertinggi & terendah dari database
+    const fetchScores = async () => {
+      try {
+        const studentStr = localStorage.getItem('currentStudent');
+        if (!studentStr) {
+          setSkorTertinggi(skorPretest);
+          setSkorTerendah(skorPretest);
+          return;
+        }
+        const student = JSON.parse(studentStr);
+        
+        const response = await fetch(`http://localhost:8000/api/skor.php?sekolah_id=${student.sekolah_id}`);
+        const result = await response.json();
+        
+        if (result.success && result.data && result.data.length > 0) {
+          const scores = result.data
+            .map(item => item.pre_test_score)
+            .filter(s => s !== null && s !== undefined);
+            
+          if (scores.length > 0) {
+            setSkorTertinggi(Math.max(...scores, skorPretest));
+            setSkorTerendah(Math.min(...scores, skorPretest));
+          } else {
+            setSkorTertinggi(skorPretest);
+            setSkorTerendah(skorPretest);
+          }
+        } else {
+          setSkorTertinggi(skorPretest);
+          setSkorTerendah(skorPretest);
+        }
+      } catch (err) {
+        console.error('Error fetching scores:', err);
+        setSkorTertinggi(skorPretest);
+        setSkorTerendah(skorPretest);
+      }
+    };
+    fetchScores();
 
     return () => clearInterval(t);
   }, []);

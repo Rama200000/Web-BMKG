@@ -16,9 +16,49 @@ function HasilSkorPage({ mode = 'pretest' }) {
   const label = isPretest ? 'Pretest' : 'Posttest';
   const skor = parseInt(localStorage.getItem(isPretest ? 'skorPretest' : 'skorPosttest') || '0');
 
-  // Simulated comparison data
-  const skorTertinggi = 95;
-  const skorTerendah = isPretest ? 30 : 60;
+  // Database comparison data
+  const [skorTertinggi, setSkorTertinggi] = useState(0);
+  const [skorTerendah, setSkorTerendah] = useState(0);
+
+  useEffect(() => {
+    const fetchScores = async () => {
+      try {
+        const studentStr = localStorage.getItem('currentStudent');
+        if (!studentStr) {
+          setSkorTertinggi(skor);
+          setSkorTerendah(skor);
+          return;
+        }
+        const student = JSON.parse(studentStr);
+        
+        const response = await fetch(`http://localhost:8000/api/skor.php?sekolah_id=${student.sekolah_id}`);
+        const result = await response.json();
+        
+        if (result.success && result.data && result.data.length > 0) {
+          const scores = result.data
+            .map(item => isPretest ? item.pre_test_score : item.post_test_score)
+            .filter(s => s !== null && s !== undefined);
+            
+          if (scores.length > 0) {
+            // Include current score in the calculation just in case it hasn't propagated to DB yet
+            setSkorTertinggi(Math.max(...scores, skor));
+            setSkorTerendah(Math.min(...scores, skor));
+          } else {
+            setSkorTertinggi(skor);
+            setSkorTerendah(skor);
+          }
+        } else {
+          setSkorTertinggi(skor);
+          setSkorTerendah(skor);
+        }
+      } catch (err) {
+        console.error('Error fetching scores:', err);
+        setSkorTertinggi(skor);
+        setSkorTerendah(skor);
+      }
+    };
+    fetchScores();
+  }, [isPretest, skor]);
 
   useEffect(() => {
     const updateTime = () => {
