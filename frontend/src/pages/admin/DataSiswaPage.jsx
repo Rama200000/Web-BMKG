@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Menu,
-  Bell,
-  ChevronRight,
+  Menu, ChevronRight,
   GraduationCap,
   Search,
   RefreshCw,
@@ -245,15 +243,13 @@ function DataSiswaPage() {
             </div>
           </div>
           <div className="topbar-right">
-            <button className="topbar-notification">
-              <Bell />
-              <span className="notification-badge"></span>
-            </button>
             <div className="topbar-profile">
-              <div className="profile-avatar">A</div>
+              <div className="profile-avatar" style={{ background: localStorage.getItem('userRole') === 'superadmin' ? '#7c3aed' : '#2563eb' }}>
+                {localStorage.getItem('userRole') === 'superadmin' ? 'SA' : 'A'}
+              </div>
               <div className="profile-info">
-                <span className="profile-name">Admin</span>
-                <span className="profile-role">Administrator</span>
+                <span className="profile-name">{localStorage.getItem('userRole') === 'superadmin' ? 'Super Admin' : 'Admin'}</span>
+                <span className="profile-role">{localStorage.getItem('userRole') === 'superadmin' ? 'Root Access' : 'Administrator'}</span>
               </div>
             </div>
           </div>
@@ -321,6 +317,16 @@ function DataSiswaPage() {
             {/* Table */}
             <div className="ds-table-wrapper">
               <table className="ds-table">
+                <colgroup>
+                  <col style={{ width: '5%' }} />
+                  <col style={{ width: '22%' }} />
+                  <col style={{ width: '15%' }} />
+                  <col style={{ width: '20%' }} />
+                  <col style={{ width: '10%' }} />
+                  <col style={{ width: '10%' }} />
+                  <col style={{ width: '8%' }} />
+                  <col style={{ width: '10%' }} />
+                </colgroup>
                 <thead>
                   <tr>
                     <th>NO</th>
@@ -330,7 +336,7 @@ function DataSiswaPage() {
                     <th>JURUSAN</th>
                     <th>KELAS</th>
                     <th>STATUS</th>
-                    <th style={{ textAlign: 'right' }}>AKSI</th>
+                    <th style={{ textAlign: 'center' }}>AKSI</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -344,7 +350,7 @@ function DataSiswaPage() {
                     paginated.map((siswa, idx) => (
                       <tr key={siswa.id}>
                         <td className="td-no">{startItem + idx}</td>
-                        <td className="td-nama-siswa">{siswa.nama}</td>
+                        <td className="td-nama">{siswa.nama}</td>
                         <td className="td-no-hp" style={{ color: '#64748b', fontSize: '13px' }}>{siswa.no_hp}</td>
                         <td className="td-sekolah">{siswa.sekolah || `(ID: ${siswa.sekolah_id})`}</td>
                         <td>{siswa.jurusan || '-'}</td>
@@ -356,7 +362,7 @@ function DataSiswaPage() {
                             {siswa.is_active == 1 ? 'Aktif' : 'Non-Aktif'}
                           </span>
                         </td>
-                        <td style={{ textAlign: 'right' }}>
+                        <td style={{ textAlign: 'center' }}>
                           <div className="table-actions">
                             <button className="btn-icon edit" onClick={() => openEditModal(siswa)}>
                               <Edit2 size={15} />
@@ -420,10 +426,6 @@ function DataSiswaPage() {
           </div>
         </div>
 
-        {/* Floating Add Button */}
-        <button className="ds-fab" onClick={openAddModal}>
-          <Plus size={24} />
-        </button>
 
         {/* Add/Edit Modal */}
         {showModal && (

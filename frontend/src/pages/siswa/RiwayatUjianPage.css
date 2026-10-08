@@ -1,0 +1,173 @@
+.riwayat-container {
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.riwayat-header-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.bg-green-light {
+  background-color: #dcfce7;
+}
+
+.text-green {
+  color: #16a34a;
+}
+
+.section-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.section-subtitle {
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.riwayat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.riwayat-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+.riwayat-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.riwayat-badge {
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.riwayat-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: #94a3b8;
+}
+
+.riwayat-module-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
+.riwayat-module-title svg {
+  margin-top: 2px;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.riwayat-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.riwayat-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #334155;
+}
+
+.riwayat-score {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.score-label {
+  font-size: 0.8125rem;
+  color: #64748b;
+}
+
+.score-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.score-value.good {
+  color: #16a34a;
+}
+
+.score-value.bad {
+  color: #ef4444;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 40px 20px;
+  background: white;
+  border-radius: 16px;
+  border: 1px dashed #cbd5e1;
+}
+
+.empty-state h3 {
+  margin-top: 16px;
+  margin-bottom: 8px;
+  font-size: 1.125rem;
+  color: #1e293b;
+}
+
+.empty-state p {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 24px;
+}
+
+.text-gray-300 {
+  color: #cbd5e1;
+}
+
+.mt-4 {
+  margin-top: 16px;
+}

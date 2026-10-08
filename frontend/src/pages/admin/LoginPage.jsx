@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Building2,
+  Mail,
   Eye,
   EyeOff,
   ArrowRight,
@@ -9,7 +9,9 @@ import {
   Check,
   RefreshCw,
   GraduationCap,
-  BookOpen
+  BookOpen,
+  X,
+  AlertCircle
 } from 'lucide-react';
 import bmkgLogo from '../../assets/bmkg-logo.png';
 import mascotImg from '../../assets/mascot.png';
@@ -23,6 +25,10 @@ function LoginPage() {
     password: ''
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [showForgotModal, setShowForgotModal] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [isResetting, setIsResetting] = useState(false);
+  const [resetSuccess, setResetSuccess] = useState(false);
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -36,17 +42,23 @@ function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
 
-    setTimeout(() => {
-      if (formData.nip && formData.password) {
-        const email = formData.nip.toLowerCase();
-        let role = 'admin';
-        
-        if (email.includes('super')) {
-          role = 'super_admin';
-        } else if (email.includes('siswa') || email.includes('murid')) {
-          role = 'siswa';
-        }
-
+    try {
+      const res = await fetch('http://localhost:8000/api/login.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          nip: formData.nip,
+          password: formData.password,
+          remember: rememberMe
+        })
+      });
+      
+      const data = await res.json();
+      
+      if (data.success) {
+        const { role, email } = data.data.user;
         localStorage.setItem('userRole', role);
         localStorage.setItem('userEmail', email);
 
@@ -56,10 +68,28 @@ function LoginPage() {
           navigate('/dashboard');
         }
       } else {
-        alert('Harap isi Email dan Password terlebih dahulu.');
-        setIsLoading(false);
+        alert(data.message || 'Login gagal.');
       }
-    }, 800);
+    } catch (error) {
+      console.error(error);
+      alert('Terjadi kesalahan jaringan.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResetSubmit = (e) => {
+    e.preventDefault();
+    if (!resetEmail) {
+      alert('Harap masukkan email Anda.');
+      return;
+    }
+    setIsResetting(true);
+    // Simulasi request reset password
+    setTimeout(() => {
+      setIsResetting(false);
+      setResetSuccess(true);
+    }, 1500);
   };
 
   return (
@@ -120,7 +150,7 @@ function LoginPage() {
                   <label className="form-label" htmlFor="nip">Email</label>
                 </div>
                 <div className="input-wrapper">
-                  <Building2 />
+                  <Mail />
                   <input
                     type="text"
                     id="nip"
@@ -137,7 +167,7 @@ function LoginPage() {
               <div className="form-group">
                 <div className="form-label-row">
                   <label className="form-label" htmlFor="password">Password</label>
-                  <a href="#" className="form-link" id="forgot-password-link">Lupa Password?</a>
+                  <button type="button" onClick={() => setShowForgotModal(true)} className="form-link" id="forgot-password-link">Lupa Password?</button>
                 </div>
                 <div className="input-wrapper">
                   <ShieldCheck />
@@ -201,6 +231,72 @@ function LoginPage() {
           </div>
         </div>
       </main>
+
+      {/* Lupa Password Modal */}
+      {showForgotModal && (
+        <div className="hs-modal-overlay" onClick={() => { setShowForgotModal(false); setResetSuccess(false); setResetEmail(''); }}>
+          <div className="hs-modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px' }}>
+            <div className="hs-modal-header" style={{ paddingBottom: '16px' }}>
+              <div className="hs-modal-title-area">
+                <div className="hs-modal-icon" style={{ background: '#eff6ff', color: '#2563eb' }}>
+                  <ShieldCheck size={18} />
+                </div>
+                <div>
+                  <h3 className="hs-modal-title">Lupa Password</h3>
+                </div>
+              </div>
+              <button className="hs-modal-close" onClick={() => { setShowForgotModal(false); setResetSuccess(false); setResetEmail(''); }}>
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="hs-modal-body">
+              {resetSuccess ? (
+                <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '48px', height: '48px', borderRadius: '50%', background: '#dcfce7', color: '#16a34a', marginBottom: '16px' }}>
+                    <Check size={24} />
+                  </div>
+                  <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#111827', marginBottom: '8px' }}>Tautan Terkirim!</h4>
+                  <p style={{ fontSize: '13px', color: '#6b7280', lineHeight: '1.5' }}>
+                    Kami telah mengirimkan instruksi untuk mereset password ke email <strong>{resetEmail}</strong>. Silakan periksa kotak masuk Anda.
+                  </p>
+                  <button 
+                    onClick={() => { setShowForgotModal(false); setResetSuccess(false); setResetEmail(''); }}
+                    style={{ marginTop: '24px', width: '100%', padding: '10px', background: '#1e40af', color: 'white', border: 'none', borderRadius: '6px', fontWeight: '600', cursor: 'pointer' }}
+                  >
+                    Tutup
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleResetSubmit}>
+                  <p style={{ fontSize: '13px', color: '#4b5563', marginBottom: '20px', lineHeight: '1.5' }}>
+                    Masukkan alamat email yang terdaftar. Kami akan mengirimkan tautan untuk mengatur ulang password Anda.
+                  </p>
+                  <div className="form-group" style={{ marginBottom: '24px' }}>
+                    <label className="form-label" style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: '600' }}>Email Terdaftar</label>
+                    <div className="input-wrapper" style={{ height: '44px' }}>
+                      <Mail size={16} />
+                      <input 
+                        type="email" 
+                        required 
+                        value={resetEmail} 
+                        onChange={(e) => setResetEmail(e.target.value)} 
+                        placeholder="Contoh: admin@bmkg.go.id" 
+                      />
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                    <button type="button" className="btn-modal-cancel" onClick={() => setShowForgotModal(false)}>Batal</button>
+                    <button type="submit" className="btn-modal-submit" disabled={isResetting}>
+                      {isResetting ? 'Mengirim...' : 'Kirim Tautan'}
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="login-footer">

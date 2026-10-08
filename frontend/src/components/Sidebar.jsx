@@ -43,7 +43,7 @@ function Sidebar({ collapsed }) {
   const userRole = localStorage.getItem('userRole') || 'admin';
 
   let currentMenus = adminMenus;
-  if (userRole === 'super_admin') currentMenus = superAdminMenus;
+  if (userRole === 'superadmin') currentMenus = superAdminMenus;
   else if (userRole === 'siswa') currentMenus = siswaMenus;
 
   const handleLogout = () => {

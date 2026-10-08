@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Menu,
-  Bell,
-  ChevronRight,
+  Menu, ChevronRight,
   ChevronDown,
   Trophy,
   Award,
@@ -20,6 +18,9 @@ function LeaderboardPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [leaderboardData, setLeaderboardData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [filterSekolah, setFilterSekolah] = useState('Semua Sekolah');
+  const [filterKelas, setFilterKelas] = useState('Semua Kelas');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
@@ -53,10 +54,17 @@ function LeaderboardPage() {
     fetchLeaderboard();
   }, []);
 
+  const filteredData = leaderboardData.filter(item => {
+    const matchSekolah = filterSekolah === 'Semua Sekolah' || item.sekolah === filterSekolah;
+    const matchKelas = filterKelas === 'Semua Kelas' || item.kelas === filterKelas;
+    const matchSearch = item.nama.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchSekolah && matchKelas && matchSearch;
+  });
+
   // Top 3 for podium
-  const top1 = leaderboardData.find(u => u.rank === 1);
-  const top2 = leaderboardData.find(u => u.rank === 2);
-  const top3 = leaderboardData.find(u => u.rank === 3);
+  const top1 = filteredData[0];
+  const top2 = filteredData[1];
+  const top3 = filteredData[2];
 
   return (
     <div className={`leaderboard-layout ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
@@ -82,15 +90,13 @@ function LeaderboardPage() {
             </div>
           </div>
           <div className="topbar-right">
-            <button className="topbar-notification">
-              <Bell />
-              <span className="notification-badge"></span>
-            </button>
             <div className="topbar-profile">
-              <div className="profile-avatar">A</div>
+              <div className="profile-avatar" style={{ background: localStorage.getItem('userRole') === 'superadmin' ? '#7c3aed' : '#2563eb' }}>
+                {localStorage.getItem('userRole') === 'superadmin' ? 'SA' : 'A'}
+              </div>
               <div className="profile-info">
-                <span className="profile-name">Admin</span>
-                <span className="profile-role">Administrator</span>
+                <span className="profile-name">{localStorage.getItem('userRole') === 'superadmin' ? 'Super Admin' : 'Admin'}</span>
+                <span className="profile-role">{localStorage.getItem('userRole') === 'superadmin' ? 'Root Access' : 'Administrator'}</span>
               </div>
             </div>
           </div>
@@ -190,17 +196,38 @@ function LeaderboardPage() {
               <div className="lb-table-filters">
                 <div className="lb-filters-left">
                   <div className="lb-select-wrap">
-                    <select><option>Semua Sekolah</option></select>
-                    <ChevronDown size={14} className="select-icon" />
+                    <select
+                      value={filterSekolah}
+                      onChange={e => setFilterSekolah(e.target.value)}
+                      style={{ appearance: 'auto', cursor: 'pointer', paddingRight: '25px' }}
+                    >
+                      <option value="Semua Sekolah">Semua Sekolah</option>
+                      {[...new Set(leaderboardData.map(item => item.sekolah))].map((sek, idx) => (
+                        <option key={idx} value={sek}>{sek}</option>
+                      ))}
+                    </select>
                   </div>
                   <div className="lb-select-wrap">
-                    <select><option>Semua Kelas</option></select>
-                    <ChevronDown size={14} className="select-icon" />
+                    <select
+                      value={filterKelas}
+                      onChange={e => setFilterKelas(e.target.value)}
+                      style={{ appearance: 'auto', cursor: 'pointer', paddingRight: '25px' }}
+                    >
+                      <option value="Semua Kelas">Semua Kelas</option>
+                      {[...new Set(leaderboardData.map(item => item.kelas))].map((kls, idx) => (
+                        <option key={idx} value={kls}>{kls}</option>
+                      ))}
+                    </select>
                   </div>
                 </div>
                 <div className="lb-search-wrap">
                   <Search size={15} />
-                  <input type="text" placeholder="Cari nama siswa..." />
+                  <input 
+                    type="text" 
+                    placeholder="Cari nama siswa..." 
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                  />
                 </div>
               </div>
 
@@ -218,11 +245,13 @@ function LeaderboardPage() {
                   <tbody>
                     {isLoading ? (
                        <tr><td colSpan="5" style={{textAlign: 'center', padding: '2rem'}}>Memuat peringkat...</td></tr>
-                    ) : leaderboardData.map((row) => (
+                    ) : filteredData.length === 0 ? (
+                       <tr><td colSpan="5" style={{textAlign: 'center', padding: '2rem'}}>Belum ada data nilai terkumpul atau sesuai filter.</td></tr>
+                    ) : filteredData.map((row, index) => (
                       <tr key={row.rank}>
                         <td align="center">
-                          <div className={`table-rank-badge rank-${row.rank}`}>
-                            #{row.rank}
+                          <div className={`table-rank-badge rank-${index + 1}`}>
+                            #{index + 1}
                           </div>
                         </td>
                         <td>

@@ -339,6 +339,15 @@
   color: var(--color-gray-400);
 }
 
+/* Fix webkit autofill background bug */
+.input-wrapper input:-webkit-autofill,
+.input-wrapper input:-webkit-autofill:hover, 
+.input-wrapper input:-webkit-autofill:focus, 
+.input-wrapper input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+    -webkit-text-fill-color: var(--color-gray-800) !important;
+}
+
 .input-icon-btn {
   display: flex;
   align-items: center;

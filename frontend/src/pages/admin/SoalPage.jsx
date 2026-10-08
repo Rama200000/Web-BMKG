@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  Menu,
-  Bell,
-  ChevronRight,
+  Menu, ChevronRight,
   Filter,
   ArrowDownUp,
   Eye,
@@ -77,15 +75,13 @@ function SoalPage() {
             </button>
           </div>
           <div className="topbar-right">
-            <button className="topbar-notification">
-              <Bell />
-              <span className="notification-badge"></span>
-            </button>
             <div className="topbar-profile">
-              <div className="profile-avatar">A</div>
+              <div className="profile-avatar" style={{ background: localStorage.getItem('userRole') === 'superadmin' ? '#7c3aed' : '#2563eb' }}>
+                {localStorage.getItem('userRole') === 'superadmin' ? 'SA' : 'A'}
+              </div>
               <div className="profile-info">
-                <span className="profile-name">Admin</span>
-                <span className="profile-role">Administrator</span>
+                <span className="profile-name">{localStorage.getItem('userRole') === 'superadmin' ? 'Super Admin' : 'Admin'}</span>
+                <span className="profile-role">{localStorage.getItem('userRole') === 'superadmin' ? 'Root Access' : 'Administrator'}</span>
               </div>
             </div>
           </div>
@@ -145,9 +141,9 @@ function SoalPage() {
                         <div className="qc-number active">{idx + 1}</div>
                         <span className="qc-type">Pilihan Ganda</span>
                       </div>
-                      <div className="qc-header-right">
-                        <button className="qc-btn-icon" onClick={() => navigate('/tambah-soal', { state: { editData: q } })} title="Edit Soal"><Pencil size={15} /></button>
-                        <button className="qc-btn-icon" onClick={() => handleDelete(q.id)}><Trash2 size={15} /></button>
+                      <div className="qc-header-right" style={{ display: 'flex', gap: '8px' }}>
+                        <button className="btn-icon edit" onClick={() => navigate('/tambah-soal', { state: { editData: q } })} title="Edit Soal"><Pencil size={18} /></button>
+                        <button className="btn-icon delete" onClick={() => handleDelete(q.id)}><Trash2 size={18} /></button>
                       </div>
                     </div>
                     <div className="qc-body">

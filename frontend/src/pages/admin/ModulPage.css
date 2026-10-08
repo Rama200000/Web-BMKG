@@ -385,9 +385,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
   border: none;
   background: transparent;
   cursor: pointer;
@@ -395,7 +395,7 @@
 }
 
 .row-action-btn.edit {
-  color: #1E40AF;
+  color: #2563eb;
   background: #eff6ff;
 }
 
@@ -481,3 +481,5 @@
     width: 100%;
   }
 }
+. b a d g e - k a t e g o r i   {   d i s p l a y :   i n l i n e - b l o c k ;   p a d d i n g :   4 p x   1 0 p x ;   f o n t - s i z e :   1 2 p x ;   f o n t - w e i g h t :   5 0 0 ;   b o r d e r - r a d i u s :   2 0 p x ;   b a c k g r o u n d - c o l o r :   # f 1 f 5 f 9 ;   c o l o r :   # 4 7 5 5 6 9 ;   b o r d e r :   1 p x   s o l i d   # e 2 e 8 f 0 ;   }  
+ 

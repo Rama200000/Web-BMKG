@@ -28,7 +28,7 @@
   gap: 8px;
   padding: 18px 24px;
   border-bottom: 1px solid #f1f5f9;
-  color: #059669;
+  color: #2563eb;
 }
 
 .qr-preview-header h3 {
@@ -64,7 +64,7 @@
 .qr-brand {
   font-size: 15px;
   font-weight: 700;
-  color: #059669;
+  color: #2563eb;
   margin: 0 0 4px 0;
 }
 
@@ -97,23 +97,23 @@
 }
 
 .qr-action-btn.primary {
-  background: linear-gradient(135deg, #047857, #059669);
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
   color: #fff;
-  box-shadow: 0 4px 12px rgba(5,150,105,0.3);
+  box-shadow: 0 4px 12px rgba(37,99,235,0.3);
 }
 .qr-action-btn.primary:hover {
-  box-shadow: 0 6px 18px rgba(5,150,105,0.4);
+  box-shadow: 0 6px 18px rgba(37,99,235,0.4);
   transform: translateY(-1px);
 }
 
 .qr-action-btn.outline {
   background: #fff;
-  color: #059669;
-  border: 1.5px solid #D1FAE5;
+  color: #2563eb;
+  border: 1.5px solid #dbeafe;
 }
 .qr-action-btn.outline:hover {
-  background: #ECFDF5;
-  border-color: #A7F3D0;
+  background: #eff6ff;
+  border-color: #bfdbfe;
 }
 
 /* ─── Info Panel ─── */
@@ -142,8 +142,8 @@
 }
 
 .qr-info-card.tip {
-  background: linear-gradient(135deg, #ECFDF5, #F0FDF4);
-  border-color: rgba(16,185,129,0.15);
+  background: linear-gradient(135deg, #eff6ff, #f8fafc);
+  border-color: rgba(37,99,235,0.15);
 }
 
 .qr-info-card.tip ul {
@@ -153,7 +153,7 @@
 
 .qr-info-card.tip li {
   font-size: 13px;
-  color: #065F46;
+  color: #1e3a8a;
   line-height: 1.7;
   margin-bottom: 4px;
 }
@@ -183,7 +183,7 @@
   align-items: center;
   gap: 4px;
   padding: 6px 12px;
-  background: #059669;
+  background: #2563eb;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -194,7 +194,7 @@
   white-space: nowrap;
   font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
 }
-.qr-copy-btn:hover { background: #047857; }
+.qr-copy-btn:hover { background: #1d4ed8; }
 
 .qr-info-note {
   font-size: 12px;
@@ -228,8 +228,8 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
-  color: #065F46;
+  background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+  color: #1e40af;
   display: flex;
   justify-content: center;
   align-items: center;

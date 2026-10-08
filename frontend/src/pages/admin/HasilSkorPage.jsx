@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Menu,
-  Bell,
-  ChevronRight,
+  Menu, ChevronRight,
   ChevronDown,
   Download,
   Eye,
@@ -17,7 +15,7 @@ import {
   FileBox
 } from 'lucide-react';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import Sidebar from '../../components/Sidebar';
 import './HasilSkorPage.css';
@@ -28,9 +26,13 @@ function HasilSkorPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
   const [selectedFormat, setSelectedFormat] = useState('pdf');
+  const [selectedCakupan, setSelectedCakupan] = useState('Semua');
   const [hasilSkorData, setHasilSkorData] = useState([]);
   const [stats, setStats] = useState({ avgPreTest: 0, avgPostTest: 0, nGain: 0, totalPeserta: 0 });
   const [isLoading, setIsLoading] = useState(true);
+  const [filterSekolah, setFilterSekolah] = useState('Semua Sekolah');
+  const [filterKelas, setFilterKelas] = useState('Semua Kelas');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const fetchSkor = async () => {
@@ -73,9 +75,9 @@ function HasilSkorPage() {
           const avgNGain = nGainCount ? (nGainTotal / nGainCount) : 0;
 
           setStats({
-            avgPreTest: avgPre.toFixed(1),
-            avgPostTest: avgPost.toFixed(1),
-            nGain: avgNGain.toFixed(2),
+            avgPreTest: Math.round(avgPre),
+            avgPostTest: Math.round(avgPost),
+            nGain: Math.round(avgNGain * 100),
             totalPeserta: formattedData.length
           });
         }
@@ -103,10 +105,14 @@ function HasilSkorPage() {
     const tableColumn = ["NO", "NAMA SISWA", "SEKOLAH", "KELAS", "PRE-TEST", "POST-TEST", "PENINGKATAN"];
     const tableRows = [];
 
-    hasilSkorData.forEach(item => {
+    const filteredData = selectedCakupan === 'Semua' 
+      ? hasilSkorData 
+      : hasilSkorData.filter(item => item.sekolah === selectedCakupan);
+
+    filteredData.forEach((item, idx) => {
       const peningkatStr = item.peningkatan > 0 ? `+${item.peningkatan}%` : `${item.peningkatan}%`;
       const rowData = [
-        item.no,
+        (idx + 1),
         item.nama,
         item.sekolah,
         item.kelas,
@@ -117,7 +123,7 @@ function HasilSkorPage() {
       tableRows.push(rowData);
     });
 
-    doc.autoTable({
+    autoTable(doc, {
       head: [tableColumn],
       body: tableRows,
       startY: 40,
@@ -130,8 +136,12 @@ function HasilSkorPage() {
   };
 
   const handleExportExcel = () => {
-    const worksheetData = hasilSkorData.map(item => ({
-      'No': item.no,
+    const filteredData = selectedCakupan === 'Semua' 
+      ? hasilSkorData 
+      : hasilSkorData.filter(item => item.sekolah === selectedCakupan);
+
+    const worksheetData = filteredData.map((item, idx) => ({
+      'No': idx + 1,
       'Nama Siswa': item.nama,
       'No HP': item.hp,
       'Asal Sekolah': item.sekolah,
@@ -157,6 +167,13 @@ function HasilSkorPage() {
     setShowExportModal(false);
   };
 
+  const filteredTableData = hasilSkorData.filter(item => {
+    const matchSekolah = filterSekolah === 'Semua Sekolah' || item.sekolah === filterSekolah;
+    const matchKelas = filterKelas === 'Semua Kelas' || item.kelas === filterKelas;
+    const matchSearch = item.nama.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchSekolah && matchKelas && matchSearch;
+  });
+
   return (
     <div className={`hasil-skor-layout ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
       <Sidebar collapsed={sidebarCollapsed} />
@@ -180,15 +197,13 @@ function HasilSkorPage() {
             </div>
           </div>
           <div className="topbar-right">
-            <button className="topbar-notification">
-              <Bell />
-              <span className="notification-badge"></span>
-            </button>
             <div className="topbar-profile">
-              <div className="profile-avatar">A</div>
+              <div className="profile-avatar" style={{ background: localStorage.getItem('userRole') === 'superadmin' ? '#7c3aed' : '#2563eb' }}>
+                {localStorage.getItem('userRole') === 'superadmin' ? 'SA' : 'A'}
+              </div>
               <div className="profile-info">
-                <span className="profile-name">Admin</span>
-                <span className="profile-role">Administrator</span>
+                <span className="profile-name">{localStorage.getItem('userRole') === 'superadmin' ? 'Super Admin' : 'Admin'}</span>
+                <span className="profile-role">{localStorage.getItem('userRole') === 'superadmin' ? 'Root Access' : 'Administrator'}</span>
               </div>
             </div>
           </div>
@@ -253,28 +268,44 @@ function HasilSkorPage() {
             <div className="hs-filter-bar">
               <div className="hs-filters-left">
                 <div className="hs-select-wrap">
-                  <select>
-                    <option>Pre-Test & Post-Test</option>
+                  <select style={{ appearance: 'auto', cursor: 'pointer', paddingRight: '25px' }}>
+                    <option>Semua Modul / Kategori</option>
                   </select>
-                  <ChevronDown size={14} className="select-icon" />
                 </div>
                 <div className="hs-select-wrap">
-                  <select>
-                    <option>Semua Sekolah</option>
+                  <select 
+                    value={filterSekolah} 
+                    onChange={e => setFilterSekolah(e.target.value)}
+                    style={{ appearance: 'auto', cursor: 'pointer', paddingRight: '25px' }}
+                  >
+                    <option value="Semua Sekolah">Semua Sekolah</option>
+                    {[...new Set(hasilSkorData.map(item => item.sekolah))].map((sek, idx) => (
+                      <option key={idx} value={sek}>{sek}</option>
+                    ))}
                   </select>
-                  <ChevronDown size={14} className="select-icon" />
                 </div>
                 <div className="hs-select-wrap">
-                  <select>
-                    <option>Semua Kelas</option>
+                  <select 
+                    value={filterKelas} 
+                    onChange={e => setFilterKelas(e.target.value)}
+                    style={{ appearance: 'auto', cursor: 'pointer', paddingRight: '25px' }}
+                  >
+                    <option value="Semua Kelas">Semua Kelas</option>
+                    {[...new Set(hasilSkorData.map(item => item.kelas))].map((kls, idx) => (
+                      <option key={idx} value={kls}>{kls}</option>
+                    ))}
                   </select>
-                  <ChevronDown size={14} className="select-icon" />
                 </div>
               </div>
               
               <div className="hs-search">
                 <Search size={15} />
-                <input type="text" placeholder="Cari nama siswa..." />
+                <input 
+                  type="text" 
+                  placeholder="Cari nama siswa..." 
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                />
               </div>
             </div>
 
@@ -298,13 +329,13 @@ function HasilSkorPage() {
                     <tr>
                       <td colSpan="8" style={{ textAlign: 'center', padding: '24px', color: '#64748b' }}>Memuat data skor...</td>
                     </tr>
-                  ) : hasilSkorData.length === 0 ? (
+                  ) : filteredTableData.length === 0 ? (
                     <tr>
-                      <td colSpan="8" style={{ textAlign: 'center', padding: '24px', color: '#64748b' }}>Belum ada data skor yang terkumpul.</td>
+                      <td colSpan="8" style={{ textAlign: 'center', padding: '24px', color: '#64748b' }}>Belum ada data skor yang terkumpul atau sesuai filter.</td>
                     </tr>
-                  ) : hasilSkorData.map((item) => (
+                  ) : filteredTableData.map((item, idx) => (
                     <tr key={item.no}>
-                      <td className="td-no">{item.no}</td>
+                      <td className="td-no">{idx + 1}</td>
                       <td>
                         <div className="cell-nama-siswa">
                           <span className="nama-siswa-text">{item.nama}</span>
@@ -439,8 +470,12 @@ function HasilSkorPage() {
               <div className="hs-form-group" style={{ marginTop: '24px' }}>
                 <label className="hs-form-label">2. CAKUPAN DATA SISWA</label>
                 <div className="hs-select-full">
-                  <select>
-                    <option>Semua Siswa Terdaftar (120 Siswa / Seluruh Sekolah)</option>
+                  <select value={selectedCakupan} onChange={(e) => setSelectedCakupan(e.target.value)}>
+                    <option value="Semua">Semua Siswa Terdaftar ({hasilSkorData.length} Siswa / Seluruh Sekolah)</option>
+                    {[...new Set(hasilSkorData.map(item => item.sekolah))].map((sek, idx) => {
+                      const count = hasilSkorData.filter(item => item.sekolah === sek).length;
+                      return <option key={idx} value={sek}>{sek} ({count} Siswa)</option>;
+                    })}
                   </select>
                   <ChevronDown size={14} className="select-icon" />
                 </div>

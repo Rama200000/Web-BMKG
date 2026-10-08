@@ -616,3 +616,233 @@
     display: none;
   }
 }
+
+/* ===== Modal Styles ===== */
+.ds-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+.ds-modal-content {
+  background: white;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+}
+
+.ds-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 28px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.ds-modal-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.ds-modal-close {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.ds-modal-close:hover {
+  background: #f1f5f9;
+  color: #ef4444;
+}
+
+.ds-modal-body {
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-row > .form-group {
+  width: 50%;
+}
+
+.form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.form-input {
+  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #1e293b;
+  outline: none;
+  transition: all 0.2s;
+  background: #f8fafc;
+}
+
+.form-input:focus {
+  border-color: #3b82f6;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-input:disabled {
+  background: #e2e8f0;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.ds-modal-footer {
+  padding: 16px 28px;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  background: #f8fafc;
+  border-radius: 0 0 20px 20px;
+}
+
+.ds-btn-outline {
+  padding: 10px 20px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ds-btn-outline:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.ds-btn-primary {
+  padding: 10px 24px;
+  background: #1d4ed8;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ds-btn-primary:hover:not(:disabled) {
+  background: #1e40af;
+  transform: translateY(-1px);
+}
+
+.ds-btn-primary:disabled {
+  background: #94a3b8;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.ds-fab {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 25px -5px rgba(29, 78, 216, 0.4);
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 50;
+}
+
+.ds-fab:hover {
+  transform: scale(1.05) translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(29, 78, 216, 0.5);
+}
+
+.ds-fab:active {
+  transform: scale(0.95);
+}
+
+.table-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-icon.edit {
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+
+.btn-icon.edit:hover {
+  background-color: #dbeafe;
+  transform: translateY(-1px);
+}
+
+.btn-icon.delete {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+.btn-icon.delete:hover {
+  background-color: #fee2e2;
+  transform: translateY(-1px);
+}

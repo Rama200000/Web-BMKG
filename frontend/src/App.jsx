@@ -25,6 +25,7 @@ import HasilSkorPage from './pages/siswa/HasilSkorPage';
 import PretestSelesaiPage from './pages/siswa/PretestSelesaiPage';
 import ModulPembelajaranPage from './pages/siswa/ModulPembelajaranPage';
 import PeringkatPage from './pages/siswa/PeringkatPage';
+import RiwayatUjianPage from './pages/siswa/RiwayatUjianPage';
 
 import './index.css';
 
@@ -55,46 +56,46 @@ function App() {
 
         {/* ═══ Admin & Super Admin Routes ═══ */}
         <Route path="/dashboard" element={
-          <ProtectedRoute allowedRoles={['admin', 'super_admin']}><DashboardPage /></ProtectedRoute>
+          <ProtectedRoute allowedRoles={['admin', 'superadmin']}><DashboardPage /></ProtectedRoute>
         } />
         <Route path="/data-siswa" element={
-          <ProtectedRoute allowedRoles={['admin', 'super_admin']}><DataSiswaPage /></ProtectedRoute>
+          <ProtectedRoute allowedRoles={['admin', 'superadmin']}><DataSiswaPage /></ProtectedRoute>
         } />
         <Route path="/pengaturan-sekolah" element={
-          <ProtectedRoute allowedRoles={['admin', 'super_admin']}><PengaturanSekolahPage /></ProtectedRoute>
+          <ProtectedRoute allowedRoles={['admin', 'superadmin']}><PengaturanSekolahPage /></ProtectedRoute>
         } />
         <Route path="/modul" element={
-          <ProtectedRoute allowedRoles={['admin', 'super_admin']}><ModulPage /></ProtectedRoute>
+          <ProtectedRoute allowedRoles={['admin', 'superadmin']}><ModulPage /></ProtectedRoute>
         } />
         <Route path="/tambah-modul" element={
-          <ProtectedRoute allowedRoles={['admin', 'super_admin']}><TambahModulPage /></ProtectedRoute>
+          <ProtectedRoute allowedRoles={['admin', 'superadmin']}><TambahModulPage /></ProtectedRoute>
         } />
         <Route path="/soal" element={
-          <ProtectedRoute allowedRoles={['admin', 'super_admin']}><SoalPage /></ProtectedRoute>
+          <ProtectedRoute allowedRoles={['admin', 'superadmin']}><SoalPage /></ProtectedRoute>
         } />
         <Route path="/tambah-soal" element={
-          <ProtectedRoute allowedRoles={['admin', 'super_admin']}><TambahSoalPage /></ProtectedRoute>
+          <ProtectedRoute allowedRoles={['admin', 'superadmin']}><TambahSoalPage /></ProtectedRoute>
         } />
         <Route path="/hasil-skor" element={
-          <ProtectedRoute allowedRoles={['admin', 'super_admin']}><HasilSkorPageAdmin /></ProtectedRoute>
+          <ProtectedRoute allowedRoles={['admin', 'superadmin']}><HasilSkorPageAdmin /></ProtectedRoute>
         } />
         <Route path="/hasil-skor/detail" element={
-          <ProtectedRoute allowedRoles={['admin', 'super_admin']}><DetailSkorPage /></ProtectedRoute>
+          <ProtectedRoute allowedRoles={['admin', 'superadmin']}><DetailSkorPage /></ProtectedRoute>
         } />
         <Route path="/hasil-skor/leaderboard" element={
-          <ProtectedRoute allowedRoles={['admin', 'super_admin']}><LeaderboardPage /></ProtectedRoute>
+          <ProtectedRoute allowedRoles={['admin', 'superadmin']}><LeaderboardPage /></ProtectedRoute>
         } />
         <Route path="/pengaturan" element={
-          <ProtectedRoute allowedRoles={['admin', 'super_admin']}><PengaturanPage /></ProtectedRoute>
+          <ProtectedRoute allowedRoles={['admin', 'superadmin']}><PengaturanPage /></ProtectedRoute>
         } />
         
         <Route path="/qr-code" element={
-          <ProtectedRoute allowedRoles={['admin', 'super_admin']}><QRCodePage /></ProtectedRoute>
+          <ProtectedRoute allowedRoles={['admin', 'superadmin']}><QRCodePage /></ProtectedRoute>
         } />
 
         {/* Super Admin Only Route */}
         <Route path="/kelola-admin" element={
-          <ProtectedRoute allowedRoles={['super_admin']}><KelolaAdminPage /></ProtectedRoute>
+          <ProtectedRoute allowedRoles={['superadmin']}><KelolaAdminPage /></ProtectedRoute>
         } />
 
         {/* ═══ Siswa Routes (Green Theme — Public, Tanpa Login) ═══ */}
@@ -109,6 +110,7 @@ function App() {
         <Route path="/siswa/hasil-pretest" element={<HasilSkorPage />} />
         <Route path="/siswa/pretest-selesai" element={<PretestSelesaiPage />} />
         <Route path="/siswa/modul" element={<ModulPembelajaranPage />} />
+        <Route path="/siswa/riwayat" element={<RiwayatUjianPage />} />
         {/* Alamat lama sebelum posttest → alur baru: scan dulu */}
         <Route path="/siswa/verifikasi-ulang" element={<Navigate to="/siswa/scan?untuk=posttest" replace />} />
         <Route path="/siswa/hasil-posttest" element={<HasilSkorPage mode="posttest" />} />

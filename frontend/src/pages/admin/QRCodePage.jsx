@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, Bell, QrCode, Download, Printer, Copy, CheckCircle2, ExternalLink, Smartphone } from 'lucide-react';
+import { Menu, QrCode, Download, Printer, Copy, CheckCircle2, ExternalLink, Smartphone } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import './QRCodePage.css';
 
@@ -23,7 +23,7 @@ function QRCodePage() {
 
   // ?src=qr → dibuka dari kamera HP, langsung lanjut ke alur siswa tanpa scan ulang
   const studentUrl = `${baseUrl}/siswa/scan?src=qr`;
-  const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(studentUrl)}&color=059669&bgcolor=ffffff&margin=20`;
+  const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=${encodeURIComponent(studentUrl)}&color=2563eb&bgcolor=ffffff&margin=20`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(studentUrl);
@@ -49,15 +49,15 @@ function QRCodePage() {
           @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body { font-family: 'Plus Jakarta Sans', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #fff; }
-          .print-card { text-align: center; padding: 48px 40px; border: 3px solid #059669; border-radius: 24px; max-width: 420px; }
-          .print-logo { font-size: 28px; font-weight: 800; color: #059669; margin-bottom: 4px; }
+          .print-card { text-align: center; padding: 48px 40px; border: 3px solid #2563eb; border-radius: 24px; max-width: 420px; }
+          .print-logo { font-size: 28px; font-weight: 800; color: #2563eb; margin-bottom: 4px; }
           .print-sub { font-size: 14px; color: #6B7280; margin-bottom: 24px; }
           .print-qr { margin: 0 auto 20px; }
           .print-qr img { width: 280px; height: 280px; border-radius: 12px; }
           .print-instructions { font-size: 13px; color: #374151; line-height: 1.6; margin-bottom: 16px; }
           .print-url { font-size: 11px; color: #9CA3AF; word-break: break-all; padding: 10px 16px; background: #F3F4F6; border-radius: 8px; }
           .print-footer { margin-top: 20px; font-size: 11px; color: #9CA3AF; }
-          @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .print-card { border-color: #059669 !important; } }
+          @media print { body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } .print-card { border-color: #2563eb !important; } }
         </style>
       </head>
       <body>
@@ -90,12 +90,13 @@ function QRCodePage() {
             <button className="topbar-toggle" onClick={() => setSidebarCollapsed(!sidebarCollapsed)}><Menu /></button>
           </div>
           <div className="topbar-right">
-            <button className="topbar-notification"><Bell /><span className="notification-badge"></span></button>
             <div className="topbar-profile">
-              <div className="profile-avatar">A</div>
+              <div className="profile-avatar" style={{ background: localStorage.getItem('userRole') === 'superadmin' ? '#7c3aed' : '#2563eb' }}>
+                {localStorage.getItem('userRole') === 'superadmin' ? 'SA' : 'A'}
+              </div>
               <div className="profile-info">
-                <span className="profile-name">Admin</span>
-                <span className="profile-role">Administrator</span>
+                <span className="profile-name">{localStorage.getItem('userRole') === 'superadmin' ? 'Super Admin' : 'Admin'}</span>
+                <span className="profile-role">{localStorage.getItem('userRole') === 'superadmin' ? 'Root Access' : 'Administrator'}</span>
               </div>
             </div>
           </div>

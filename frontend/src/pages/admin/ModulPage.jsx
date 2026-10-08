@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Menu,
-  Bell,
-  ChevronRight,
+  Menu, ChevronRight,
   BookOpen,
   FileText,
   Search,
@@ -16,6 +14,8 @@ import {
   ChevronLeft
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import './ModulPage.css';
 
 const API_BASE_URL = 'http://localhost:8000/api';
@@ -25,6 +25,9 @@ function ModulPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [modules, setModules] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterKategori, setFilterKategori] = useState('Semua');
+  const [filterSort, setFilterSort] = useState('Terbaru');
 
   const fetchModules = async () => {
     setIsLoading(true);
@@ -73,6 +76,7 @@ function ModulPage() {
             id: item.id,
             judul: newJudul.trim(),
             deskripsi: newDeskripsi !== null ? newDeskripsi.trim() : (item.deskripsi || ''),
+            kategori: item.kategori,
             is_active: item.is_active
           })
         });
@@ -87,6 +91,38 @@ function ModulPage() {
         alert('Gagal memperbarui modul.');
       }
     }
+  };
+
+  const filteredModules = modules.filter(m => {
+    const matchSearch = m.judul.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      (m.deskripsi && m.deskripsi.toLowerCase().includes(searchQuery.toLowerCase()));
+      
+    const matchKategori = filterKategori === 'Semua' || m.kategori === filterKategori;
+    
+    return matchSearch && matchKategori;
+  }).sort((a, b) => {
+    if (filterSort === 'Terbaru') {
+      return new Date(b.created_at) - new Date(a.created_at);
+    } else {
+      return new Date(a.created_at) - new Date(b.created_at);
+    }
+  });
+
+  const handleExport = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text('Data Modul - Si Iklim Muda', 14, 20);
+    
+    const tableData = filteredModules.map((m, index) => {
+      return [index + 1, m.judul, m.kategori || 'Klimatologi & Pemanasan Global', m.deskripsi || '-', m.jumlah_soal || 0];
+    });
+    
+    autoTable(doc, { 
+      startY: 30, 
+      head: [['No', 'Nama Modul', 'Kategori', 'Deskripsi', 'Jumlah Soal']], 
+      body: tableData 
+    });
+    doc.save('Data_Modul_SiIklimMuda.pdf');
   };
 
   return (
@@ -110,15 +146,13 @@ function ModulPage() {
             </div>
           </div>
           <div className="topbar-right">
-            <button className="topbar-notification">
-              <Bell />
-              <span className="notification-badge"></span>
-            </button>
             <div className="topbar-profile">
-              <div className="profile-avatar">A</div>
+              <div className="profile-avatar" style={{ background: localStorage.getItem('userRole') === 'superadmin' ? '#7c3aed' : '#2563eb' }}>
+                {localStorage.getItem('userRole') === 'superadmin' ? 'SA' : 'A'}
+              </div>
               <div className="profile-info">
-                <span className="profile-name">Admin</span>
-                <span className="profile-role">Administrator</span>
+                <span className="profile-name">{localStorage.getItem('userRole') === 'superadmin' ? 'Super Admin' : 'Admin'}</span>
+                <span className="profile-role">{localStorage.getItem('userRole') === 'superadmin' ? 'Root Access' : 'Administrator'}</span>
               </div>
             </div>
           </div>
@@ -162,15 +196,36 @@ function ModulPage() {
             <div className="modul-filters">
               <div className="modul-search">
                 <Search size={15} />
-                <input type="text" placeholder="Cari nama modul..." />
+                <input 
+                  type="text" 
+                  placeholder="Cari nama modul..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
               
               <div className="modul-actions">
-                <button className="modul-action-btn">
-                  <Filter size={15} />
-                  Filter
-                </button>
-                <button className="modul-action-btn">
+                <select 
+                  className="modul-action-btn" 
+                  value={filterKategori} 
+                  onChange={(e) => setFilterKategori(e.target.value)}
+                  style={{ appearance: 'auto', cursor: 'pointer', paddingRight: '32px' }}
+                >
+                  <option value="Semua">Semua Kategori</option>
+                  <option value="Klimatologi & Pemanasan Global">Klimatologi & Pemanasan Global</option>
+                  <option value="Meteorologi Dasar">Meteorologi Dasar</option>
+                </select>
+
+                <select 
+                  className="modul-action-btn" 
+                  value={filterSort} 
+                  onChange={(e) => setFilterSort(e.target.value)}
+                  style={{ appearance: 'auto', cursor: 'pointer', paddingRight: '32px' }}
+                >
+                  <option value="Terbaru">Waktu Update (Terbaru)</option>
+                  <option value="Terlama">Waktu Update (Terlama)</option>
+                </select>
+                <button className="modul-action-btn" onClick={handleExport}>
                   <Download size={15} />
                   Ekspor
                 </button>
@@ -184,6 +239,7 @@ function ModulPage() {
                   <tr>
                     <th style={{ width: '60px' }}>NO</th>
                     <th>NAMA MODUL</th>
+                    <th>KATEGORI</th>
                     <th>DESKRIPSI</th>
                     <th style={{ width: '150px' }}>JUMLAH SOAL</th>
                     <th style={{ width: '100px', textAlign: 'center' }}>AKSI</th>
@@ -192,13 +248,13 @@ function ModulPage() {
                 <tbody>
                   {isLoading ? (
                     <tr>
-                      <td colSpan="5" style={{ textAlign: 'center', padding: '24px', color: '#64748b' }}>Memuat modul...</td>
+                      <td colSpan="6" style={{ textAlign: 'center', padding: '24px', color: '#64748b' }}>Memuat modul...</td>
                     </tr>
-                  ) : modules.length === 0 ? (
+                  ) : filteredModules.length === 0 ? (
                     <tr>
-                      <td colSpan="5" style={{ textAlign: 'center', padding: '24px', color: '#64748b' }}>Belum ada modul yang ditambahkan.</td>
+                      <td colSpan="6" style={{ textAlign: 'center', padding: '24px', color: '#64748b' }}>Data tidak ditemukan.</td>
                     </tr>
-                  ) : modules.map((item, index) => (
+                  ) : filteredModules.map((item, index) => (
                     <tr key={item.id}>
                       <td className="td-no">{index + 1}</td>
                       <td>
@@ -208,6 +264,9 @@ function ModulPage() {
                           </div>
                           <span className="nama-modul-text">{item.judul}</span>
                         </div>
+                      </td>
+                      <td>
+                        <span className="badge-kategori">{item.kategori || 'Klimatologi & Pemanasan Global'}</span>
                       </td>
                       <td className="td-desc">{item.deskripsi || '-'}</td>
                       <td>
@@ -234,7 +293,7 @@ function ModulPage() {
             {/* Pagination */}
             <div className="ds-table-footer">
               <span className="ds-table-info">
-                {isLoading ? 'Memuat...' : `Menampilkan ${modules.length} dari ${modules.length} Modul`}
+                {isLoading ? 'Memuat...' : `Menampilkan ${filteredModules.length} dari ${filteredModules.length} Modul`}
               </span>
               <div className="ds-pagination">
                 <button className="page-btn" disabled><ChevronLeft size={14} /></button>

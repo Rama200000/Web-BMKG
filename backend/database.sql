@@ -32,7 +32,7 @@ VALUES (
     '198503152010',
     'admin@bmkg.go.id',
     'Admin BMKG',
-    '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
+    '$2y$10$t3J5F/M9d8213YpB.s2YquDOPKOf1O6hQGjG5R8nS3i2K.q5Y0zYW', -- Hash for 'admin123'
     'superadmin',
     1
 );
@@ -81,6 +81,7 @@ CREATE TABLE IF NOT EXISTS modules (
     id INT AUTO_INCREMENT PRIMARY KEY,
     judul VARCHAR(255) NOT NULL,
     deskripsi TEXT,
+    kategori VARCHAR(100) DEFAULT 'Klimatologi & Pemanasan Global',
     is_active TINYINT(1) DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;

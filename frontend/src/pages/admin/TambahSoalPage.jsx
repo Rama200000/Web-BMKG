@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
-  Menu,
-  Bell,
-  ChevronRight,
+  Menu, ChevronRight,
   MessageSquare,
   CheckCircle2,
   Save,
-  ArrowLeft
+  ArrowLeft,
+  AlertCircle
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import './TambahSoalPage.css';
@@ -34,6 +33,14 @@ function TambahSoalPage() {
     pembahasan: editData?.pembahasan || ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+    setTimeout(() => {
+      setToast({ show: false, message: '', type: 'success' });
+    }, 3000);
+  };
 
   useEffect(() => {
     // Fetch modules
@@ -60,12 +67,12 @@ function TambahSoalPage() {
 
   const handleSimpan = async () => {
     if (!formData.modul_id || !formData.pertanyaan) {
-      alert("Modul dan Pertanyaan wajib diisi!");
+      showToast("Modul dan Pertanyaan wajib diisi!", "error");
       return;
     }
     
     if (tipeSoal === 'pilihan_ganda' && (!formData.opsi_a || !formData.opsi_b || !formData.opsi_c || !formData.opsi_d || !formData.kunci_jawaban)) {
-      alert("Semua opsi pilihan ganda dan kunci jawaban wajib diisi!");
+      showToast("Semua opsi pilihan ganda dan kunci jawaban wajib diisi!", "error");
       return;
     }
 
@@ -97,14 +104,14 @@ function TambahSoalPage() {
 
       const result = await response.json();
       if (result.success) {
-        alert(isEdit ? "Soal berhasil diperbarui!" : "Soal berhasil ditambahkan!");
-        navigate('/soal');
+        showToast(isEdit ? "Soal berhasil diperbarui!" : "Soal berhasil ditambahkan!", "success");
+        setTimeout(() => navigate('/soal'), 1500);
       } else {
-        alert((isEdit ? "Gagal memperbarui soal: " : "Gagal menambahkan soal: ") + result.message);
+        showToast((isEdit ? "Gagal memperbarui soal: " : "Gagal menambahkan soal: ") + result.message, "error");
       }
     } catch (error) {
       console.error(error);
-      alert("Terjadi kesalahan server");
+      showToast("Terjadi kesalahan server", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -126,15 +133,13 @@ function TambahSoalPage() {
             </button>
           </div>
           <div className="topbar-right">
-            <button className="topbar-notification">
-              <Bell />
-              <span className="notification-badge"></span>
-            </button>
             <div className="topbar-profile">
-              <div className="profile-avatar">A</div>
+              <div className="profile-avatar" style={{ background: localStorage.getItem('userRole') === 'superadmin' ? '#7c3aed' : '#2563eb' }}>
+                {localStorage.getItem('userRole') === 'superadmin' ? 'SA' : 'A'}
+              </div>
               <div className="profile-info">
-                <span className="profile-name">Admin</span>
-                <span className="profile-role">Administrator</span>
+                <span className="profile-name">{localStorage.getItem('userRole') === 'superadmin' ? 'Super Admin' : 'Admin'}</span>
+                <span className="profile-role">{localStorage.getItem('userRole') === 'superadmin' ? 'Root Access' : 'Administrator'}</span>
               </div>
             </div>
           </div>
@@ -271,6 +276,28 @@ function TambahSoalPage() {
             {isSubmitting ? 'Menyimpan...' : (isEdit ? 'Simpan Perubahan Soal' : 'Simpan Soal ke Bank Data')}
           </button>
         </div>
+
+        {/* Custom Toast Notification */}
+        {toast.show && (
+          <div style={{
+            position: 'fixed',
+            bottom: '24px',
+            right: '24px',
+            background: toast.type === 'success' ? '#10b981' : '#ef4444',
+            color: 'white',
+            padding: '12px 20px',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+            zIndex: 9999,
+            animation: 'fadeInUp 0.3s ease forwards'
+          }}>
+            {toast.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
+            <span style={{ fontSize: '14px', fontWeight: '500' }}>{toast.message}</span>
+          </div>
+        )}
 
       </div>
     </div>

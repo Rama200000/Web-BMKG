@@ -1,9 +1,7 @@
 import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  Menu,
-  Bell,
-  ChevronRight,
+  Menu, ChevronRight,
   ClipboardList,
   BookOpen,
   Pencil,
@@ -14,6 +12,7 @@ import {
   CheckCircle2,
   ArrowLeft,
   ChevronDown,
+  AlertCircle
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import './TambahModulPage.css';
@@ -33,10 +32,18 @@ function TambahModulPage() {
   // File upload states
   const fileInputRef = useRef(null);
   const [fileName, setFileName] = useState("");
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+    setTimeout(() => {
+      setToast({ show: false, message: '', type: 'success' });
+    }, 3000);
+  };
 
   const handleSimpan = async () => {
     if (!judul.trim()) {
-      alert('Judul Modul wajib diisi!');
+      showToast('Judul Modul wajib diisi!', 'error');
       return;
     }
 
@@ -48,20 +55,21 @@ function TambahModulPage() {
         body: JSON.stringify({
           judul: judul.trim(),
           deskripsi: deskripsi.trim(),
+          kategori: kategori,
           is_active: 1
         })
       });
 
       const result = await response.json();
       if (result.success) {
-        alert('Modul berhasil ditambahkan!');
-        navigate('/modul');
+        showToast('Modul berhasil ditambahkan!', 'success');
+        setTimeout(() => navigate('/modul'), 1500);
       } else {
-        alert('Gagal menambahkan modul: ' + result.message);
+        showToast('Gagal menambahkan modul: ' + result.message, 'error');
       }
     } catch (error) {
       console.error(error);
-      alert('Terjadi kesalahan server saat menyimpan modul.');
+      showToast('Terjadi kesalahan server saat menyimpan modul.', 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -90,15 +98,13 @@ function TambahModulPage() {
             </div>
           </div>
           <div className="topbar-right">
-            <button className="topbar-notification">
-              <Bell />
-              <span className="notification-badge"></span>
-            </button>
             <div className="topbar-profile">
-              <div className="profile-avatar">A</div>
+              <div className="profile-avatar" style={{ background: localStorage.getItem('userRole') === 'superadmin' ? '#7c3aed' : '#2563eb' }}>
+                {localStorage.getItem('userRole') === 'superadmin' ? 'SA' : 'A'}
+              </div>
               <div className="profile-info">
-                <span className="profile-name">Admin</span>
-                <span className="profile-role">Administrator</span>
+                <span className="profile-name">{localStorage.getItem('userRole') === 'superadmin' ? 'Super Admin' : 'Admin'}</span>
+                <span className="profile-role">{localStorage.getItem('userRole') === 'superadmin' ? 'Root Access' : 'Administrator'}</span>
               </div>
             </div>
           </div>
@@ -233,6 +239,28 @@ function TambahModulPage() {
             </div>
           </div>
         </div>
+
+        {/* Custom Toast Notification */}
+        {toast.show && (
+          <div style={{
+            position: 'fixed',
+            bottom: '24px',
+            right: '24px',
+            background: toast.type === 'success' ? '#10b981' : '#ef4444',
+            color: 'white',
+            padding: '12px 20px',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+            zIndex: 9999,
+            animation: 'fadeInUp 0.3s ease forwards'
+          }}>
+            {toast.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
+            <span style={{ fontSize: '14px', fontWeight: '500' }}>{toast.message}</span>
+          </div>
+        )}
 
       </div>
     </div>

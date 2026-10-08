@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  Menu,
-  Bell,
-  ChevronRight,
+  Menu, ChevronRight,
   History,
   HelpCircle,
   Timer,
@@ -30,10 +28,20 @@ function PengaturanPage() {
   const [mulai, setMulai] = useState('2025-07-12 08:00');
   const [selesai, setSelesai] = useState('2025-07-12 09:00');
   const [isSaving, setIsSaving] = useState(false);
+  
+  // Custom Toast State
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+    setTimeout(() => {
+      setToast({ show: false, message: '', type: 'success' });
+    }, 3000);
+  };
 
   const handleSimpan = () => {
     setIsSaving(true);
-    // Simpan ke localStorage sebagai contoh (nanti bisa dipindah ke API)
+    // Simpan ke localStorage
     localStorage.setItem('pengaturan_ujian', JSON.stringify({
       durasi,
       mulai,
@@ -41,8 +49,8 @@ function PengaturanPage() {
     }));
     setTimeout(() => {
       setIsSaving(false);
-      alert('Pengaturan berhasil disimpan!');
-    }, 500);
+      showToast('Pengaturan berhasil disimpan ke sistem!');
+    }, 800);
   };
 
   const handleBatal = () => {
@@ -65,15 +73,13 @@ function PengaturanPage() {
             </button>
           </div>
           <div className="topbar-right">
-            <button className="topbar-notification">
-              <Bell />
-              <span className="notification-badge"></span>
-            </button>
             <div className="topbar-profile">
-              <div className="profile-avatar">A</div>
+              <div className="profile-avatar" style={{ background: localStorage.getItem('userRole') === 'superadmin' ? '#7c3aed' : '#2563eb' }}>
+                {localStorage.getItem('userRole') === 'superadmin' ? 'SA' : 'A'}
+              </div>
               <div className="profile-info">
-                <span className="profile-name">Admin</span>
-                <span className="profile-role">Administrator</span>
+                <span className="profile-name">{localStorage.getItem('userRole') === 'superadmin' ? 'Super Admin' : 'Admin'}</span>
+                <span className="profile-role">{localStorage.getItem('userRole') === 'superadmin' ? 'Root Access' : 'Administrator'}</span>
               </div>
             </div>
           </div>
@@ -98,10 +104,10 @@ function PengaturanPage() {
                 <span className="pg-badge">Sesi Ujian Aktif</span>
               </div>
               <div className="pg-title-actions">
-                <button className="btn-log-audit" onClick={() => alert('Fitur Log Audit sedang dalam pengembangan.')}>
+                <button className="btn-log-audit" onClick={() => showToast('Fitur Log Audit sedang dalam pengembangan.', 'info')}>
                   <History size={16} /> Log Audit
                 </button>
-                <button className="btn-panduan" onClick={() => alert('Fitur Panduan Pengaturan sedang dalam pengembangan.')}>
+                <button className="btn-panduan" onClick={() => showToast('Fitur Panduan Pengaturan segera hadir.', 'info')}>
                   <HelpCircle size={16} /> Panduan Pengaturan
                 </button>
               </div>
@@ -123,7 +129,7 @@ function PengaturanPage() {
                     <p>Konfigurasi batasan waktu jadwal ujian serta mekanisme keamanan sesi otomatis.</p>
                   </div>
                 </div>
-                <button className="btn-sinkron" onClick={() => alert('Waktu server NTP telah sinkron secara otomatis.')}>
+                <button className="btn-sinkron" onClick={() => showToast('Waktu server NTP telah disinkronisasi.', 'success')}>
                   Sinkron Server NTP
                 </button>
               </div>
@@ -294,6 +300,28 @@ function PengaturanPage() {
           
         </div>
       </div>
+
+      {/* Custom Toast Notification */}
+      {toast.show && (
+        <div style={{
+          position: 'fixed',
+          bottom: '24px',
+          right: '24px',
+          background: toast.type === 'success' ? '#10b981' : '#3b82f6',
+          color: 'white',
+          padding: '12px 20px',
+          borderRadius: '8px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+          zIndex: 9999,
+          animation: 'fadeInUp 0.3s ease forwards'
+        }}>
+          {toast.type === 'success' ? <CheckCircle2 size={18} /> : <Info size={18} />}
+          <span style={{ fontSize: '14px', fontWeight: '500' }}>{toast.message}</span>
+        </div>
+      )}
     </div>
   );
 }

@@ -8,7 +8,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 switch ($method) {
     case 'GET':
         $stmt = $pdo->query("
-            SELECT m.id, m.judul, m.deskripsi, m.is_active, m.created_at, COUNT(q.id) as jumlah_soal 
+            SELECT m.id, m.judul, m.deskripsi, m.kategori, m.is_active, m.created_at, COUNT(q.id) as jumlah_soal 
             FROM modules m
             LEFT JOIN questions q ON m.id = q.modul_id
             GROUP BY m.id
@@ -32,10 +32,11 @@ switch ($method) {
         }
 
         try {
-            $stmt = $pdo->prepare("INSERT INTO modules (judul, deskripsi, is_active) VALUES (?, ?, ?)");
+            $stmt = $pdo->prepare("INSERT INTO modules (judul, deskripsi, kategori, is_active) VALUES (?, ?, ?, ?)");
             $stmt->execute([
                 $data['judul'],
                 isset($data['deskripsi']) ? $data['deskripsi'] : '',
+                isset($data['kategori']) ? $data['kategori'] : 'Klimatologi & Pemanasan Global',
                 isset($data['is_active']) ? $data['is_active'] : 1
             ]);
             
@@ -60,10 +61,11 @@ switch ($method) {
         }
 
         try {
-            $stmt = $pdo->prepare("UPDATE modules SET judul = ?, deskripsi = ?, is_active = ? WHERE id = ?");
+            $stmt = $pdo->prepare("UPDATE modules SET judul = ?, deskripsi = ?, kategori = ?, is_active = ? WHERE id = ?");
             $stmt->execute([
                 $data['judul'],
                 isset($data['deskripsi']) ? $data['deskripsi'] : '',
+                isset($data['kategori']) ? $data['kategori'] : 'Klimatologi & Pemanasan Global',
                 isset($data['is_active']) ? $data['is_active'] : 1,
                 $data['id']
             ]);
