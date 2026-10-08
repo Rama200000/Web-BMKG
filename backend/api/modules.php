@@ -7,6 +7,20 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($method) {
     case 'GET':
+        if (isset($_GET['id'])) {
+            $stmt = $pdo->prepare("SELECT * FROM modules WHERE id = ?");
+            $stmt->execute([$_GET['id']]);
+            $module = $stmt->fetch();
+            
+            if ($module) {
+                echo json_encode(['success' => true, 'data' => $module]);
+            } else {
+                http_response_code(404);
+                echo json_encode(['success' => false, 'message' => 'Modul tidak ditemukan']);
+            }
+            break;
+        }
+
         $stmt = $pdo->query("
             SELECT m.id, m.judul, m.deskripsi, m.kategori, m.is_active, m.created_at, m.file_path, COUNT(q.id) as jumlah_soal 
             FROM modules m
@@ -49,21 +63,50 @@ switch ($method) {
         }
 
         try {
-            $stmt = $pdo->prepare("INSERT INTO modules (judul, deskripsi, kategori, is_active, file_path) VALUES (?, ?, ?, ?, ?)");
-            $stmt->execute([
-                $data['judul'],
-                isset($data['deskripsi']) ? $data['deskripsi'] : '',
-                isset($data['kategori']) ? $data['kategori'] : 'Klimatologi & Pemanasan Global',
-                isset($data['is_active']) ? $data['is_active'] : 1,
-                $file_path
-            ]);
-            
-            echo json_encode([
-                'success' => true,
-                'message' => 'Modul berhasil ditambahkan',
-                'id' => $pdo->lastInsertId(),
-                'file_path' => $file_path
-            ]);
+            if (isset($data['id'])) {
+                if ($file_path) {
+                    $stmt = $pdo->prepare("UPDATE modules SET judul = ?, deskripsi = ?, kategori = ?, is_active = ?, file_path = ? WHERE id = ?");
+                    $stmt->execute([
+                        $data['judul'],
+                        isset($data['deskripsi']) ? $data['deskripsi'] : '',
+                        isset($data['kategori']) ? $data['kategori'] : 'Klimatologi & Pemanasan Global',
+                        isset($data['is_active']) ? $data['is_active'] : 1,
+                        $file_path,
+                        $data['id']
+                    ]);
+                } else {
+                    $stmt = $pdo->prepare("UPDATE modules SET judul = ?, deskripsi = ?, kategori = ?, is_active = ? WHERE id = ?");
+                    $stmt->execute([
+                        $data['judul'],
+                        isset($data['deskripsi']) ? $data['deskripsi'] : '',
+                        isset($data['kategori']) ? $data['kategori'] : 'Klimatologi & Pemanasan Global',
+                        isset($data['is_active']) ? $data['is_active'] : 1,
+                        $data['id']
+                    ]);
+                }
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Modul berhasil diperbarui',
+                    'id' => $data['id'],
+                    'file_path' => $file_path
+                ]);
+            } else {
+                $stmt = $pdo->prepare("INSERT INTO modules (judul, deskripsi, kategori, is_active, file_path) VALUES (?, ?, ?, ?, ?)");
+                $stmt->execute([
+                    $data['judul'],
+                    isset($data['deskripsi']) ? $data['deskripsi'] : '',
+                    isset($data['kategori']) ? $data['kategori'] : 'Klimatologi & Pemanasan Global',
+                    isset($data['is_active']) ? $data['is_active'] : 1,
+                    $file_path
+                ]);
+                
+                echo json_encode([
+                    'success' => true,
+                    'message' => 'Modul berhasil ditambahkan',
+                    'id' => $pdo->lastInsertId(),
+                    'file_path' => $file_path
+                ]);
+            }
         } catch (PDOException $e) {
             http_response_code(500);
             echo json_encode(['success' => false, 'message' => 'Gagal menyimpan data: ' . $e->getMessage()]);

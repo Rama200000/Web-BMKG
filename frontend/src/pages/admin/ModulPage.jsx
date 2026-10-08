@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Menu, ChevronRight,
   BookOpen,
@@ -22,6 +22,7 @@ const API_BASE_URL = 'http://localhost:8000/api';
 
 function ModulPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [modules, setModules] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -64,33 +65,8 @@ function ModulPage() {
     }
   };
 
-  const handleEdit = async (item) => {
-    const newJudul = window.prompt('Edit judul modul:', item.judul);
-    if (newJudul !== null && newJudul.trim() !== '') {
-      const newDeskripsi = window.prompt('Edit deskripsi modul:', item.deskripsi || '');
-      try {
-        const res = await fetch(`${API_BASE_URL}/modules.php`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            id: item.id,
-            judul: newJudul.trim(),
-            deskripsi: newDeskripsi !== null ? newDeskripsi.trim() : (item.deskripsi || ''),
-            kategori: item.kategori,
-            is_active: item.is_active
-          })
-        });
-        const result = await res.json();
-        if (result.success) {
-          fetchModules();
-        } else {
-          alert(result.message);
-        }
-      } catch (err) {
-        console.error('Error updating:', err);
-        alert('Gagal memperbarui modul.');
-      }
-    }
+  const handleEdit = (item) => {
+    navigate(`/edit-modul/${item.id}`);
   };
 
   const filteredModules = modules.filter(m => {

@@ -4,6 +4,7 @@ import DashboardPage from './pages/admin/DashboardPage';
 import DataSiswaPage from './pages/admin/DataSiswaPage';
 import ModulPage from './pages/admin/ModulPage';
 import TambahModulPage from './pages/admin/TambahModulPage';
+import EditModulPage from './pages/admin/EditModulPage';
 import SoalPage from './pages/admin/SoalPage';
 import TambahSoalPage from './pages/admin/TambahSoalPage';
 import HasilSkorPageAdmin from './pages/admin/HasilSkorPage';
@@ -69,6 +70,9 @@ function App() {
         } />
         <Route path="/tambah-modul" element={
           <ProtectedRoute allowedRoles={['admin', 'superadmin']}><TambahModulPage /></ProtectedRoute>
+        } />
+        <Route path="/edit-modul/:id" element={
+          <ProtectedRoute allowedRoles={['admin', 'superadmin']}><EditModulPage /></ProtectedRoute>
         } />
         <Route path="/soal" element={
           <ProtectedRoute allowedRoles={['admin', 'superadmin']}><SoalPage /></ProtectedRoute>
