@@ -49,15 +49,20 @@ function TambahModulPage() {
 
     setIsSubmitting(true);
     try {
+      const formData = new FormData();
+      formData.append('judul', judul.trim());
+      formData.append('deskripsi', deskripsi.trim());
+      formData.append('kategori', kategori);
+      formData.append('is_active', 1);
+      
+      if (fileInputRef.current.files && fileInputRef.current.files.length > 0) {
+        formData.append('file', fileInputRef.current.files[0]);
+      }
+
       const response = await fetch(`${API_BASE_URL}/modules.php`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          judul: judul.trim(),
-          deskripsi: deskripsi.trim(),
-          kategori: kategori,
-          is_active: 1
-        })
+        // Do not set Content-Type header when using FormData; fetch will set it to multipart/form-data with boundary
+        body: formData
       });
 
       const result = await response.json();

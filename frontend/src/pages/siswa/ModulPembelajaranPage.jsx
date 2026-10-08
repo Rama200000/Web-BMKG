@@ -6,12 +6,15 @@ import './mobile-green-theme.css';
 import './siswa-navy.css';
 import './ModulPembelajaranPage.css';
 
+const API_BASE_URL = 'http://localhost:8000/api';
 const FOKUS_PEMBAHASAN = ['Konsep Dasar', 'Struktur Topik', 'Persiapan Uji Kompetensi'];
 
 function ModulPembelajaranPage() {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState('');
   const [showConfirm, setShowConfirm] = useState(false);
+  const [modulData, setModulData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (localStorage.getItem('pretestDone') !== 'true') {
@@ -25,6 +28,24 @@ function ModulPembelajaranPage() {
     };
     updateTime();
     const t = setInterval(updateTime, 1000);
+
+    const fetchModul = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/modules.php`);
+        const result = await response.json();
+        if (result.success && result.data.length > 0) {
+          // Get the first active module
+          const activeModul = result.data.find(m => m.is_active === 1) || result.data[0];
+          setModulData(activeModul);
+        }
+      } catch (error) {
+        console.error('Failed to fetch module', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchModul();
+
     return () => clearInterval(t);
   }, [navigate]);
 
@@ -67,14 +88,20 @@ function ModulPembelajaranPage() {
         </header>
 
         <div className="m-body nv-body modul-body">
+          {loading ? (
+             <div style={{ padding: '20px', textAlign: 'center' }}>Memuat modul...</div>
+          ) : !modulData ? (
+             <div style={{ padding: '20px', textAlign: 'center' }}>Modul belum tersedia.</div>
+          ) : (
+            <>
           {/* Judul modul */}
           <section className="modul-card modul-hero">
             <div className="modul-hero-top">
-              <span className="modul-badge"><BookOpenText size={15} /> Modul 1</span>
-              <span className="modul-offline"><CircleCheck size={13} /> Tersedia Luring</span>
+              <span className="modul-badge"><BookOpenText size={15} /> Modul Pembelajaran</span>
+              <span className="modul-offline"><CircleCheck size={13} /> {modulData.kategori}</span>
             </div>
-            <h1 className="modul-judul">Pengenalan Materi</h1>
-            <p className="modul-subtitle">Pelajari konsep dasar dan pengenalan materi sebelum melanjutkan ke pembahasan berikutnya.</p>
+            <h1 className="modul-judul">{modulData.judul}</h1>
+            <p className="modul-subtitle">{modulData.deskripsi || "Pelajari konsep dasar dan pengenalan materi sebelum melanjutkan ke pembahasan berikutnya."}</p>
             <div className="modul-cover">
               <img src={imgCover} alt="Buku catatan terbuka di atas meja belajar" />
               <span className="modul-cover-caption"><BookOpen size={15} /> Bahan Bacaan Pokok Siswa</span>
@@ -126,12 +153,25 @@ function ModulPembelajaranPage() {
           {/* Simpan modul */}
           <section className="modul-card modul-save">
             <div className="modul-icon-tile"><MonitorSmartphone size={22} /></div>
-            <h2 className="modul-save-title">Simpan Modul Pembelajaran</h2>
-            <p className="modul-save-desc">Modul ini dapat disimpan ke perangkat untuk dibaca secara luring.</p>
-            <button type="button" className="nv-btn">
-              <Download size={18} /> Download Modul
-            </button>
+            <h2 className="modul-save-title">Baca & Unduh Modul Pembelajaran</h2>
+            <p className="modul-save-desc">Modul ini dapat dibaca langsung atau disimpan ke perangkat untuk dibaca secara luring.</p>
+            <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
+              {modulData.file_path ? (
+                <>
+                  <button type="button" className="nv-btn" onClick={() => window.open(`http://localhost:8000/${modulData.file_path}`, '_blank')}>
+                    <BookOpen size={18} /> Buka PDF
+                  </button>
+                  <a href={`http://localhost:8000/${modulData.file_path}`} download className="nv-btn" style={{ textDecoration: 'none', background: '#3b82f6', color: 'white' }}>
+                    <Download size={18} /> Download Modul
+                  </a>
+                </>
+              ) : (
+                <p style={{ color: '#ef4444', fontSize: '13px', fontWeight: 600 }}>File modul PDF belum diunggah oleh Admin.</p>
+              )}
+            </div>
           </section>
+            </>
+          )}
         </div>
 
         {/* Tombol selesai (menempel di bawah) */}
