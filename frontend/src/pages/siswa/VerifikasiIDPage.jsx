@@ -57,10 +57,20 @@ function VerifikasiIDPage() {
       const result = await response.json();
 
       if (result.success) {
+        // Clear previous session data to prevent inheriting locked states
+        localStorage.removeItem('pretestDone');
+        localStorage.removeItem('modulDone');
+        localStorage.removeItem('skorPretest');
+        localStorage.removeItem('rekapPretest');
+        localStorage.removeItem('skorPosttest');
+        localStorage.removeItem('rekapPosttest');
+        localStorage.removeItem('pretestTime');
+        localStorage.removeItem('posttestTime');
+
         // Successfully found student
         localStorage.setItem('siswaPhone', phone);
         localStorage.setItem('currentStudent', JSON.stringify(result.data));
-        localStorage.setItem('userRole', 'siswa'); // so ProtectedRoute passes if you have one
+        localStorage.setItem('userRole', 'siswa');
         
         if (result.data.pre_test_score !== null) {
           localStorage.setItem('pretestDone', 'true');
@@ -79,6 +89,16 @@ function VerifikasiIDPage() {
         
         navigate('/siswa/dashboard');
       } else if (response.status === 404) {
+        // Clear previous session data for new registration
+        localStorage.removeItem('pretestDone');
+        localStorage.removeItem('modulDone');
+        localStorage.removeItem('skorPretest');
+        localStorage.removeItem('rekapPretest');
+        localStorage.removeItem('skorPosttest');
+        localStorage.removeItem('rekapPosttest');
+        localStorage.removeItem('pretestTime');
+        localStorage.removeItem('posttestTime');
+
         // Number not found, redirect to register
         localStorage.setItem('siswaPhone', phone);
         navigate('/siswa/biodata');

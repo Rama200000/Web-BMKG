@@ -148,6 +148,16 @@ function BiodataPage() {
           is_active: 1
         };
         
+        // Clear previous session progress to ensure fresh start
+        localStorage.removeItem('pretestDone');
+        localStorage.removeItem('modulDone');
+        localStorage.removeItem('skorPretest');
+        localStorage.removeItem('rekapPretest');
+        localStorage.removeItem('skorPosttest');
+        localStorage.removeItem('rekapPosttest');
+        localStorage.removeItem('pretestTime');
+        localStorage.removeItem('posttestTime');
+
         localStorage.setItem('currentStudent', JSON.stringify(student));
         localStorage.setItem('userRole', 'siswa'); // so ProtectedRoute passes if you have one
         navigate('/siswa/dashboard');
