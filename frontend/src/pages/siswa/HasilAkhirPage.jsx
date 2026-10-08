@@ -24,20 +24,7 @@ function HasilAkhirPage() {
     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
-  // Mock Leaderboard Data (enriched)
-  const leaderboardData = [
-    { rank: 1, nama: 'Aulia Rahma', pre: 70, post: 98, timeSecs: 504 }, // 08:24
-    { rank: 2, nama: 'Budi Santoso', pre: 65, post: 95, timeSecs: 555 }, // 09:15
-    { rank: 3, nama: 'Citra Dewi', pre: 75, post: 92, timeSecs: 603 }, // 10:03
-    { rank: 4, nama: student.nama || 'Kamu', pre: skorPretest, post: skorPosttest, timeSecs: posttestTimeSecs }, // Current user
-    { rank: 5, nama: 'Eka Putri', pre: 60, post: 85, timeSecs: 587 }, // 09:47
-  ];
-  
-  // Sort leaderboard by posttest score (desc), then time (asc)
-  const sortedLeaderboard = [...leaderboardData].sort((a, b) => {
-    if (b.post !== a.post) return b.post - a.post;
-    return a.timeSecs - b.timeSecs;
-  }).map((item, index) => ({ ...item, rank: index + 1 }));
+  const [sortedLeaderboard, setSortedLeaderboard] = useState([]);
 
   useEffect(() => {
     const updateTime = () => {
@@ -48,6 +35,51 @@ function HasilAkhirPage() {
     const t = setInterval(updateTime, 1000);
     return () => clearInterval(t);
   }, []);
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        const res = await fetch('http://localhost:8000/api/skor.php');
+        const result = await res.json();
+        if (result.success) {
+          let data = result.data.map(item => ({
+            nama: item.siswa,
+            pre: Math.round(item.pre_test_score || 0),
+            post: Math.round(item.post_test_score || 0),
+            timeSecs: parseInt(item.post_test_time_seconds || 0)
+          }));
+
+          // Add current student to leaderboard if not present (incase DB isn't updated yet)
+          const isCurrentUserInDB = data.some(d => d.nama === student.nama);
+          if (!isCurrentUserInDB && student.nama) {
+            data.push({
+               nama: student.nama,
+               pre: skorPretest,
+               post: skorPosttest,
+               timeSecs: posttestTimeSecs
+            });
+          } else if (isCurrentUserInDB && student.nama) {
+            // Update the current user's local score so it matches their session
+            const userIndex = data.findIndex(d => d.nama === student.nama);
+            data[userIndex].pre = skorPretest;
+            data[userIndex].post = skorPosttest;
+            data[userIndex].timeSecs = posttestTimeSecs;
+          }
+
+          // Sort by posttest score (desc), then time (asc)
+          const sorted = data.sort((a, b) => {
+            if (b.post !== a.post) return b.post - a.post;
+            return a.timeSecs - b.timeSecs;
+          }).map((item, index) => ({ ...item, rank: index + 1 })).slice(0, 5);
+          
+          setSortedLeaderboard(sorted);
+        }
+      } catch (error) {
+        console.error('Gagal mengambil data leaderboard', error);
+      }
+    };
+    fetchLeaderboard();
+  }, [student.nama, skorPretest, skorPosttest, posttestTimeSecs]);
 
   const getScoreColor = (s) => {
     if (s >= 80) return '#059669';

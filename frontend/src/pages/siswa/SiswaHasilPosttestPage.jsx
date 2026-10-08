@@ -23,29 +23,42 @@ function SiswaHasilPosttestPage() {
   }, []);
 
   useEffect(() => {
-    // Ambil 5 nilai posttest tertinggi dari semua record
-    const records = JSON.parse(localStorage.getItem('studentRecords') || '[]');
-    const myScore = parseInt(localStorage.getItem('skorPosttest') || '0');
-    const allScores = [
-      ...records
-        .filter(r => r.nilaiPosttest != null)
-        .map(r => ({ name: r.nama, score: r.nilaiPosttest })),
-      { name: 'Kamu', score: myScore, isMe: true }
-    ];
-    const sorted = allScores.sort((a, b) => b.score - a.score).slice(0, 5);
-    setTopScores(sorted);
+    const fetchTopScores = async () => {
+      try {
+        const student = JSON.parse(localStorage.getItem('currentStudent') || '{}');
+        const myScore = parseInt(localStorage.getItem('skorPosttest') || '0');
+        
+        const res = await fetch('http://localhost:8000/api/skor.php');
+        const result = await res.json();
+        
+        if (result.success) {
+          let data = result.data.map(item => ({
+            name: item.siswa,
+            score: Math.round(item.post_test_score || 0),
+            isMe: item.siswa === student.nama
+          }));
+          
+          const isCurrentUserInDB = data.some(d => d.name === student.nama);
+          if (!isCurrentUserInDB && student.nama) {
+             data.push({ name: student.nama, score: myScore, isMe: true });
+          } else if (isCurrentUserInDB) {
+             const userIndex = data.findIndex(d => d.name === student.nama);
+             data[userIndex].score = myScore; // sync local score
+             data[userIndex].isMe = true;
+          }
+
+          const sorted = data.sort((a, b) => b.score - a.score).slice(0, 5);
+          setTopScores(sorted);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchTopScores();
   }, []);
 
   const handleFinish = () => {
-    const currentStudent = JSON.parse(localStorage.getItem('currentStudent') || '{}');
-    if (currentStudent && currentStudent.nama) {
-      currentStudent.nilaiPosttest = skorSaya;
-      currentStudent.status = 'Selesai';
-      const allStudents = JSON.parse(localStorage.getItem('studentRecords') || '[]');
-      allStudents.push(currentStudent);
-      localStorage.setItem('studentRecords', JSON.stringify(allStudents));
-      localStorage.removeItem('currentStudent');
-    }
+    localStorage.removeItem('currentStudent');
     setSelesai(true);
   };
 
