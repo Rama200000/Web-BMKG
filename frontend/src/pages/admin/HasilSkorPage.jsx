@@ -14,8 +14,8 @@ import {
   X,
   FileBox
 } from 'lucide-react';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import { exportHasilSkorPDF } from '../../utils/pdfExport';
+import bmkgLogoUrl from '../../assets/bmkg-logo.png';
 import * as XLSX from 'xlsx';
 import Sidebar from '../../components/Sidebar';
 import './HasilSkorPage.css';
@@ -91,48 +91,12 @@ function HasilSkorPage() {
   }, []);
 
   const handleExportPDF = () => {
-    const doc = new jsPDF();
-    
-    // Header text
-    doc.setFontSize(18);
-    doc.setTextColor(15, 23, 42); // slate-900
-    doc.text('Laporan Hasil Skor (Pre-Test & Post-Test)', 14, 22);
-    
-    doc.setFontSize(11);
-    doc.setTextColor(100, 116, 139); // slate-500
-    doc.text('Evaluasi komparasi peningkatan pemahaman modul literasi iklim siswa.', 14, 30);
-    
-    const tableColumn = ["NO", "NAMA SISWA", "SEKOLAH", "KELAS", "PRE-TEST", "POST-TEST", "PENINGKATAN"];
-    const tableRows = [];
-
-    const filteredData = selectedCakupan === 'Semua' 
-      ? hasilSkorData 
-      : hasilSkorData.filter(item => item.sekolah === selectedCakupan);
-
-    filteredData.forEach((item, idx) => {
-      const peningkatStr = item.peningkatan > 0 ? `+${item.peningkatan}%` : `${item.peningkatan}%`;
-      const rowData = [
-        (idx + 1),
-        item.nama,
-        item.sekolah,
-        item.kelas,
-        item.preTest.toString(),
-        item.postTest.toString(),
-        peningkatStr
-      ];
-      tableRows.push(rowData);
+    exportHasilSkorPDF({
+      hasilSkorData,
+      stats,
+      selectedCakupan,
+      logoUrl: bmkgLogoUrl,
     });
-
-    autoTable(doc, {
-      head: [tableColumn],
-      body: tableRows,
-      startY: 40,
-      headStyles: { fillColor: [37, 99, 235], textColor: [255, 255, 255] },
-      alternateRowStyles: { fillColor: [248, 250, 252] },
-      styles: { fontSize: 10 }
-    });
-
-    doc.save('Laporan_Hasil_Skor.pdf');
   };
 
   const handleExportExcel = () => {

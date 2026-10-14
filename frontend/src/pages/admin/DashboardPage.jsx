@@ -23,8 +23,8 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
 import * as XLSX from 'xlsx';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import { exportDashboardPDF } from '../../utils/pdfExport';
+import bmkgLogoUrl from '../../assets/bmkg-logo.png';
 import Sidebar from '../../components/Sidebar';
 import './DashboardPage.css';
 
@@ -97,26 +97,16 @@ function DashboardPage() {
   }, []);
 
   const handleExportPDF = () => {
-    const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.text('Laporan Rekapitulasi Nilai - Si Iklim Muda', 14, 20);
-    
-    let filteredData = stats.chartData;
-    if (selectedCakupan !== 'Semua') {
-      filteredData = stats.chartData.filter(s => s.skor === selectedCakupan);
-    }
-
-    const tableData = filteredData.map((s, index) => {
-      const sekolah = stats.sekolahList.find(x => x.nama === s.skor);
-      return [index + 1, s.skor, sekolah ? sekolah.jumlah_siswa : '-', s.pretest, s.posttest];
+    exportDashboardPDF({
+      chartData: stats.chartData,
+      sekolahList: stats.sekolahList,
+      totalSiswa: stats.totalSiswa,
+      totalModul: stats.totalModul,
+      totalDinilai: stats.totalDinilai,
+      avgSkor: stats.avgSkor,
+      selectedCakupan,
+      logoUrl: bmkgLogoUrl,
     });
-    
-    autoTable(doc, { 
-      startY: 30, 
-      head: [['No', 'Nama Sekolah', 'Jumlah Siswa', 'Rata-rata Pre-Test', 'Rata-rata Post-Test']], 
-      body: tableData 
-    });
-    doc.save('Laporan_Dashboard_SiIklimMuda.pdf');
   };
 
   const handleExportExcel = () => {

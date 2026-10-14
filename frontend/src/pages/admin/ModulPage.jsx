@@ -14,8 +14,8 @@ import {
   ChevronLeft
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
-import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import { exportModulPDF } from '../../utils/pdfExport';
+import bmkgLogoUrl from '../../assets/bmkg-logo.png';
 import './ModulPage.css';
 
 const API_BASE_URL = 'http://localhost:8000/api';
@@ -85,20 +85,10 @@ function ModulPage() {
   });
 
   const handleExport = () => {
-    const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.text('Data Modul - Si Iklim Muda', 14, 20);
-    
-    const tableData = filteredModules.map((m, index) => {
-      return [index + 1, m.judul, m.kategori || 'Klimatologi & Pemanasan Global', m.deskripsi || '-', m.jumlah_soal || 0];
+    exportModulPDF({
+      modules: filteredModules,
+      logoUrl: bmkgLogoUrl,
     });
-    
-    autoTable(doc, { 
-      startY: 30, 
-      head: [['No', 'Nama Modul', 'Kategori', 'Deskripsi', 'Jumlah Soal']], 
-      body: tableData 
-    });
-    doc.save('Data_Modul_SiIklimMuda.pdf');
   };
 
   return (
