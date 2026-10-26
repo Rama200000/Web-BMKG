@@ -72,7 +72,7 @@ function QRCodePage() {
             3. Tap link yang muncul untuk masuk
           </div>
           <div class="print-url">${studentUrl}</div>
-          <div class="print-footer">© ${new Date().getFullYear()} BMKG — Si Iklim Muda</div>
+          <div class="print-footer">© ${new Date().getFullYear()} BMKG Stasiun Klimatologi Lampung & Mahasiswa PKL TRPL Politeknik Negeri Lampung</div>
         </div>
         <script>setTimeout(() => { window.print(); }, 500);</script>
       </body>

@@ -177,3 +177,27 @@
   line-height: 1.7;
   color: #5B6B85;
 }
+
+/* ─── Footer Kolaborasi BMKG & Polinela ─── */
+.dash-collab-footer {
+  margin-top: 24px;
+  margin-bottom: 8px;
+  padding: 12px 14px;
+  text-align: center;
+  border-top: 1px dashed rgba(91, 107, 133, 0.25);
+}
+
+.collab-badge-title {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: #2D3748;
+  letter-spacing: 0.2px;
+}
+
+.collab-badge-desc {
+  margin: 4px 0 0 0;
+  font-size: 10px;
+  color: #718096;
+  line-height: 1.45;
+}

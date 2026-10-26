@@ -300,7 +300,7 @@ function LoginPage() {
 
       {/* Footer */}
       <footer className="login-footer">
-        <p>© 2025 Badan Meteorologi, Klimatologi, dan Geofisika (BMKG) • Pusat Layanan Informasi Iklim Terapan. All rights reserved.</p>
+        <p>© 2026 BMKG Stasiun Klimatologi Lampung • Kerjasama dengan Mahasiswa PKL Teknologi Rekayasa Perangkat Lunak, Politeknik Negeri Lampung. All rights reserved.</p>
       </footer>
     </div>
   );

@@ -166,6 +166,14 @@ function SiswaDashboardPage() {
             <span className="dash-info-divider" aria-hidden="true"></span>
             <p>Kerjakan setiap tahapan dengan sungguh - sungguh untuk mendapatkan hasil terbaik!</p>
           </div>
+
+          {/* Footer Kolaborasi BMKG & Polinela */}
+          <footer className="dash-collab-footer">
+            <p className="collab-badge-title">© 2026 BMKG Stasiun Klimatologi Lampung</p>
+            <p className="collab-badge-desc">
+              Kerjasama dengan Mahasiswa PKL Teknologi Rekayasa Perangkat Lunak, Politeknik Negeri Lampung
+            </p>
+          </footer>
         </div>
 
         <div className="m-home-indicator"><div className="m-home-indicator-line"></div></div>

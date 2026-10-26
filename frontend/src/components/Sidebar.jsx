@@ -91,6 +91,12 @@ function Sidebar({ collapsed }) {
           <LogOut />
           <span>Keluar</span>
         </button>
+        {!collapsed && (
+          <div className="sidebar-collab-note">
+            <p className="sidebar-collab-title">© 2026 BMKG Klimatologi Lampung</p>
+            <p className="sidebar-collab-desc">Kerjasama Mahasiswa PKL TRPL Polinela</p>
+          </div>
+        )}
       </div>
     </aside>
   );
