@@ -4,19 +4,36 @@
  * Sesuaikan dengan pengaturan database Anda
  */
 
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'bmkg_si_iklim_muda');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_CHARSET', 'utf8mb4');
+// Muat file .env jika ada (opsional)
+$envPath = __DIR__ . '/../.env';
+if (file_exists($envPath)) {
+    $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        $line = trim($line);
+        if ($line === '' || str_starts_with($line, '#')) continue;
+        if (strpos($line, '=') !== false) {
+            [$k, $v] = explode('=', $line, 2);
+            $k = trim($k);
+            $v = trim($v, " \t\n\r\0\x0B\"'");
+            putenv("$k=$v");
+            $_ENV[$k] = $v;
+        }
+    }
+}
+
+define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+define('DB_NAME', getenv('DB_NAME') ?: 'bmkg_si_iklim_muda');
+define('DB_USER', getenv('DB_USER') ?: 'root');
+define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : '');
+define('DB_CHARSET', getenv('DB_CHARSET') ?: 'utf8mb4');
 
 /**
  * Konfigurasi Aplikasi
  */
-define('APP_NAME', 'Si Iklim Muda BMKG');
-define('APP_ENV', 'development'); // development | production
-define('JWT_SECRET', 'ganti_dengan_secret_key_anda_yang_aman');
-define('CORS_ORIGIN', 'http://localhost:5173'); // URL frontend React
+define('APP_NAME', getenv('APP_NAME') ?: 'Si Iklim Muda BMKG');
+define('APP_ENV', getenv('APP_ENV') ?: 'development'); // development | production
+define('JWT_SECRET', getenv('JWT_SECRET') ?: 'ganti_dengan_secret_key_anda_yang_aman');
+define('CORS_ORIGIN', getenv('CORS_ORIGIN') ?: 'http://localhost:5173'); // URL frontend React
 
 /**
  * Koneksi Database menggunakan PDO
