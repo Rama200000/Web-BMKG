@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Menu, Plus, Search, Edit2, Trash2, CheckCircle2, XCircle, X } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
+import { API_BASE_URL } from '../../utils/apiConfig';
 import './KelolaAdminPage.css';
 
 function KelolaAdminPage() {
@@ -25,7 +26,7 @@ function KelolaAdminPage() {
   const fetchAdmins = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch('http://localhost:8000/api/users.php');
+      const res = await fetch(`${API_BASE_URL}/users.php`);
       const data = await res.json();
       if (data.success) {
         setAdmins(data.data);
@@ -78,7 +79,7 @@ function KelolaAdminPage() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const url = 'http://localhost:8000/api/users.php';
+    const url = `${API_BASE_URL}/users.php`;
     const method = isEditMode ? 'PUT' : 'POST';
 
     try {
@@ -106,7 +107,7 @@ function KelolaAdminPage() {
   const handleDelete = async (id) => {
     if (!window.confirm('Yakin ingin menghapus admin ini?')) return;
     try {
-      const res = await fetch(`http://localhost:8000/api/users.php?id=${id}`, {
+      const res = await fetch(`${API_BASE_URL}/users.php?id=${id}`, {
         method: 'DELETE'
       });
       const data = await res.json();

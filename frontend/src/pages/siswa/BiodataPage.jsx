@@ -5,6 +5,7 @@ import './mobile-green-theme.css';
 import './siswa-navy.css';
 import './siswa-navy.css';
 import './BiodataPage.css';
+import { API_BASE_URL } from '../../utils/apiConfig';
 
 const JURUSAN_OPTIONS = [
   { value: 'MIPA', label: 'MIPA / IPA' },
@@ -61,7 +62,7 @@ function BiodataPage() {
 
   // Fetch schools on mount
   useEffect(() => {
-    fetch('http://localhost:8000/api/schools.php')
+    fetch(`${API_BASE_URL}/schools.php`)
       .then(res => res.json())
       .then(data => {
         if (data.success) {
@@ -74,7 +75,7 @@ function BiodataPage() {
   // Fetch classes when school changes
   useEffect(() => {
     if (formData.sekolah) {
-      fetch(`http://localhost:8000/api/classes.php?sekolah_id=${formData.sekolah}`)
+      fetch(`${API_BASE_URL}/classes.php?sekolah_id=${formData.sekolah}`)
         .then(res => res.json())
         .then(data => {
           if (data.success) {
@@ -117,7 +118,7 @@ function BiodataPage() {
     const phone = localStorage.getItem('siswaPhone') || '';
     
     try {
-      const response = await fetch('http://localhost:8000/api/students.php', {
+      const response = await fetch(`${API_BASE_URL}/students.php`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

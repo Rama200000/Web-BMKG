@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ChevronLeft, GraduationCap, Battery, Wifi, Signal, ClipboardCheck, Trophy, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './DataPenggunaPage.css';
+import { API_BASE_URL } from '../../utils/apiConfig';
 
 function SiswaHasilPosttestPage() {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ function SiswaHasilPosttestPage() {
         const student = JSON.parse(localStorage.getItem('currentStudent') || '{}');
         const myScore = parseInt(localStorage.getItem('skorPosttest') || '0');
         
-        const res = await fetch('http://localhost:8000/api/skor.php');
+        const res = await fetch(`${API_BASE_URL}/skor.php`);
         const result = await res.json();
         
         if (result.success) {

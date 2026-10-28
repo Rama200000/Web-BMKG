@@ -15,8 +15,7 @@ import {
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import './SoalPage.css';
-
-const API_BASE_URL = 'http://localhost:8000/api';
+import { API_BASE_URL } from '../../utils/apiConfig';
 
 function SoalPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);

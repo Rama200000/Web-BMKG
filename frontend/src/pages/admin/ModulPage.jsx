@@ -17,8 +17,7 @@ import Sidebar from '../../components/Sidebar';
 import { exportModulPDF } from '../../utils/pdfExport';
 import bmkgLogoUrl from '../../assets/bmkg-logo.png';
 import './ModulPage.css';
-
-const API_BASE_URL = 'http://localhost:8000/api';
+import { API_BASE_URL } from '../../utils/apiConfig';
 
 function ModulPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);

@@ -19,8 +19,7 @@ import bmkgLogoUrl from '../../assets/bmkg-logo.png';
 import * as XLSX from 'xlsx';
 import Sidebar from '../../components/Sidebar';
 import './HasilSkorPage.css';
-
-const API_BASE_URL = 'http://localhost:8000/api';
+import { API_BASE_URL } from '../../utils/apiConfig';
 
 function HasilSkorPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);

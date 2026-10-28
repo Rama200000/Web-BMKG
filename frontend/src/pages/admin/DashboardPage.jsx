@@ -27,8 +27,7 @@ import { exportDashboardPDF } from '../../utils/pdfExport';
 import bmkgLogoUrl from '../../assets/bmkg-logo.png';
 import Sidebar from '../../components/Sidebar';
 import './DashboardPage.css';
-
-const API_BASE_URL = 'http://localhost:8000/api';
+import { API_BASE_URL } from '../../utils/apiConfig';
 
 function DashboardPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);

@@ -16,8 +16,7 @@ import {
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import './TambahModulPage.css';
-
-const API_BASE_URL = 'http://localhost:8000/api';
+import { API_BASE_URL } from '../../utils/apiConfig';
 
 function TambahModulPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);

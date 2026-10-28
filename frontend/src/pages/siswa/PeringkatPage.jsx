@@ -7,6 +7,7 @@ import imgScroll from '../../assets/fluent-emoji/scroll.png';
 import './mobile-green-theme.css';
 import './siswa-navy.css';
 import './PeringkatPage.css';
+import { API_BASE_URL } from '../../utils/apiConfig';
 
 
 
@@ -39,7 +40,7 @@ function PeringkatPage() {
 
   useEffect(() => {
     if (student.sekolah_id) {
-      fetch(`http://localhost:8000/api/skor.php?sekolah_id=${student.sekolah_id}`)
+      fetch(`${API_BASE_URL}/skor.php?sekolah_id=${student.sekolah_id}`)
         .then(res => res.json())
         .then(data => {
           if (data.success) {

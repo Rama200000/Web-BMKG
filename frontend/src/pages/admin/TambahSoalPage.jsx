@@ -9,6 +9,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
+import { API_BASE_URL } from '../../utils/apiConfig';
 import './TambahSoalPage.css';
 
 function TambahSoalPage() {
@@ -44,7 +45,7 @@ function TambahSoalPage() {
 
   useEffect(() => {
     // Fetch modules
-    fetch('http://localhost:8000/api/modules.php')
+    fetch(`${API_BASE_URL}/modules.php`)
       .then(res => res.json())
       .then(data => {
         if (data.success && data.data) {
@@ -94,7 +95,7 @@ function TambahSoalPage() {
         bodyData.id = editData.id;
       }
 
-      const response = await fetch('http://localhost:8000/api/questions.php', {
+      const response = await fetch(`${API_BASE_URL}/questions.php`, {
         method: isEdit ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json'

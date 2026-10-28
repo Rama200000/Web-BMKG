@@ -11,8 +11,7 @@ import {
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import './LeaderboardPage.css';
-
-const API_BASE_URL = 'http://localhost:8000/api';
+import { API_BASE_URL } from '../../utils/apiConfig';
 
 function LeaderboardPage() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);

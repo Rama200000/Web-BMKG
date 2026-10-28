@@ -3,6 +3,7 @@ import { Trophy, ArrowRight, ArrowUpRight, ArrowDownRight, Minus, Crown, Medal, 
 import { useNavigate } from 'react-router-dom';
 import './mobile-green-theme.css';
 import './HasilAkhirPage.css';
+import { API_BASE_URL } from '../../utils/apiConfig';
 
 function HasilAkhirPage() {
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ function HasilAkhirPage() {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const res = await fetch('http://localhost:8000/api/skor.php');
+        const res = await fetch(`${API_BASE_URL}/skor.php`);
         const result = await res.json();
         if (result.success) {
           let data = result.data.map(item => ({

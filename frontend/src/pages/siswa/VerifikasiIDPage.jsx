@@ -3,9 +3,10 @@ import { ChevronLeft, Phone, ArrowRight, ShieldCheck, Info } from 'lucide-react'
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import './mobile-green-theme.css';
 import './siswa-navy.css';
+import { API_BASE_URL } from '../../utils/apiConfig';
 import './VerifikasiIDPage.css';
 
-const API_URL = 'http://localhost:8000/api/auth_siswa.php';
+const API_URL = `${API_BASE_URL}/auth_siswa.php`;
 
 function VerifikasiIDPage() {
   const navigate = useNavigate();

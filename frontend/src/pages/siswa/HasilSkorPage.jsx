@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import './mobile-green-theme.css';
 import './siswa-navy.css';
 import './HasilSkorPage.css';
+import { API_BASE_URL } from '../../utils/apiConfig';
 
 /**
  * Hasil skor setelah pretest / posttest.
@@ -31,7 +32,7 @@ function HasilSkorPage({ mode = 'pretest' }) {
         }
         const student = JSON.parse(studentStr);
         
-        const response = await fetch(`http://localhost:8000/api/skor.php?sekolah_id=${student.sekolah_id}`);
+        const response = await fetch(`${API_BASE_URL}/skor.php?sekolah_id=${student.sekolah_id}`);
         const result = await response.json();
         
         if (result.success && result.data && result.data.length > 0) {

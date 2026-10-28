@@ -6,6 +6,7 @@ import { bankSoal } from './bankSoal';
 import './mobile-green-theme.css';
 import './siswa-navy.css';
 import './UjianPage.css';
+import { API_BASE_URL } from '../../utils/apiConfig';
 
 const TIMER_SECONDS = UJIAN_DURASI_MENIT * 60;
 
@@ -49,7 +50,7 @@ function UjianPage() {
 
     const fetchSoal = async () => {
       try {
-        const res = await fetch('http://localhost:8000/api/questions.php?modul_id=1');
+        const res = await fetch(`${API_BASE_URL}/questions.php?modul_id=1`);
         const data = await res.json();
         if (data.success && data.data.length > 0) {
           const shuffle = (array) => {
@@ -147,7 +148,7 @@ function UjianPage() {
     }
 
     if (student.id) {
-        fetch('http://localhost:8000/api/skor.php', {
+        fetch(`${API_BASE_URL}/skor.php`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

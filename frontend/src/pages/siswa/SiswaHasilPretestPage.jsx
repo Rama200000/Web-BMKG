@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ChevronLeft, GraduationCap, Battery, Wifi, Signal, ClipboardCheck, Info, ArrowRight, TrendingUp, TrendingDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './DataPenggunaPage.css';
+import { API_BASE_URL } from '../../utils/apiConfig';
 
 function SiswaHasilPretestPage() {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ function SiswaHasilPretestPage() {
         }
         const student = JSON.parse(studentStr);
         
-        const response = await fetch(`http://localhost:8000/api/skor.php?sekolah_id=${student.sekolah_id}`);
+        const response = await fetch(`${API_BASE_URL}/skor.php?sekolah_id=${student.sekolah_id}`);
         const result = await response.json();
         
         if (result.success && result.data && result.data.length > 0) {

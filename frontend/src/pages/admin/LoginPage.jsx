@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import bmkgLogo from '../../assets/bmkg-logo.png';
 import mascotImg from '../../assets/mascot.png';
+import { API_BASE_URL } from '../../utils/apiConfig';
 import './LoginPage.css';
 
 function LoginPage() {
@@ -43,7 +44,7 @@ function LoginPage() {
     setIsLoading(true);
 
     try {
-      const res = await fetch('http://localhost:8000/api/login.php', {
+      const res = await fetch(`${API_BASE_URL}/login.php`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
