@@ -21,7 +21,7 @@ Sebelum menjalankan aplikasi, pastikan perangkat lokal Anda telah memenuhi spesi
 
 ### 3. Port Jaringan Lokal
 - Port `5173`: Frontend React + Vite
-- Port `8000`: Backend API PHP
+- Port `8181`: Backend API PHP (`http://10.21.224.6:8181` / `0.0.0.0:8181`)
 - Port `3306`: MySQL Database Server
 
 ---
@@ -63,9 +63,9 @@ mysql -u root bmkg_si_iklim_muda < backend/database.sql
 Buka terminal dan arahkan ke folder `backend`:
 ```powershell
 cd "d:\BMKG 2026\SIKLIM\backend"
-php -S localhost:8000
+php -S 0.0.0.0:8181
 ```
-*Backend akan aktif di `http://localhost:8000/api/`*
+*Backend akan aktif di `http://10.21.224.6:8181/api/`*
 
 #### 3. Instal Dependensi & Jalankan Frontend
 Buka terminal kedua dan arahkan ke folder `frontend`:

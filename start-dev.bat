@@ -11,8 +11,8 @@ echo.
 cd /d "%~dp0"
 
 :: 2. Jalankan Backend PHP di window terpisah
-echo [1/3] Menjalankan Backend PHP Server (Port 8000)...
-start "Backend PHP (Port 8000)" cmd /k "cd /d ""%~dp0backend"" && title Backend PHP Server (Port 8000) && color 0B && echo Menjalankan PHP Server di http://localhost:8000 ... && php -S localhost:8000"
+echo [1/3] Menjalankan Backend PHP Server (Port 8181)...
+start "Backend PHP (Port 8181)" cmd /k "cd /d ""%~dp0backend"" && title Backend PHP Server (Port 8181) && color 0B && echo Menjalankan PHP Server di http://0.0.0.0:8181 ... && php -S 0.0.0.0:8181"
 
 :: 3. Jalankan Frontend Vite di window terpisah
 echo [2/3] Menjalankan Frontend Vite Server (Port 5173)...
@@ -27,7 +27,7 @@ echo.
 echo ========================================================
 echo   Kedua server sudah berjalan di jendela terminal masing-masing!
 echo   Frontend : http://localhost:5173
-echo   Backend  : http://localhost:8000
+echo   Backend  : http://10.21.224.6:8181 (0.0.0.0:8181)
 echo ========================================================
 echo.
 pause
