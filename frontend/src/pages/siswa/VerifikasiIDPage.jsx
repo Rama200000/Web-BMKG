@@ -55,9 +55,19 @@ function VerifikasiIDPage() {
         body: JSON.stringify({ no_hp: phone })
       });
       
-      const result = await response.json();
+      let result = null;
+      try {
+        result = await response.json();
+      } catch (parseErr) {
+        // Jika server mengembalikan 404 dan di-intercept web server Nginx menjadi HTML
+        if (response.status === 404) {
+          result = { success: false, not_found: true };
+        } else {
+          throw parseErr;
+        }
+      }
 
-      if (result.success) {
+      if (result && result.success) {
         // Clear previous session data to prevent inheriting locked states
         localStorage.removeItem('pretestDone');
         localStorage.removeItem('modulDone');
@@ -89,7 +99,7 @@ function VerifikasiIDPage() {
         }
         
         navigate('/siswa/dashboard');
-      } else if (response.status === 404) {
+      } else if (response.status === 404 || result?.not_found) {
         // Clear previous session data for new registration
         localStorage.removeItem('pretestDone');
         localStorage.removeItem('modulDone');
@@ -105,7 +115,7 @@ function VerifikasiIDPage() {
         navigate('/siswa/biodata');
       } else {
         // Other errors (e.g., account disabled)
-        setErrorMsg(result.message || 'Terjadi kesalahan saat verifikasi.');
+        setErrorMsg(result?.message || 'Terjadi kesalahan saat verifikasi.');
       }
     } catch (err) {
       console.error(err);

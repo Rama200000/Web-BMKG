@@ -39,8 +39,12 @@ if ($method === 'POST') {
                 echo json_encode(['success' => false, 'message' => 'Akun Anda dinonaktifkan. Hubungi Admin.']);
             }
         } else {
-            http_response_code(404);
-            echo json_encode(['success' => false, 'message' => 'Nomor HP tidak terdaftar.']);
+            // Tidak menggunakan 404 HTTP code agar tidak di-intercept oleh Nginx try_files menjadi index.html
+            echo json_encode([
+                'success' => false,
+                'not_found' => true,
+                'message' => 'Nomor HP tidak terdaftar.'
+            ]);
         }
     } catch (PDOException $e) {
         http_response_code(500);

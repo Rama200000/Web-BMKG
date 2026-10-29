@@ -71,14 +71,23 @@ try {
         exit;
     }
     
-    // Verifikasi password
-    if (!password_verify($password, $user['password'])) {
+    // Verifikasi password (mendukung hash bcrypt & fallback aman)
+    $isPasswordValid = password_verify($password, $user['password']) || ($password === $user['password']);
+    
+    if (!$isPasswordValid) {
         http_response_code(401);
         echo json_encode([
             'success' => false,
             'message' => 'Kata sandi salah. Silakan coba lagi.'
         ]);
         exit;
+    }
+    
+    // Jika password di database belum berformat hash bcrypt standar, otomatis update ke hash yang valid
+    if ($password === $user['password'] || password_needs_rehash($user['password'], PASSWORD_BCRYPT)) {
+        $rehash = password_hash($password, PASSWORD_BCRYPT);
+        $updateStmt = $db->prepare("UPDATE users SET password = ? WHERE id = ?");
+        $updateStmt->execute([$rehash, $user['id']]);
     }
     
     // Login berhasil - buat session token sederhana

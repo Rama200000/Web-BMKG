@@ -1,12 +1,6 @@
 -- ============================================
 -- Database: bmkg_si_iklim_muda
--- Jalankan script ini di phpMyAdmin atau MySQL CLI
 -- ============================================
-
-CREATE DATABASE IF NOT EXISTS bmkg_si_iklim_muda
-CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-USE bmkg_si_iklim_muda;
 
 -- ============================================
 -- Tabel Users
@@ -32,7 +26,7 @@ VALUES (
     '198503152010',
     'admin@bmkg.go.id',
     'Admin BMKG',
-    '$2y$10$t3J5F/M9d8213YpB.s2YquDOPKOf1O6hQGjG5R8nS3i2K.q5Y0zYW', -- Hash for 'admin123'
+    '$2y$12$FqPFm.cuhd8Z1EX20XSLjORRTTZcnL0q4CwQbyVc.mEEfN18SEXjS', -- Hash valid for 'admin123'
     'superadmin',
     1
 );
@@ -82,6 +76,7 @@ CREATE TABLE IF NOT EXISTS modules (
     judul VARCHAR(255) NOT NULL,
     deskripsi TEXT,
     kategori VARCHAR(100) DEFAULT 'Klimatologi & Pemanasan Global',
+    file_path VARCHAR(255) DEFAULT NULL,
     is_active TINYINT(1) DEFAULT 1,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
