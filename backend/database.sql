@@ -69,6 +69,19 @@ CREATE TABLE IF NOT EXISTS students (
 ) ENGINE=InnoDB;
 
 -- ============================================
+-- Tabel Categories (Kategori Modul)
+-- ============================================
+CREATE TABLE IF NOT EXISTS categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nama VARCHAR(100) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+INSERT IGNORE INTO categories (nama) VALUES 
+('Klimatologi & Pemanasan Global'),
+('Meteorologi Dasar');
+
+-- ============================================
 -- Tabel Modules (Modul)
 -- ============================================
 CREATE TABLE IF NOT EXISTS modules (

@@ -16,6 +16,7 @@ function UjianPage() {
   const mode = searchParams.get('mode') || 'pretest';
 
   const [soalList, setSoalList] = useState([]);
+  const [currentModulId, setCurrentModulId] = useState(1);
   const [currentQ, setCurrentQ] = useState(0);
   const [jawaban, setJawaban] = useState({}); // { [index]: choiceIndex }
   const [flagged, setFlagged] = useState({}); // { [index]: true }
@@ -50,7 +51,22 @@ function UjianPage() {
 
     const fetchSoal = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/questions.php?modul_id=1`);
+        // Langkah 1: ambil modul aktif dari database (bukan hardcode modul_id=1)
+        let modulId = 1; // fallback
+        try {
+          const modulRes = await fetch(`${API_BASE_URL}/modules.php`);
+          const modulData = await modulRes.json();
+          if (modulData.success && modulData.data && modulData.data.length > 0) {
+            const activeModul = modulData.data.find(m => m.is_active === 1) || modulData.data[0];
+            modulId = activeModul.id;
+          }
+        } catch (modulErr) {
+          console.warn('Gagal fetch modul, pakai modul_id fallback:', modulErr);
+        }
+
+        // Langkah 2: ambil soal berdasarkan modul_id yang benar
+        setCurrentModulId(modulId);
+        const res = await fetch(`${API_BASE_URL}/questions.php?modul_id=${modulId}`);
         const data = await res.json();
         if (data.success && data.data.length > 0) {
           const shuffle = (array) => {
@@ -153,17 +169,26 @@ function UjianPage() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 student_id: student.id,
-                modul_id: 1,
+                modul_id: currentModulId,
                 test_type: mode === 'pretest' ? 'pre_test' : 'post_test',
                 score: skor,
                 time: elapsed,
                 answers: answersData
-            })
+            }),
+            keepalive: true
         }).catch(err => console.error("Gagal simpan skor ke database", err));
     }
 
+    // Jika keluar tab atau sengaja keluar saat ujian: progres sudah tersimpan di atas,
+    // langsung arahkan logout ke scan barcode agar harus scan ulang untuk masuk lagi
+    if (alasan === 'curang' || alasan === 'keluar') {
+      localStorage.removeItem('userRole');
+      window.location.replace('/siklim/siswa/scan');
+      return;
+    }
+
     setSelesai(alasan);
-  }, [jawaban, mode, submitted, startTime, soalList]);
+  }, [jawaban, mode, submitted, startTime, soalList, currentModulId]);
 
   // Countdown timer
   useEffect(() => {
@@ -368,10 +393,10 @@ function UjianPage() {
             >
               <div className="nv-dialog-icon"><LogOut size={22} /></div>
               <h3 id="ujian-exit-title">Keluar dari {mode === 'pretest' ? 'pretest' : 'posttest'}?</h3>
-              <p>Jawaban yang sudah kamu pilih tidak akan disimpan, dan kamu harus mengulang dari awal.</p>
+              <p>Jawaban yang sudah kamu pilih akan disimpan otomatis, dan kamu akan keluar ke halaman awal.</p>
               <div className="nv-dialog-actions">
                 <button type="button" className="nv-btn secondary" onClick={() => setConfirmExit(false)}>Batal</button>
-                <button type="button" className="nv-btn" onClick={() => navigate('/siswa/dashboard', { replace: true })}>Keluar</button>
+                <button type="button" className="nv-btn" onClick={() => doSubmit('keluar')}>Keluar</button>
               </div>
             </div>
           </div>

@@ -10,10 +10,10 @@ switch ($method) {
         $modul_id = isset($_GET['modul_id']) ? $_GET['modul_id'] : null;
         
         if ($modul_id) {
-            $stmt = $pdo->prepare("SELECT q.*, m.judul as modul_judul FROM questions q JOIN modules m ON q.modul_id = m.id WHERE q.modul_id = ? ORDER BY q.id ASC");
+            $stmt = $pdo->prepare("SELECT q.*, m.judul as modul_judul FROM questions q LEFT JOIN modules m ON q.modul_id = m.id WHERE q.modul_id = ? ORDER BY q.id ASC");
             $stmt->execute([$modul_id]);
         } else {
-            $stmt = $pdo->query("SELECT q.*, m.judul as modul_judul FROM questions q JOIN modules m ON q.modul_id = m.id ORDER BY q.id ASC");
+            $stmt = $pdo->query("SELECT q.*, m.judul as modul_judul FROM questions q LEFT JOIN modules m ON q.modul_id = m.id ORDER BY q.id ASC");
         }
         $questions = $stmt->fetchAll();
         

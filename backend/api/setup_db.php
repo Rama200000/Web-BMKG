@@ -87,7 +87,21 @@ try {
         ) ENGINE=InnoDB;
     ");
 
-    // 6. Tabel Modules
+    // 6. Tabel Categories
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS categories (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            nama VARCHAR(100) NOT NULL UNIQUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB;
+    ");
+
+    // Seed default categories
+    $stmtSeed = $pdo->prepare("INSERT IGNORE INTO categories (nama) VALUES (?)");
+    $stmtSeed->execute(['Klimatologi & Pemanasan Global']);
+    $stmtSeed->execute(['Meteorologi Dasar']);
+
+    // 7. Tabel Modules
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS modules (
             id INT AUTO_INCREMENT PRIMARY KEY,

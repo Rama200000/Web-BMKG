@@ -63,6 +63,7 @@ export default defineConfig(({ mode }) => {
   const useLocalCert = https && hasLocalCert
 
   return {
+    base: '/siklim/',
     plugins: [
       react(),
       serveLanOrigin(),

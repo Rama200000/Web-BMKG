@@ -11,7 +11,9 @@ import {
   PlaySquare,
   Pencil,
   Trash2,
-  ChevronLeft
+  ChevronLeft,
+  Tags,
+  X
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import { exportModulPDF } from '../../utils/pdfExport';
@@ -29,6 +31,15 @@ function ModulPage() {
   const [filterKategori, setFilterKategori] = useState('Semua');
   const [filterSort, setFilterSort] = useState('Terbaru');
 
+  // State Kelola Kategori
+  const [categories, setCategories] = useState([
+    { id: 1, nama: 'Klimatologi & Pemanasan Global' },
+    { id: 2, nama: 'Meteorologi Dasar' }
+  ]);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [isSavingCategory, setIsSavingCategory] = useState(false);
+
   const fetchModules = async () => {
     setIsLoading(true);
     try {
@@ -44,9 +55,63 @@ function ModulPage() {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/categories.php`);
+      const data = await res.json();
+      if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+        setCategories(data.data);
+      }
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
   useEffect(() => {
     fetchModules();
+    fetchCategories();
   }, []);
+
+  const handleAddCategory = async (e) => {
+    if (e) e.preventDefault();
+    if (!newCategoryName.trim()) return;
+    setIsSavingCategory(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/categories.php`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nama: newCategoryName.trim() })
+      });
+      const result = await res.json();
+      if (result.success) {
+        setNewCategoryName('');
+        await fetchCategories();
+      } else {
+        alert(result.message || 'Gagal menambahkan kategori');
+      }
+    } catch (err) {
+      alert('Gagal menghubungi server untuk menambah kategori');
+    } finally {
+      setIsSavingCategory(false);
+    }
+  };
+
+  const handleDeleteCategory = async (cat) => {
+    if (window.confirm(`Yakin ingin menghapus kategori "${cat.nama}"? Modul yang sudah menggunakan kategori ini tidak akan terhapus.`)) {
+      try {
+        const res = await fetch(`${API_BASE_URL}/categories.php?id=${cat.id}`, { method: 'DELETE' });
+        const result = await res.json();
+        if (result.success) {
+          if (filterKategori === cat.nama) setFilterKategori('Semua');
+          await fetchCategories();
+        } else {
+          alert(result.message || 'Gagal menghapus kategori');
+        }
+      } catch (err) {
+        alert('Gagal menghubungi server');
+      }
+    }
+  };
 
   const handleDelete = async (id) => {
     if (window.confirm('Yakin ingin menghapus modul ini? Semua soal di dalam modul akan terhapus!')) {
@@ -128,10 +193,20 @@ function ModulPage() {
           {/* Header */}
           <div className="modul-header-wrapper">
             <h1 className="modul-title">Kelola Modul</h1>
-            <Link to="/tambah-modul" className="btn-tambah-modul">
-              <Plus size={16} />
-              Tambah Modul
-            </Link>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button 
+                type="button" 
+                onClick={() => setShowCategoryModal(true)} 
+                className="btn-kelola-kategori"
+              >
+                <Tags size={16} />
+                Kelola Kategori
+              </button>
+              <Link to="/tambah-modul" className="btn-tambah-modul">
+                <Plus size={16} />
+                Tambah Modul
+              </Link>
+            </div>
           </div>
 
           {/* Stat Cards */}
@@ -177,8 +252,9 @@ function ModulPage() {
                   style={{ appearance: 'auto', cursor: 'pointer', paddingRight: '32px' }}
                 >
                   <option value="Semua">Semua Kategori</option>
-                  <option value="Klimatologi & Pemanasan Global">Klimatologi & Pemanasan Global</option>
-                  <option value="Meteorologi Dasar">Meteorologi Dasar</option>
+                  {categories.map((c) => (
+                    <option key={c.id || c.nama} value={c.nama}>{c.nama}</option>
+                  ))}
                 </select>
 
                 <select 
@@ -269,6 +345,89 @@ function ModulPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal Kelola Kategori */}
+      {showCategoryModal && (
+        <div className="modal-overlay-kategori" onClick={() => setShowCategoryModal(false)}>
+          <div className="modal-content-kategori" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header-kategori">
+              <div className="modal-header-title">
+                <div className="modal-header-icon">
+                  <Tags size={20} />
+                </div>
+                <div className="modal-title-text">
+                  <h3>Kelola Kategori Modul</h3>
+                  <p>Tambah atau hapus topik materi modul</p>
+                </div>
+              </div>
+              <button 
+                type="button" 
+                className="modal-close-btn" 
+                onClick={() => setShowCategoryModal(false)}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="modal-body-kategori">
+              {/* Form Tambah Kategori */}
+              <form onSubmit={handleAddCategory} className="kategori-input-row">
+                <input 
+                  type="text" 
+                  placeholder="Ketik nama kategori baru..." 
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                />
+                <button 
+                  type="submit" 
+                  className="btn-tambah-kategori-submit"
+                  disabled={isSavingCategory || !newCategoryName.trim()}
+                >
+                  <Plus size={15} />
+                  {isSavingCategory ? 'Menyimpan...' : 'Tambah'}
+                </button>
+              </form>
+
+              {/* Daftar Kategori */}
+              <div style={{ marginBottom: '8px', fontSize: '12px', fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Daftar Kategori Aktif ({categories.length})
+              </div>
+              <div className="kategori-list-wrapper">
+                {categories.length === 0 ? (
+                  <div style={{ padding: '20px', textAlign: 'center', color: '#94a3b8', fontSize: '13px' }}>
+                    Belum ada kategori
+                  </div>
+                ) : (
+                  categories.map((cat) => (
+                    <div key={cat.id || cat.nama} className="kategori-list-item">
+                      <span style={{ fontWeight: 500 }}>{cat.nama}</span>
+                      <button 
+                        type="button" 
+                        className="btn-hapus-kategori"
+                        title="Hapus kategori"
+                        onClick={() => handleDeleteCategory(cat)}
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            <div className="modal-footer-kategori">
+              <button 
+                type="button" 
+                className="modul-action-btn"
+                style={{ cursor: 'pointer', padding: '8px 18px', fontWeight: 600 }}
+                onClick={() => setShowCategoryModal(false)}
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

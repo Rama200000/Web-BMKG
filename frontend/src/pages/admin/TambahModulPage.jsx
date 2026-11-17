@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Menu, ChevronRight,
@@ -12,7 +12,8 @@ import {
   CheckCircle2,
   ArrowLeft,
   ChevronDown,
-  AlertCircle
+  AlertCircle,
+  X
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
 import './TambahModulPage.css';
@@ -24,7 +25,14 @@ function TambahModulPage() {
 
   // Form states
   const [judul, setJudul] = useState('');
+  const [categories, setCategories] = useState([
+    'Klimatologi & Pemanasan Global',
+    'Meteorologi Dasar'
+  ]);
   const [kategori, setKategori] = useState('Klimatologi & Pemanasan Global');
+  const [showModalKategori, setShowModalKategori] = useState(false);
+  const [kategoriBaru, setKategoriBaru] = useState('');
+  const [isSavingKategori, setIsSavingKategori] = useState(false);
   const [deskripsi, setDeskripsi] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -38,6 +46,55 @@ function TambahModulPage() {
     setTimeout(() => {
       setToast({ show: false, message: '', type: 'success' });
     }, 3000);
+  };
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/categories.php`);
+        const result = await res.json();
+        if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+          const names = result.data.map(c => c.nama);
+          setCategories(names);
+          if (!kategori || !names.includes(kategori)) {
+            setKategori(names[0]);
+          }
+        }
+      } catch (err) {
+        console.warn('Gagal memuat kategori dari server:', err);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  const handleTambahKategori = async (e) => {
+    if (e) e.preventDefault();
+    if (!kategoriBaru.trim()) return;
+    setIsSavingKategori(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/categories.php`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nama: kategoriBaru.trim() })
+      });
+      const data = await res.json();
+      if (data.success) {
+        const newName = data.data?.nama || kategoriBaru.trim();
+        if (!categories.includes(newName)) {
+          setCategories(prev => [...prev, newName]);
+        }
+        setKategori(newName);
+        setKategoriBaru('');
+        setShowModalKategori(false);
+        showToast('Kategori baru berhasil ditambahkan!', 'success');
+      } else {
+        showToast(data.message || 'Gagal menambahkan kategori', 'error');
+      }
+    } catch (err) {
+      showToast('Koneksi gagal saat menambah kategori', 'error');
+    } finally {
+      setIsSavingKategori(false);
+    }
   };
 
   const handleSimpan = async () => {
@@ -151,11 +208,31 @@ function TambahModulPage() {
               </div>
 
               <div className="tm-form-group">
-                <label className="tm-label">Kategori / Topik Iklim <span className="tm-req">*</span></label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <label className="tm-label" style={{ marginBottom: 0 }}>Kategori / Topik Iklim <span className="tm-req">*</span></label>
+                  <button
+                    type="button"
+                    onClick={() => setShowModalKategori(true)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#0284c7',
+                      fontSize: '13px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    <Plus size={14} /> + Tambah Kategori
+                  </button>
+                </div>
                 <div className="tm-select-wrapper">
                   <select value={kategori} onChange={(e) => setKategori(e.target.value)}>
-                    <option>Klimatologi & Pemanasan Global</option>
-                    <option>Meteorologi Dasar</option>
+                    {categories.map((cat, idx) => (
+                      <option key={idx} value={cat}>{cat}</option>
+                    ))}
                   </select>
                   <ChevronDown size={16} className="select-icon" />
                 </div>
@@ -263,6 +340,109 @@ function TambahModulPage() {
           }}>
             {toast.type === 'success' ? <CheckCircle2 size={18} /> : <AlertCircle size={18} />}
             <span style={{ fontSize: '14px', fontWeight: '500' }}>{toast.message}</span>
+          </div>
+        )}
+
+        {/* Modal Tambah Kategori Cepat */}
+        {showModalKategori && (
+          <div 
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(15, 23, 42, 0.5)',
+              backdropFilter: 'blur(3px)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 9999,
+              padding: '16px'
+            }}
+            onClick={() => setShowModalKategori(false)}
+          >
+            <div 
+              style={{
+                background: 'white',
+                width: '100%',
+                maxWidth: '420px',
+                borderRadius: '16px',
+                padding: '24px',
+                boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 700, color: '#0f172a' }}>Tambah Kategori Baru</h3>
+                <button 
+                  type="button" 
+                  onClick={() => setShowModalKategori(false)}
+                  style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', padding: '4px' }}
+                >
+                  <X size={18} />
+                </button>
+              </div>
+              <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#64748b', lineHeight: 1.5 }}>
+                Masukkan nama kategori atau topik iklim baru. Kategori ini akan otomatis tersimpan dan terpilih pada modul ini.
+              </p>
+              <form onSubmit={handleTambahKategori}>
+                <div style={{ marginBottom: '20px' }}>
+                  <input 
+                    type="text" 
+                    placeholder="Contoh: Geofisika & Seismologi"
+                    value={kategoriBaru}
+                    onChange={(e) => setKategoriBaru(e.target.value)}
+                    autoFocus
+                    style={{
+                      width: '100%',
+                      padding: '10px 14px',
+                      border: '1.5px solid #e2e8f0',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      color: '#0f172a',
+                      outline: 'none',
+                      boxSizing: 'border-box'
+                    }}
+                  />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+                  <button 
+                    type="button"
+                    onClick={() => setShowModalKategori(false)}
+                    style={{
+                      padding: '8px 16px',
+                      background: '#f1f5f9',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      color: '#475569',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Batal
+                  </button>
+                  <button 
+                    type="submit"
+                    disabled={isSavingKategori || !kategoriBaru.trim()}
+                    style={{
+                      padding: '8px 18px',
+                      background: '#2563eb',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontSize: '13px',
+                      fontWeight: 600,
+                      color: 'white',
+                      cursor: isSavingKategori || !kategoriBaru.trim() ? 'not-allowed' : 'pointer',
+                      opacity: isSavingKategori || !kategoriBaru.trim() ? 0.6 : 1
+                    }}
+                  >
+                    {isSavingKategori ? 'Menyimpan...' : 'Simpan Kategori'}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
 

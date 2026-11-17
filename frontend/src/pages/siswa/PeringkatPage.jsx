@@ -9,8 +9,6 @@ import './siswa-navy.css';
 import './PeringkatPage.css';
 import { API_BASE_URL } from '../../utils/apiConfig';
 
-
-
 /**
  * Papan peringkat 1–5 setelah posttest (urut skor posttest, lalu waktu tercepat).
  * Siswa yang sedang masuk ikut diperingkat dan ditandai "(Kamu)".

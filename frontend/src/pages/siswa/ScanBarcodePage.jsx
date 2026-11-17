@@ -6,11 +6,12 @@ import './mobile-green-theme.css';
 import './siswa-navy.css';
 import './ScanBarcodePage.css';
 
-// QR dari halaman admin berisi URL `${origin}/siswa/scan?src=qr`.
-// Origin & query tidak dicek agar QR yang dicetak dari localhost / domain produksi tetap valid.
+// QR dari halaman admin berisi URL `${origin}/siswa/scan?src=qr` atau `${origin}/siklim/siswa/scan?src=qr`.
+// Menggunakan endsWith('/siswa/scan') agar tetap valid baik di root domain maupun subpath /siklim
 const isValidCode = (text) => {
   try {
-    return new URL(text).pathname.replace(/\/+$/, '') === '/siswa/scan';
+    const path = new URL(text).pathname.replace(/\/+$/, '');
+    return path === '/siswa/scan' || path.endsWith('/siswa/scan');
   } catch {
     return false;
   }

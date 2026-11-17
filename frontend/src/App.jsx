@@ -49,7 +49,7 @@ function ProtectedRoute({ children, allowedRoles }) {
 
 function App() {
   return (
-    <Router>
+    <Router basename="/siklim">
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         {/* Redirect root ke login */}

@@ -96,6 +96,12 @@ function VerifikasiIDPage() {
             localStorage.setItem('posttestTime', result.data.post_test_time_seconds);
           }
           localStorage.setItem('modulDone', 'true');
+        } else {
+          // Pulihkan status baca modul dari data lokal siswa jika ada
+          const users = JSON.parse(localStorage.getItem('registeredUsers') || '{}');
+          if (users[phone]?.modulDone) {
+            localStorage.setItem('modulDone', 'true');
+          }
         }
         
         navigate('/siswa/dashboard');
