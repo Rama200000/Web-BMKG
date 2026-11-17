@@ -45,6 +45,7 @@ function SiswaDashboardPage() {
   };
 
   const handleLogout = () => {
+    sessionStorage.removeItem('siswa_warn_count');
     localStorage.removeItem('siswaPhone');
     localStorage.removeItem('currentStudent');
     localStorage.removeItem('pretestDone');

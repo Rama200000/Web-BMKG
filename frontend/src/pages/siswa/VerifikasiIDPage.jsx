@@ -79,6 +79,7 @@ function VerifikasiIDPage() {
         localStorage.removeItem('posttestTime');
 
         // Successfully found student
+        sessionStorage.removeItem('siswa_warn_count');
         localStorage.setItem('siswaPhone', phone);
         localStorage.setItem('currentStudent', JSON.stringify(result.data));
         localStorage.setItem('userRole', 'siswa');

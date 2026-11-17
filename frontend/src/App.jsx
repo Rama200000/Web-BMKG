@@ -27,6 +27,7 @@ import PretestSelesaiPage from './pages/siswa/PretestSelesaiPage';
 import ModulPembelajaranPage from './pages/siswa/ModulPembelajaranPage';
 import PeringkatPage from './pages/siswa/PeringkatPage';
 import RiwayatUjianPage from './pages/siswa/RiwayatUjianPage';
+import SiswaTabGuard from './components/SiswaTabGuard';
 
 import './index.css';
 
@@ -50,8 +51,9 @@ function ProtectedRoute({ children, allowedRoles }) {
 function App() {
   return (
     <Router basename="/siklim">
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
+      <SiswaTabGuard>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
         {/* Redirect root ke login */}
         <Route path="/" element={<Navigate to="/login" replace />} />
 
@@ -127,6 +129,7 @@ function App() {
         <Route path="/scan" element={<Navigate to="/siswa/scan" replace />} />
 
       </Routes>
+      </SiswaTabGuard>
     </Router>
   );
 }

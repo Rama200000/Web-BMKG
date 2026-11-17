@@ -90,8 +90,8 @@ function PretestIntroPage({ mode = 'pretest' }) {
               <li className="pi-rule-item pi-rule-danger">
                 <div className="pi-rule-icon danger"><Ban size={14} /></div>
                 <div>
-                  <strong>Dilarang keluar halaman / pindah tab</strong>
-                  <p>Jika kamu meninggalkan halaman ujian atau berpindah ke aplikasi lain, jawaban akan <strong>langsung otomatis terkirim</strong> tanpa peringatan.</p>
+                  <strong>Tidak boleh keluar dari tab web</strong>
+                  <p>Harap <strong>tidak keluar dari tab web Si Iklim Muda</strong> selama pengerjaan soal. Kamu hanya diberikan <strong>1 kali kesempatan peringatan</strong> jika keluar dari tab. Jika keluar sekali lagi, ujian akan langsung diselesaikan otomatis dan kamu dikeluarkan dari sistem.</p>
                 </div>
               </li>
               <li className="pi-rule-item">

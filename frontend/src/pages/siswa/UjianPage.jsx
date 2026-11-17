@@ -23,7 +23,6 @@ function UjianPage() {
   const [timeLeft, setTimeLeft] = useState(TIMER_SECONDS);
   const [startTime] = useState(Date.now());
   const [currentTime, setCurrentTime] = useState('');
-  // Warning states removed — auto-submit langsung saat keluar tab
   const [submitted, setSubmitted] = useState(false);
   const [showGrid, setShowGrid] = useState(false);
   const [confirmExit, setConfirmExit] = useState(false);
@@ -198,16 +197,14 @@ function UjianPage() {
     return () => clearInterval(timer);
   }, [timeLeft, submitted, doSubmit]);
 
-  // Anti-cheat — langsung auto-submit saat keluar tab / ganti aplikasi
+  // Anti-cheat: Menerima sinyal force-submit dari SiswaTabGuard jika pelanggaran ke-2 terjadi
   useEffect(() => {
-    const handleVisibility = () => {
-      if (document.hidden && !submitted) {
-        doSubmit('curang');
-      }
+    const handleForceSubmit = () => {
+      doSubmit('curang');
     };
-    document.addEventListener('visibilitychange', handleVisibility);
-    return () => document.removeEventListener('visibilitychange', handleVisibility);
-  }, [submitted, doSubmit]);
+    window.addEventListener('anti-cheat-force-submit', handleForceSubmit);
+    return () => window.removeEventListener('anti-cheat-force-submit', handleForceSubmit);
+  }, [doSubmit]);
 
   const formatTime = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
   const isWarningTime = timeLeft < 3 * 60;
@@ -433,8 +430,6 @@ function UjianPage() {
             </div>
           </div>
         )}
-
-        {/* Anti-cheat: Warning dihapus — langsung auto-submit */}
       </div>
     </div>
   );

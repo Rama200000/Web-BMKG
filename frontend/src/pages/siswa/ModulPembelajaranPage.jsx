@@ -157,10 +157,21 @@ function ModulPembelajaranPage() {
             <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
               {modulData.file_path ? (
                 <>
-                  <button type="button" className="nv-btn" onClick={() => window.open(`${BACKEND_URL}/${modulData.file_path}`, '_blank')}>
+                  <button type="button" className="nv-btn" onClick={() => {
+                    sessionStorage.setItem('siswa_bypass_guard', (Date.now() + 10000).toString());
+                    window.open(`${BACKEND_URL}/${modulData.file_path}`, '_blank');
+                  }}>
                     <BookOpen size={18} /> Buka PDF
                   </button>
-                  <a href={`${BACKEND_URL}/${modulData.file_path}`} download className="nv-btn" style={{ textDecoration: 'none', background: '#3b82f6', color: 'white' }}>
+                  <a
+                    href={`${BACKEND_URL}/${modulData.file_path}`}
+                    download
+                    onClick={() => {
+                      sessionStorage.setItem('siswa_bypass_guard', (Date.now() + 10000).toString());
+                    }}
+                    className="nv-btn"
+                    style={{ textDecoration: 'none', background: '#3b82f6', color: 'white' }}
+                  >
                     <Download size={18} /> Download Modul
                   </a>
                 </>
