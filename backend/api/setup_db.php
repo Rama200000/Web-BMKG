@@ -87,7 +87,21 @@ try {
         ) ENGINE=InnoDB;
     ");
 
-    // 6. Tabel Modules
+    // 6. Tabel Categories
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS categories (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            nama VARCHAR(100) NOT NULL UNIQUE,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB;
+    ");
+
+    // Seed default categories
+    $stmtSeed = $pdo->prepare("INSERT IGNORE INTO categories (nama) VALUES (?)");
+    $stmtSeed->execute(['Klimatologi & Pemanasan Global']);
+    $stmtSeed->execute(['Meteorologi Dasar']);
+
+    // 7. Tabel Modules
     $pdo->exec("
         CREATE TABLE IF NOT EXISTS modules (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -152,9 +166,25 @@ try {
         ) ENGINE=InnoDB;
     ");
 
+    // 10. Tabel Settings
+    $pdo->exec("
+        CREATE TABLE IF NOT EXISTS settings (
+            `key_name` VARCHAR(50) PRIMARY KEY,
+            `value_text` TEXT,
+            `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB;
+    ");
+
+    $pdo->exec("
+        INSERT IGNORE INTO settings (`key_name`, `value_text`) VALUES 
+        ('durasi_ujian_menit', '15'),
+        ('mulai_ujian', '08:00'),
+        ('selesai_ujian', '09:00');
+    ");
+
     echo json_encode([
         'success' => true,
-        'message' => 'Luar biasa! Semua 8 tabel database berhasil dibuat & akun Super Admin BMKG berhasil diaktifkan.',
+        'message' => 'Luar biasa! Semua 9 tabel database berhasil dibuat & akun Super Admin BMKG berhasil diaktifkan.',
         'admin_credentials' => [
             'nip' => '198503152010',
             'email' => 'admin@bmkg.go.id',
@@ -162,7 +192,7 @@ try {
             'role' => 'superadmin'
         ],
         'tables_created' => [
-            'users', 'schools', 'classes', 'students', 'modules', 'questions', 'scores', 'student_answers'
+            'users', 'schools', 'classes', 'students', 'modules', 'questions', 'scores', 'student_answers', 'settings'
         ]
     ], JSON_PRETTY_PRINT);
 

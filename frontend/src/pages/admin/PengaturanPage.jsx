@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Menu, ChevronRight,
@@ -17,6 +17,7 @@ import {
   Save
 } from 'lucide-react';
 import Sidebar from '../../components/Sidebar';
+import { API_BASE_URL } from '../../utils/apiConfig';
 import './PengaturanPage.css';
 
 function PengaturanPage() {
@@ -24,7 +25,7 @@ function PengaturanPage() {
   const navigate = useNavigate();
 
   // Form states
-  const [durasi, setDurasi] = useState('60');
+  const [durasi, setDurasi] = useState('15');
   const [mulai, setMulai] = useState('2025-07-12 08:00');
   const [selesai, setSelesai] = useState('2025-07-12 09:00');
   const [isSaving, setIsSaving] = useState(false);
@@ -39,18 +40,63 @@ function PengaturanPage() {
     }, 3000);
   };
 
-  const handleSimpan = () => {
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/settings.php`);
+        const json = await res.json();
+        if (json.success && json.data) {
+          if (json.data.durasi_ujian_menit) setDurasi(String(json.data.durasi_ujian_menit));
+          if (json.data.mulai_ujian) setMulai(String(json.data.mulai_ujian));
+          if (json.data.selesai_ujian) setSelesai(String(json.data.selesai_ujian));
+        }
+      } catch (err) {
+        console.warn('Gagal memuat pengaturan dari server, menggunakan cache lokal:', err);
+        const local = localStorage.getItem('pengaturan_ujian');
+        if (local) {
+          try {
+            const parsed = JSON.parse(local);
+            if (parsed.durasi) setDurasi(parsed.durasi);
+            if (parsed.mulai) setMulai(parsed.mulai);
+            if (parsed.selesai) setSelesai(parsed.selesai);
+          } catch {}
+        }
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  const handleSimpan = async () => {
     setIsSaving(true);
-    // Simpan ke localStorage
+    // Simpan ke localStorage sebagai cache
     localStorage.setItem('pengaturan_ujian', JSON.stringify({
       durasi,
       mulai,
       selesai
     }));
-    setTimeout(() => {
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/settings.php`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          durasi_ujian_menit: parseInt(durasi, 10) || 15,
+          mulai_ujian: mulai,
+          selesai_ujian: selesai
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('Pengaturan berhasil disimpan ke sistem & database!');
+      } else {
+        showToast(data.message || 'Pengaturan tersimpan lokal saja.', 'warning');
+      }
+    } catch (err) {
+      console.error('Gagal simpan ke server:', err);
+      showToast('Pengaturan tersimpan lokal (server offline).', 'warning');
+    } finally {
       setIsSaving(false);
-      showToast('Pengaturan berhasil disimpan ke sistem!');
-    }, 800);
+    }
   };
 
   const handleBatal = () => {

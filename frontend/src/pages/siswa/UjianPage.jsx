@@ -8,7 +8,11 @@ import './siswa-navy.css';
 import './UjianPage.css';
 import { API_BASE_URL } from '../../utils/apiConfig';
 
-const TIMER_SECONDS = UJIAN_DURASI_MENIT * 60;
+const getUjianDurationSeconds = () => {
+  const cached = sessionStorage.getItem('ujian_durasi_menit');
+  const menit = cached ? parseInt(cached, 10) : UJIAN_DURASI_MENIT;
+  return (menit > 0 ? menit : UJIAN_DURASI_MENIT) * 60;
+};
 
 function UjianPage() {
   const navigate = useNavigate();
@@ -16,13 +20,13 @@ function UjianPage() {
   const mode = searchParams.get('mode') || 'pretest';
 
   const [soalList, setSoalList] = useState([]);
+  const [currentModulId, setCurrentModulId] = useState(1);
   const [currentQ, setCurrentQ] = useState(0);
   const [jawaban, setJawaban] = useState({}); // { [index]: choiceIndex }
   const [flagged, setFlagged] = useState({}); // { [index]: true }
-  const [timeLeft, setTimeLeft] = useState(TIMER_SECONDS);
+  const [timeLeft, setTimeLeft] = useState(getUjianDurationSeconds);
   const [startTime] = useState(Date.now());
   const [currentTime, setCurrentTime] = useState('');
-  // Warning states removed — auto-submit langsung saat keluar tab
   const [submitted, setSubmitted] = useState(false);
   const [showGrid, setShowGrid] = useState(false);
   const [confirmExit, setConfirmExit] = useState(false);
@@ -50,7 +54,22 @@ function UjianPage() {
 
     const fetchSoal = async () => {
       try {
-        const res = await fetch(`${API_BASE_URL}/questions.php?modul_id=1`);
+        // Langkah 1: ambil modul aktif dari database (bukan hardcode modul_id=1)
+        let modulId = 1; // fallback
+        try {
+          const modulRes = await fetch(`${API_BASE_URL}/modules.php`);
+          const modulData = await modulRes.json();
+          if (modulData.success && modulData.data && modulData.data.length > 0) {
+            const activeModul = modulData.data.find(m => m.is_active === 1) || modulData.data[0];
+            modulId = activeModul.id;
+          }
+        } catch (modulErr) {
+          console.warn('Gagal fetch modul, pakai modul_id fallback:', modulErr);
+        }
+
+        // Langkah 2: ambil soal berdasarkan modul_id yang benar
+        setCurrentModulId(modulId);
+        const res = await fetch(`${API_BASE_URL}/questions.php?modul_id=${modulId}`);
         const data = await res.json();
         if (data.success && data.data.length > 0) {
           const shuffle = (array) => {
@@ -153,17 +172,26 @@ function UjianPage() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 student_id: student.id,
-                modul_id: 1,
+                modul_id: currentModulId,
                 test_type: mode === 'pretest' ? 'pre_test' : 'post_test',
                 score: skor,
                 time: elapsed,
                 answers: answersData
-            })
+            }),
+            keepalive: true
         }).catch(err => console.error("Gagal simpan skor ke database", err));
     }
 
+    // Jika keluar tab atau sengaja keluar saat ujian: progres sudah tersimpan di atas,
+    // langsung arahkan logout ke scan barcode agar harus scan ulang untuk masuk lagi
+    if (alasan === 'curang' || alasan === 'keluar') {
+      localStorage.removeItem('userRole');
+      window.location.replace('/siklim/siswa/scan');
+      return;
+    }
+
     setSelesai(alasan);
-  }, [jawaban, mode, submitted, startTime, soalList]);
+  }, [jawaban, mode, submitted, startTime, soalList, currentModulId]);
 
   // Countdown timer
   useEffect(() => {
@@ -173,16 +201,14 @@ function UjianPage() {
     return () => clearInterval(timer);
   }, [timeLeft, submitted, doSubmit]);
 
-  // Anti-cheat — langsung auto-submit saat keluar tab / ganti aplikasi
+  // Anti-cheat: Menerima sinyal force-submit dari SiswaTabGuard jika pelanggaran ke-2 terjadi
   useEffect(() => {
-    const handleVisibility = () => {
-      if (document.hidden && !submitted) {
-        doSubmit('curang');
-      }
+    const handleForceSubmit = () => {
+      doSubmit('curang');
     };
-    document.addEventListener('visibilitychange', handleVisibility);
-    return () => document.removeEventListener('visibilitychange', handleVisibility);
-  }, [submitted, doSubmit]);
+    window.addEventListener('anti-cheat-force-submit', handleForceSubmit);
+    return () => window.removeEventListener('anti-cheat-force-submit', handleForceSubmit);
+  }, [doSubmit]);
 
   const formatTime = (s) => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
   const isWarningTime = timeLeft < 3 * 60;
@@ -368,10 +394,10 @@ function UjianPage() {
             >
               <div className="nv-dialog-icon"><LogOut size={22} /></div>
               <h3 id="ujian-exit-title">Keluar dari {mode === 'pretest' ? 'pretest' : 'posttest'}?</h3>
-              <p>Jawaban yang sudah kamu pilih tidak akan disimpan, dan kamu harus mengulang dari awal.</p>
+              <p>Jawaban yang sudah kamu pilih akan disimpan otomatis, dan kamu akan keluar ke halaman awal.</p>
               <div className="nv-dialog-actions">
                 <button type="button" className="nv-btn secondary" onClick={() => setConfirmExit(false)}>Batal</button>
-                <button type="button" className="nv-btn" onClick={() => navigate('/siswa/dashboard', { replace: true })}>Keluar</button>
+                <button type="button" className="nv-btn" onClick={() => doSubmit('keluar')}>Keluar</button>
               </div>
             </div>
           </div>
@@ -408,8 +434,6 @@ function UjianPage() {
             </div>
           </div>
         )}
-
-        {/* Anti-cheat: Warning dihapus — langsung auto-submit */}
       </div>
     </div>
   );

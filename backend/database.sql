@@ -69,6 +69,19 @@ CREATE TABLE IF NOT EXISTS students (
 ) ENGINE=InnoDB;
 
 -- ============================================
+-- Tabel Categories (Kategori Modul)
+-- ============================================
+CREATE TABLE IF NOT EXISTS categories (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nama VARCHAR(100) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+INSERT IGNORE INTO categories (nama) VALUES 
+('Klimatologi & Pemanasan Global'),
+('Meteorologi Dasar');
+
+-- ============================================
 -- Tabel Modules (Modul)
 -- ============================================
 CREATE TABLE IF NOT EXISTS modules (
@@ -115,6 +128,20 @@ CREATE TABLE IF NOT EXISTS scores (
     FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
     FOREIGN KEY (modul_id) REFERENCES modules(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+-- ============================================
+-- Tabel Settings (Pengaturan Sistem)
+-- ============================================
+CREATE TABLE IF NOT EXISTS settings (
+    `key_name` VARCHAR(50) PRIMARY KEY,
+    `value_text` TEXT,
+    `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+INSERT IGNORE INTO settings (`key_name`, `value_text`) VALUES 
+('durasi_ujian_menit', '15'),
+('mulai_ujian', '08:00'),
+('selesai_ujian', '09:00');
 
 -- ============================================
 -- Tabel Student Answers (Detail Jawaban)

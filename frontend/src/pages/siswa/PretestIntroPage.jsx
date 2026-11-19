@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ChevronLeft, GraduationCap, Clock, ShieldAlert, AlertTriangle, Ban, ListChecks } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { UJIAN_DURASI_MENIT } from './ujianConfig';
+import { API_BASE_URL } from '../../utils/apiConfig';
 import './mobile-green-theme.css';
 import './siswa-navy.css';
 import './PretestIntroPage.css';
@@ -13,6 +14,29 @@ import './PretestIntroPage.css';
 function PretestIntroPage({ mode = 'pretest' }) {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState('');
+  const [durasiMenit, setDurasiMenit] = useState(() => {
+    const cached = sessionStorage.getItem('ujian_durasi_menit');
+    return cached ? parseInt(cached, 10) : UJIAN_DURASI_MENIT;
+  });
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/settings.php`);
+        const json = await res.json();
+        if (json.success && json.data && json.data.durasi_ujian_menit) {
+          const menit = parseInt(json.data.durasi_ujian_menit, 10);
+          if (menit > 0) {
+            setDurasiMenit(menit);
+            sessionStorage.setItem('ujian_durasi_menit', menit.toString());
+          }
+        }
+      } catch (err) {
+        console.warn('Gagal memuat durasi ujian dari server, gunakan default:', err);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   useEffect(() => {
     const updateTime = () => {
@@ -43,6 +67,7 @@ function PretestIntroPage({ mode = 'pretest' }) {
   // replace: tombol kembali dari halaman soal tidak kembali ke halaman info ini
   const handleStart = () => {
     if (mode === 'posttest') sessionStorage.removeItem('posttestVerified');
+    sessionStorage.setItem('ujian_durasi_menit', durasiMenit.toString());
     navigate(`/siswa/ujian?mode=${mode}`, { replace: true });
   };
 
@@ -73,10 +98,10 @@ function PretestIntroPage({ mode = 'pretest' }) {
         {/* Body */}
         <div className="m-body nv-body pi-body">
           {/* Durasi */}
-          <section className="pi-duration" aria-label={`Durasi pengerjaan ${UJIAN_DURASI_MENIT} menit`}>
+          <section className="pi-duration" aria-label={`Durasi pengerjaan ${durasiMenit} menit`}>
             <div className="pi-duration-icon"><Clock size={20} strokeWidth={2.25} /></div>
             <h1 className="pi-duration-label">Durasi Pengerjaan</h1>
-            <div className="pi-duration-value">{UJIAN_DURASI_MENIT}</div>
+            <div className="pi-duration-value">{durasiMenit}</div>
             <div className="pi-duration-unit">Menit</div>
           </section>
 
@@ -90,14 +115,14 @@ function PretestIntroPage({ mode = 'pretest' }) {
               <li className="pi-rule-item pi-rule-danger">
                 <div className="pi-rule-icon danger"><Ban size={14} /></div>
                 <div>
-                  <strong>Dilarang keluar halaman / pindah tab</strong>
-                  <p>Jika kamu meninggalkan halaman ujian atau berpindah ke aplikasi lain, jawaban akan <strong>langsung otomatis terkirim</strong> tanpa peringatan.</p>
+                  <strong>Tidak boleh keluar dari tab web</strong>
+                  <p>Harap <strong>tidak keluar dari tab web Si Iklim Muda</strong> selama pengerjaan soal. Kamu hanya diberikan <strong>1 kali kesempatan peringatan</strong> jika keluar dari tab. Jika keluar sekali lagi, ujian akan langsung diselesaikan otomatis dan kamu dikeluarkan dari sistem.</p>
                 </div>
               </li>
               <li className="pi-rule-item">
                 <div className="pi-rule-icon warning"><Clock size={14} /></div>
                 <div>
-                  <strong>Waktu terbatas {UJIAN_DURASI_MENIT} menit</strong>
+                  <strong>Waktu terbatas {durasiMenit} menit</strong>
                   <p>Setelah waktu habis, seluruh jawaban akan dikirim secara otomatis meskipun belum selesai.</p>
                 </div>
               </li>
